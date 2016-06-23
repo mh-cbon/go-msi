@@ -1,0 +1,4 @@
+package: github.com/mh-cbon/go-msi
+import:
+- package: github.com/urfave/cli
+  version: ^1.17.0

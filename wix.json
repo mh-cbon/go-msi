@@ -1,0 +1,39 @@
+{
+  "product": "",
+  "company": "",
+  "version": "",
+  "upgrade-code": "",
+  "files": {
+    "dir": "",
+    "guid": "",
+    "items": [
+      "example.exe"
+    ]
+  },
+  "directories": [
+    "src"
+  ],
+  "env": {
+    "guid": "",
+    "vars": [
+      {
+          "name": "TEST",
+          "value": "some",
+          "permanent": false,
+          "system": "no",
+          "action": "set",
+          "part": "last",
+      }
+    ]
+  },
+  "shortcuts": [
+    {
+        "guid": "",
+        "name": "",
+        "description": "",
+        "target": "",
+        "wdir": "",
+        "arguments": "",
+    }
+  ]
+}
