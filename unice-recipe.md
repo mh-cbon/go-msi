@@ -50,23 +50,32 @@ The command should display your project files.
 From your local computer, download [wix](http://wixtoolset.org/releases/v3-10-3-3007/) msi package,
 
 ```sh
-wget -O wix310.exe http://wixtoolset.org/downloads/v3.10.3.3007/wix310.exe
+wget -O wix310-binaries.zip http://wixtoolset.org/downloads/v3.10.3.3007/wix310-binaries.zip
 # or
-curl -O http://wixtoolset.org/downloads/v3.10.3.3007/wix310.exe
+curl -O http://wixtoolset.org/downloads/v3.10.3.3007/wix310-binaries.zip
+
+unzip wix310-binaries.zip -d wix310
 ```
 
-Trigger `wix` setup on the remote windows machine,
+Copy `wix310` folder, clean your copy
 
 ```sh
-vagrant winrm -c "msiexec.exe /i C:\\vagrant\\wix310.exe INSTALLDIR=\"C:\\wix310\" /quiet"
+vagrant winrm -c "xcopy /E /I C:\vagrant\wix310 C:\wix310"
+rm -fr wix310
+rm -fr wix310-binaries.zip
 ```
 
 Register `wix` bin path to `PATH`
 
 ```sh
-vagrant winrm -c "setx PATH \"%PATH%;C:\\wix310\\bin\""
+vagrant winrm -c "setx PATH \"%PATH%;C:\\wix310\""
 ```
 
+Confirm its up to date by running this command
+
+```sh
+vagrant winrm -c "heat.exe -v"
+```
 
 From your local computer, download [go-msi](TBD) msi package,
 
