@@ -44,7 +44,7 @@ If you wonder why `INSTALLDIR`, `[INSTALLDIR]`, this is part of wix rules, pleas
 
 ### wix templates
 
-For simplicity a default install flow is provided, which you can find [here]()
+For simplicity a default install flow is provided, which you can find [here](https://github.com/mh-cbon/go-msi/tree/master/templates)
 
 You can create a new one for your own personalization,
 you should only take care to reproduce the go templating already
