@@ -26,7 +26,7 @@ For simple cases,
 
 - Create a `wix.json` file like [this one](https://github.com/mh-cbon/go-msi/blob/master/wix.json)
 - Apply it guids with `go-msi set-guid`
-- Run `go-msi make`
+- Run `go-msi make --msi your_program.msi --version 0.0.2`
 
 ### wix.json
 
