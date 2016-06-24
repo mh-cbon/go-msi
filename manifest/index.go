@@ -135,12 +135,28 @@ func (wixFile *WixManifest) NeedGuid () bool {
   return need
 }
 
-func (wixFile *WixManifest) RewriteFilePaths(o string) {
+func (wixFile *WixManifest) RewriteFilePaths(o string) error {
+  var err error
   for i, file := range wixFile.Files.Items {
-    wixFile.Files.Items[i], _ = filepath.Rel(o, file)
+    file, err = filepath.Abs(file)
+    if err!=nil {
+      return err
+    }
+    wixFile.Files.Items[i], err = filepath.Rel(o, file)
+    if err!=nil {
+      return err
+    }
   }
   for _, d := range wixFile.Directories {
-    r, _ := filepath.Rel(o, d)
+    d, err = filepath.Abs(d)
+    if err!=nil {
+      return err
+    }
+    r, err := filepath.Rel(o, d)
+    if err!=nil {
+      return err
+    }
     wixFile.RelDirs = append(wixFile.RelDirs, r)
   }
+  return nil
 }

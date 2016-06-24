@@ -3,8 +3,8 @@ package rtf
 import (
   "io/ioutil"
   "unicode"
+  "regexp"
 
-  // "golang.org/x/text/encoding"
   "golang.org/x/text/runes"
   "golang.org/x/text/transform"
   "golang.org/x/text/encoding/charmap"
@@ -29,7 +29,11 @@ func WriteAsWindows1252 (src string, dst string) error {
       return err
   }
 
-  return ioutil.WriteFile(dst, bDst, 0644)
+  // not sure how to catch for [^\r]\n...
+  re := regexp.MustCompile(`\n`)
+  dS := re.ReplaceAllString(string(bDst), "\r\n")
+
+  return ioutil.WriteFile(dst, []byte(dS), 0644)
 }
 
 func WriteAsRtf (src string, dst string, reencode bool) error {
@@ -42,7 +46,7 @@ func WriteAsRtf (src string, dst string, reencode bool) error {
   var bDst []byte
 
   if reencode {
-    bDst = make([]byte, len(bSrc)*2)
+    bDst = make([]byte, len(bSrc))
     replaceNonAscii := runes.Map(func(r rune) rune {
   		if r > unicode.MaxASCII {
   			return rune('?')
@@ -55,11 +59,17 @@ func WriteAsRtf (src string, dst string, reencode bool) error {
         return err
     }
 
+    re := regexp.MustCompile(`\n`)
+    dS := re.ReplaceAllString(string(bDst), "\r\n")
+
+    bDst = []byte(dS)
+
   } else {
     bDst = bSrc
   }
 
-  sDat := string(bDst)
+  re := regexp.MustCompile(`(\r\n|\n)`)
+  sDat := re.ReplaceAllString(string(bDst), "\n\\line ")
   sDat = "{\\rtf1\\ansi\n"+sDat+"\n}"
 
   return ioutil.WriteFile(dst, []byte(sDat), 0644)

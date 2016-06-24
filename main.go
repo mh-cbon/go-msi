@@ -19,6 +19,10 @@ var VERSION = "0.0.0"
 func main() {
 
   b := getBinPath()
+  tmpBuildDir, err := ioutil.TempDir("", "go-msi")
+  if err != nil {
+    panic(err)
+  }
 
 	app := cli.NewApp()
 	app.Name = "go-msi"
@@ -67,7 +71,7 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "out, o",
-					Value: "builder",
+					Value: tmpBuildDir,
 					Usage: "Directory path to the generated wix templates files",
 				},
 				cli.StringFlag{
@@ -137,7 +141,7 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "out, o",
-					Value: "builder",
+					Value: tmpBuildDir,
 					Usage: "Directory path to the generated wix cmd file",
 				},
 				cli.StringFlag{
@@ -159,7 +163,7 @@ func main() {
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "out, o",
-					Value: "builder",
+					Value: tmpBuildDir,
 					Usage: "Directory path to the generated wix cmd file",
 				},
 			},
@@ -181,7 +185,7 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "out, o",
-					Value: "builder",
+					Value: tmpBuildDir,
 					Usage: "Directory path to the generated wix cmd file",
 				},
 				cli.StringFlag{
@@ -284,7 +288,10 @@ func generateTemplates(c *cli.Context) error {
     return cli.NewExitError("Cannot proceed, manifest file is incomplete", 1)
   }
 
-  wixFile.RewriteFilePaths(out)
+  err = wixFile.RewriteFilePaths(out)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
 
   if c.IsSet("version") {
     wixFile.Version = version
@@ -403,8 +410,15 @@ func generateWixCommands(c *cli.Context) error {
     return cli.NewExitError("Cannot proceed, manifest file is incomplete", 1)
   }
 
-  wixFile.RewriteFilePaths(out)
+  err = wixFile.RewriteFilePaths(out)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
 
+  msi, err = filepath.Abs(msi)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
   msi, err = filepath.Rel(out, msi)
   if err!=nil {
     return cli.NewExitError(err.Error(), 1)
@@ -473,7 +487,10 @@ func quickMake(c *cli.Context) error {
     return cli.NewExitError(err.Error(), 1)
   }
 
-  wixFile.RewriteFilePaths(out)
+  err = wixFile.RewriteFilePaths(out)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
 
   if c.IsSet("version") {
     wixFile.Version = version
@@ -515,6 +532,10 @@ func quickMake(c *cli.Context) error {
     }
   }
 
+  msi, err = filepath.Abs(msi)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
   msi, err = filepath.Rel(out, msi)
   if err!=nil {
     return cli.NewExitError(err.Error(), 1)
