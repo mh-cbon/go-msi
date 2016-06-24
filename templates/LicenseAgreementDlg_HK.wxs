@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?define LicenseSrc = "license.rtf"?>
-
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
    <Fragment>
       <UI>
@@ -19,7 +17,7 @@
             </Control>
             <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.LicenseAgreementDlgBannerBitmap)" />
             <Control Id="LicenseText" Type="ScrollableText" X="20" Y="60" Width="330" Height="140" Sunken="yes" TabSkip="no">
-            
+
             {{if gt (.License | len) 0}}
             <Text SourceFile="{{.License}}" />
             {{else}}

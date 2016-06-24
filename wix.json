@@ -2,8 +2,8 @@
   "product": "go-msi",
   "company": "mh-cbon",
   "version": "0.0.1",
-  "license": "",
-  "upgrade-code": "DC754E3C-A2D7-4C53-90E3-616FFBFAB9BE",
+  "license": "LICENSE",
+  "upgrade-code": "8615055C-D8E0-404C-93BE-441C503BA6F0",
   "files": {
     "guid": "378896D8-6749-4821-870A-44CBBB791D0C",
     "items": [
@@ -33,7 +33,7 @@
       {
         "name": "go-msi",
         "description": "Easy msi pakage for Go",
-        "target": "[INSTALLDIR]\\example.exe",
+        "target": "[INSTALLDIR]\\go-msi.exe",
         "wdir": "INSTALLDIR",
         "arguments": ""
       }

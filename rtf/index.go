@@ -1,64 +1,65 @@
 package rtf
 
 import (
-  "io"
   "io/ioutil"
-  "os"
-  "bytes"
-  "bufio"
+  "unicode"
 
-  "golang.org/x/text/encoding/charmap"
+  // "golang.org/x/text/encoding"
+  "golang.org/x/text/runes"
   "golang.org/x/text/transform"
+  "golang.org/x/text/encoding/charmap"
 )
 
-
 func WriteAsWindows1252 (src string, dst string) error {
-  f, err := os.Open(src)
-  if err != nil {
-      return err
-  }
-  defer f.Close()
-
-  out, err := os.Create(dst)
-  if err != nil {
-      return err
-  }
-  defer out.Close()
-
-  wInUTF8 := transform.NewWriter(out, charmap.Windows1252.NewEncoder())
-
-  _, err = io.Copy(wInUTF8, f)
+  bSrc, err := ioutil.ReadFile(src)
   if err != nil {
       return err
   }
 
-  return nil
+  bDst := make([]byte, len(bSrc)*2)
+  replaceNonAscii := runes.Map(func(r rune) rune {
+		if r > unicode.MaxASCII {
+			return rune('?')
+		}
+		return r
+  })
+  transformer := transform.Chain(replaceNonAscii, charmap.Windows1252.NewEncoder())
+  _, _, err = transformer.Transform(bDst, bSrc, true)
+  if err != nil {
+      return err
+  }
+
+  return ioutil.WriteFile(dst, bDst, 0644)
 }
 
 func WriteAsRtf (src string, dst string, reencode bool) error {
 
-  dat, err := ioutil.ReadFile(src)
+  bSrc, err := ioutil.ReadFile(src)
   if err != nil {
       return err
   }
-  r := bytes.NewReader(dat)
-  var b bytes.Buffer
-  o := bufio.NewWriter(&b)
-  if reencode {
-    wInUTF8 := transform.NewWriter(o, charmap.Windows1252.NewEncoder())
 
-    _, err = io.Copy(wInUTF8, r)
+  var bDst []byte
+
+  if reencode {
+    bDst = make([]byte, len(bSrc)*2)
+    replaceNonAscii := runes.Map(func(r rune) rune {
+  		if r > unicode.MaxASCII {
+  			return rune('?')
+  		}
+  		return r
+    })
+    transformer := transform.Chain(replaceNonAscii, charmap.Windows1252.NewEncoder())
+    _, _, err := transformer.Transform(bDst, bSrc, true)
     if err != nil {
         return err
     }
+
   } else {
-    _, err = io.Copy(o, r)
-    if err != nil {
-        return err
-    }
+    bDst = bSrc
   }
 
-  sDat := string(b.Bytes())
+  sDat := string(bDst)
   sDat = "{\\rtf1\\ansi\n"+sDat+"\n}"
 
   return ioutil.WriteFile(dst, []byte(sDat), 0644)

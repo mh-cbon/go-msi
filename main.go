@@ -18,6 +18,8 @@ var VERSION = "0.0.0"
 
 func main() {
 
+  b := getBinPath()
+
 	app := cli.NewApp()
 	app.Name = "go-msi"
 	app.Version = VERSION
@@ -60,7 +62,7 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "src, s",
-					Value: "templates",
+					Value: filepath.Join(b, "templates"),
 					Usage: "Diretory path to the wix templates files",
 				},
 				cli.StringFlag{
@@ -130,7 +132,7 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "src, s",
-					Value: "templates",
+					Value: filepath.Join(b, "templates"),
 					Usage: "Diretory path to the wix templates files",
 				},
 				cli.StringFlag{
@@ -168,9 +170,39 @@ func main() {
 			Action: make,
 			Flags: []cli.Flag{
 				cli.StringFlag{
+					Name:  "path, p",
+					Value: "wix.json",
+					Usage: "Path to the wix manifest file",
+				},
+				cli.StringFlag{
+					Name:  "src, s",
+					Value: filepath.Join(b, "templates"),
+					Usage: "Diretory path to the wix templates files",
+				},
+				cli.StringFlag{
 					Name:  "out, o",
 					Value: "builder",
 					Usage: "Directory path to the generated wix cmd file",
+				},
+				cli.StringFlag{
+					Name:  "arch, a",
+					Value: "",
+					Usage: "A target architecture , x64 or x86 (ia64 is not handled)",
+				},
+				cli.StringFlag{
+					Name:  "msi, m",
+					Value: "",
+					Usage: "Path to write resulting msi file to",
+				},
+				cli.StringFlag{
+					Name:  "version",
+					Value: "",
+					Usage: "The version of your program",
+				},
+				cli.StringFlag{
+					Name:  "license, l",
+					Value: "",
+					Usage: "Path to the license file",
 				},
 			},
 		},
@@ -182,7 +214,7 @@ func main() {
 func checkJson(c *cli.Context) error {
   path := c.String("path")
 
-  var wixFile *manifest.WixManifest
+  wixFile := manifest.WixManifest{}
   err := wixFile.Load(path)
   if err!=nil {
     return cli.NewExitError(err.Error(), 1)
@@ -202,7 +234,7 @@ func checkJson(c *cli.Context) error {
 func setGuid(c *cli.Context) error {
   path := c.String("path")
 
-  var wixFile *manifest.WixManifest
+  wixFile := manifest.WixManifest{}
   err := wixFile.Load(path)
   if err!=nil {
     return cli.NewExitError(err.Error(), 1)
@@ -235,7 +267,7 @@ func generateTemplates(c *cli.Context) error {
   version := c.String("version")
   license := c.String("license")
 
-  var wixFile *manifest.WixManifest
+  wixFile := manifest.WixManifest{}
   err := wixFile.Load(path)
   if err!=nil {
     return cli.NewExitError(err.Error(), 1)
@@ -250,11 +282,11 @@ func generateTemplates(c *cli.Context) error {
 
   wixFile.RewriteFilePaths(out)
 
-  if version!="" {
+  if c.IsSet("version") {
     wixFile.Version = version
   }
 
-  if license!="" {
+  if c.IsSet("license") {
     wixFile.License = license
   }
 
@@ -273,16 +305,16 @@ func generateTemplates(c *cli.Context) error {
 
   for _, tpl := range templates {
     dst := filepath.Join(out, filepath.Base(tpl))
-    err = tpls.GenerateTemplate(wixFile, tpl, dst)
+    err = tpls.GenerateTemplate(&wixFile, tpl, dst)
     if err!=nil {
       return cli.NewExitError(err.Error(), 1)
     }
   }
 
-  fmt.Printf("Generated %s templates\n", len(templates))
+  fmt.Printf("Generated %d templates\n", len(templates))
   for _, tpl := range templates {
     dst := filepath.Join(out, filepath.Base(tpl))
-    fmt.Println("- %s", dst)
+    fmt.Printf("- %s\n", dst)
   }
 
   return nil
@@ -349,7 +381,7 @@ func generateWixCommands(c *cli.Context) error {
     return cli.NewExitError("No templates *.wxs found in this directory", 1)
   }
 
-  var wixFile *manifest.WixManifest
+  wixFile := manifest.WixManifest{}
   err = wixFile.Load(path)
   if err!=nil {
     return cli.NewExitError(err.Error(), 1)
@@ -364,7 +396,12 @@ func generateWixCommands(c *cli.Context) error {
 
   wixFile.RewriteFilePaths(out)
 
-  cmdStr := wix.GenerateCmd(wixFile, templates, msi, arch)
+  msi, err = filepath.Rel(out, msi)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+
+  cmdStr := wix.GenerateCmd(&wixFile, templates, msi, arch)
 
   targetFile := filepath.Join(out, "build.bat")
   err = ioutil.WriteFile(targetFile, []byte(cmdStr), 0644)
@@ -404,7 +441,7 @@ func make(c *cli.Context) error {
   msi := c.String("msi")
   arch := c.String("arch")
 
-  var wixFile *manifest.WixManifest
+  wixFile := manifest.WixManifest{}
   err := wixFile.Load(path)
   if err!=nil {
     return cli.NewExitError(err.Error(), 1)
@@ -419,11 +456,11 @@ func make(c *cli.Context) error {
 
   wixFile.RewriteFilePaths(out)
 
-  if version!="" {
+  if c.IsSet("version") {
     wixFile.Version = version
   }
 
-  if license!="" {
+  if c.IsSet("license") {
     wixFile.License = license
   }
 
@@ -453,13 +490,18 @@ func make(c *cli.Context) error {
 
   for _, tpl := range templates {
     dst := filepath.Join(out, filepath.Base(tpl))
-    err = tpls.GenerateTemplate(wixFile, tpl, dst)
+    err = tpls.GenerateTemplate(&wixFile, tpl, dst)
     if err!=nil {
       return cli.NewExitError(err.Error(), 1)
     }
   }
 
-  cmdStr := wix.GenerateCmd(wixFile, templates, msi, arch)
+  msi, err = filepath.Rel(out, msi)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+
+  cmdStr := wix.GenerateCmd(&wixFile, templates, msi, arch)
 
   targetFile := filepath.Join(out, "build.bat")
   err = ioutil.WriteFile(targetFile, []byte(cmdStr), 0644)
@@ -482,4 +524,14 @@ func make(c *cli.Context) error {
   }
 
   return nil
+}
+
+func getBinPath () string {
+  wd := ""
+  if filepath.Base(os.Args[0])=="main" { // go run ...
+    wd, _ = os.Getwd()
+  } else {
+    wd = filepath.Dir(os.Args[0])
+  }
+  return wd
 }

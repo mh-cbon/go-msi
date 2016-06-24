@@ -77,11 +77,11 @@ func (wixFile *WixManifest) Load(p string) error {
   if err != nil {
     return err
   }
-  err = json.Unmarshal(dat, wixFile);
+  err = json.Unmarshal(dat, &wixFile);
   if  err != nil {
     return err
   }
-  return err
+  return nil
 }
 
 func (wixFile *WixManifest) SetGuids () (bool, error) {
