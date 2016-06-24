@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
-<?define ProductVersion = "0.0.8"?>
-<?define ProductUpgradeCode = "8A8A4A40-D596-481D-ACC2-5F9EA29CD738"?>
+
+<?if $(sys.BUILDARCH)="x86"?>
+    <?define Program_Files="ProgramFilesFolder"?>
+<?elseif $(sys.BUILDARCH)="x64"?>
+    <?define Program_Files="ProgramFiles64Folder"?>
+<?else?>
+    <?error Unsupported value of sys.BUILDARCH=$(sys.BUILDARCH)?>
+<?endif?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
@@ -23,24 +29,24 @@
 
       <Directory Id="TARGETDIR" Name="SourceDir">
 
-         <Directory Id="ProgramFilesFolder">
-            <Directory Id="INSTALLDIR" Name="{{.Files.Dir}}">
-               {{if len(.Files.Items)>0}}
+         <Directory Id="$(var.Program_Files)">
+            <Directory Id="INSTALLDIR" Name="{{.Product}}">
+               {{if gt (.Files.Items | len) 0}}
                <Component Id="ApplicationFiles" Guid="{{.Files.Guid}}">
                   {{range $i, $e := .Files.Items}}
                     <File Id="ApplicationFile{{$i}}" Source="{{$e}}"/>
                   {{end}}
                </Component>
-               {{- end}}
-               {{if len(.Files.Directories)>0}}
-               {{range $i, $e := .Files.Directories}}
-               <Directory Id="APPDIR{{$i}}" Name="$(var.SourceDir{{$i}})" />
                {{end}}
-               {{- end}}
+               {{if gt (.Directories | len) 0}}
+               {{range $i, $e := .Directories}}
+               <Directory Id="APPDIR{{$i}}" Name="{{$e}}" />
+               {{end}}
+               {{end}}
             </Directory>
          </Directory>
 
-         {{if len(.Env)>0}}
+         {{if gt (.Env.Vars | len) 0}}
          <Component Id="ENVS" Guid="{{.Env.Guid}}">
           {{range $i, $e := .Env.Vars}}
           <Environment Id="ENV{{$i}}"
@@ -52,30 +58,32 @@
             System="{{$e.System}}" />
           {{end}}
         </Component>
-        {{- end}}
+        {{end}}
 
-         {{if len(.Shortcuts.Items)>0}}
+         {{if gt (.Shortcuts.Items | len) 0}}
          <Directory Id="ProgramMenuFolder">
-            <Directory Id="ProgramMenuSubfolder" Name="{{.Shortcuts.Dir}}">
-               <Component Id="ApplicationShortcuts" Guid="{{$e.Guid}}">
+            <Directory Id="ProgramMenuSubfolder" Name="{{.Product}}">
+               <Component Id="ApplicationShortcuts" Guid="{{.Shortcuts.Guid}}">
                {{range $i, $e := .Shortcuts.Items}}
                   <Shortcut Id="ApplicationShortcut{{$i}}"
                         Name="{{$e.Name}}"
                         Description="{{$e.Description}}"
                         Target="{{$e.Target}}"
                         WorkingDirectory="{{$e.WDir}}"
-                        Arguments="{{$e.Guid}}"
+                        {{if gt ($e.Arguments | len) 0}}
+                        Arguments="{{$e.Arguments}}"
+                        {{end}}
                         />
                   <RegistryValue Root="HKCU"
-                    Key="Software\{{.Company}}\{{.Product}}"
+                    Key="Software\{{$.Company}}\{{$.Product}}"
                     Name="installed{{$i}}"
                     Type="integer" Value="1" KeyPath="yes"/>
-                {{- end}}
+                {{end}}
                 <RemoveFolder Id="ProgramMenuSubfolder" On="uninstall"/>
                </Component>
             </Directory>
          </Directory>
-         {{- end}}
+         {{end}}
 
       </Directory>
 
@@ -84,18 +92,18 @@
       </InstallExecuteSequence>
 
       <Feature Id="DefaultFeature" Level="1">
-         {{if len(.Env)>0}}
+         {{if gt (.Env.Vars | len) 0}}
          <ComponentRef Id="ENVS"/>
-         {{- end}}
-         {{if len(.Files.Items)>0}}
+         {{end}}
+         {{if gt (.Files.Items | len) 0}}
          <ComponentRef Id="ApplicationFiles"/>
-         {{- end}}
-         {{if len(.Shortcuts.Items)>0}}
+         {{end}}
+         {{if gt (.Shortcuts.Items | len) 0}}
          <ComponentRef Id="ApplicationShortcuts"/>
-         {{- end}}
-         {{range $i, $e := .Files.Directories}}
+         {{end}}
+         {{range $i, $e := .Directories}}
          <ComponentGroupRef Id="AppFiles{{$i}}" />
-         {{- end}}
+         {{end}}
       </Feature>
 
       <UI>

@@ -1,6 +1,16 @@
-hash: 626411f26671b4922ed4ac68b8fda810c914fcce065e5be5d1d3074eab83855d
-updated: 2016-06-23T20:00:38.561894113+02:00
+hash: 77bdddf0589c53c09fc03dea53704f1752a3313fe77a42e80463da405a55c425
+updated: 2016-06-24T13:22:58.817867007+02:00
 imports:
+- name: github.com/mattn/go-zglob
+  version: 2dbd7f37a45e993d5180a251b4bdd314d6333b70
 - name: github.com/urfave/cli
   version: 01857ac33766ce0c93856370626f9799281c14f4
+- name: golang.org/x/text
+  version: 4440cd4f4c2ea31e1872e00de675a86d0c19006c
+  subpackages:
+  - encoding/charmap
+  - transform
+  - encoding
+  - encoding/internal
+  - encoding/internal/identifier
 devImports: []

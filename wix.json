@@ -1,39 +1,42 @@
 {
-  "product": "",
-  "company": "",
-  "version": "",
-  "upgrade-code": "",
+  "product": "go-msi",
+  "company": "mh-cbon",
+  "version": "0.0.1",
+  "license": "",
+  "upgrade-code": "DC754E3C-A2D7-4C53-90E3-616FFBFAB9BE",
   "files": {
-    "dir": "",
-    "guid": "",
+    "guid": "378896D8-6749-4821-870A-44CBBB791D0C",
     "items": [
-      "example.exe"
+      "go-wix.exe"
     ]
   },
   "directories": [
-    "src"
+    "utils",
+    "templates"
   ],
   "env": {
-    "guid": "",
+    "guid": "0CB88C7F-85A7-4986-B6CE-1CAD5C17EA0E",
     "vars": [
       {
-          "name": "TEST",
-          "value": "some",
-          "permanent": false,
-          "system": "no",
-          "action": "set",
-          "part": "last",
+        "name": "PATH",
+        "value": "[INSTALLDIR]",
+        "permanent": "no",
+        "system": "no",
+        "action": "set",
+        "part": "last"
       }
     ]
   },
-  "shortcuts": [
-    {
-        "guid": "",
-        "name": "",
-        "description": "",
-        "target": "",
-        "wdir": "",
-        "arguments": "",
-    }
-  ]
+  "shortcuts": {
+    "guid": "6DAFD205-3D2D-43D7-BF78-33BFE8746D2A",
+    "items": [
+      {
+        "name": "go-msi",
+        "description": "Easy msi pakage for Go",
+        "target": "[INSTALLDIR]\\example.exe",
+        "wdir": "INSTALLDIR",
+        "arguments": ""
+      }
+    ]
+  }
 }

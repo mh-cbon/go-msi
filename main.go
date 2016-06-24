@@ -5,283 +5,487 @@ import (
   "io/ioutil"
   "path/filepath"
   "text/template"
+  "io"
   "os"
+  "fmt"
+  "strings"
+  "strconv"
+  "runtime"
+  "os/exec"
 
   "golang.org/x/text/encoding/charmap"
   "golang.org/x/text/transform"
+  "github.com/mh-cbon/go-msi/manifest"
+  "github.com/mh-cbon/go-msi/tpls"
+  "github.com/mh-cbon/go-msi/rtf"
 )
 
+var VERSION = "0.0.0"
 
-type WixManifest struct {
-    Product       string          `json:"product"`
-    Company       string          `json:"company"`
-    Version       string          `json:"version"`
-    License       string          `json:"license"`
-    UpgradeCode   string          `json:"upgrade-code"`
-    Files         WixFiles        `json:"files"`
-    Directories   []string        `json:"directories"`
-    Env           []WixEnvList    `json:"env"`
-    Shortcuts     []WixShortcuts  `json:"shortcuts"`
+func main() {
+
+	app := cli.NewApp()
+	app.Name = "go-msi"
+	app.Version = VERSION
+	app.Usage = "Easy msi pakage for Go"
+	app.UsageText = "go-msi <cmd> <options>"
+	app.Commands = []cli.Command{
+		{
+			Name:   "check-json",
+			Usage:  "Check the JSON wix manifest",
+			Action: checkJson,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "path, p",
+					Value: "wix.json",
+					Usage: "Path to the wix manifest file",
+				},
+			},
+		},
+		{
+			Name:   "set-guid",
+			Usage:  "Sets appropriate guids in your wix manifest",
+			Action: setGuid,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "path, p",
+					Value: "wix.json",
+					Usage: "Path to the wix manifest file",
+				},
+			},
+		},
+		{
+			Name:   "generate-templates",
+			Usage:  "Generate wix templates",
+			Action: generateTemplates,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "path, p",
+					Value: "wix.json",
+					Usage: "Path to the wix manifest file",
+				},
+				cli.StringFlag{
+					Name:  "src, s",
+					Value: "templates",
+					Usage: "Diretory path to the wix templates files",
+				},
+				cli.StringFlag{
+					Name:  "out, o",
+					Value: "builder",
+					Usage: "Directory path to the generated wix templates files",
+				},
+				cli.StringFlag{
+					Name:  "version",
+					Value: "",
+					Usage: "The version of your program",
+				},
+				cli.StringFlag{
+					Name:  "license, l",
+					Value: "",
+					Usage: "Path to the license file",
+				},
+			},
+		},
+		{
+			Name:   "to-windows",
+			Usage:  "Write Windows1252 encoded file",
+			Action: toWindows1252,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "src, s",
+					Value: "",
+					Usage: "Path to an UTF-8 encoded file",
+				},
+				cli.StringFlag{
+					Name:  "out, o",
+					Value: "",
+					Usage: "Path to the ANSI generated file",
+				},
+			},
+		},
+		{
+			Name:   "to-rtf",
+			Usage:  "Write RTF formatted file",
+			Action: toRtf,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "src, s",
+					Value: "",
+					Usage: "Path to a text file",
+				},
+				cli.StringFlag{
+					Name:  "out, o",
+					Value: "",
+					Usage: "Path to the RTF generated file",
+				},
+				cli.BoolFlag{
+					Name:  "reencode, e",
+					Usage: "Also re encode UTF-8 to Windows1252 charset",
+				},
+			},
+		},
+		{
+			Name:   "gen-wix-cmd",
+			Usage:  "Generate a batch file of Wix commands to run",
+			Action: generateWixCommands,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "path, p",
+					Value: "wix.json",
+					Usage: "Path to the wix manifest file",
+				},
+				cli.StringFlag{
+					Name:  "src, s",
+					Value: "templates",
+					Usage: "Diretory path to the wix templates files",
+				},
+				cli.StringFlag{
+					Name:  "out, o",
+					Value: "builder",
+					Usage: "Directory path to the generated wix cmd file",
+				},
+				cli.StringFlag{
+					Name:  "arch, a",
+					Value: "",
+					Usage: "A target architecture , x64 or x86 (ia64 is not handled)",
+				},
+				cli.StringFlag{
+					Name:  "msi, m",
+					Value: "",
+					Usage: "Path to write resulting msi file to",
+				},
+			},
+		},
+		{
+			Name:   "run-wix-cmd",
+			Usage:  "Run the batch file of Wix commands",
+			Action: runWixCommands,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "out, o",
+					Value: "builder",
+					Usage: "Directory path to the generated wix cmd file",
+				},
+			},
+		},
+		{
+			Name:   "make",
+			Usage:  "All-in-one command to make MSI files",
+			Action: make,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "out, o",
+					Value: "builder",
+					Usage: "Directory path to the generated wix cmd file",
+				},
+			},
+		},
+	}
+
+	app.Run(os.Args)
 }
 
-type WixFiles {
-    Guid      string      `json:"guid"`
-    Dir       string      `json:"dir"`
-    Items     []string    `json:"items"`
-}
+func checkJson(c *cli.Context) error {
+  path := c.String("path")
 
-type WixEnvList {
-    Guid       string      `json:"guid"`
-    Vars       []WixEnv    `json:"vars"`
-}
-type WixEnv {
-    Name       string      `json:"name"`
-    Value      string      `json:"value"`
-    Permanent  string      `json:"permanent"`
-    System     string      `json:"system"`
-    Action     string      `json:"action"`
-    Part       string      `json:"part"`
-}
-type WixShortcuts {
-    Dir       string        `json:"guid"`
-    Items     []WixShortcut `json:"name"`
-}
-type WixShortcut {
-    Guid          string      `json:"guid"`
-    Name          string      `json:"name"`
-    Description   string      `json:"description"`
-    Target        string      `json:"target"`
-    WDir          string      `json:"wdir"`
-    Arguments     string      `json:"arguments"`
-}
-
-func main () {
-
-  var wixFile WixManifest
-  dat, err := ioutil.ReadFile("wix.json")
-  if err != nil {
-    panic(err)
+  var wixFile *manifest.WixManifest
+  err = wixFile.Load(path)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
   }
-  err = json.Unmarshal(dat, &wixFile);
 
-  wixFile, err := LoadWixManifest("")
-  if err != nil {
-    panic(err)
+  fmt.Println("The manifest is syntaxically correct !")
+
+  if wixFile.NeedGuid() {
+    fmt.Println("The manifest needs Guid")
+    fmt.Println("To update your file automatically run:")
+    fmt.Println("     go-msi set-guid")
+    return cli.NewExitError("Incomplete manifest file detected", 1)
+  }
+  return nil
+}
+
+func setGuid(c *cli.Context) error {
+  path := c.String("path")
+
+  var wixFile *manifest.WixManifest
+  err = wixFile.Load(path)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
   }
 
-  updated, err := CheckWixManifest(wixFile)
-  if err != nil {
-    panic(err)
+  updated, err := wixFile.SetGuids()
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
   }
+
   if updated {
-    err = WriteWixManifest(wixFile, "wix.json")
-    if err != nil {
-      panic(err)
-    }
-  }
-
-  wixFile.License, err = RewriteLicenseFile(wixFile.License, "builder")
-  if err != nil {
-    panic(err)
-  }
-
-  RewriteWixFilePaths(wixFile, "builder")
-
-  err = GenerateTemplates(wixFile, "templates", "builder")
-  if err != nil {
-    panic(err)
-  }
-
-  cmdStr = GenerateCmd(wixFile, "builder", "test.msi")
-  if err != nil {
-    panic(err)
-  }
-
-  fmt.Println(cmdStr)
-  fmt.Println("All done!")
-}
-
-func RewriteWixFilePaths(wixFile *wixFile, o string) {
-  for i, file := range wixFile.Files.Items {
-    wixFile.Files.Items[i], _ := filepath.Rel(o, file)
-  }
-  for i, d := range wixFile.Directories {
-    wixFile.Directories[i], _ := filepath.Rel(o, d)
-  }
-}
-
-func GenerateCmd (wixFile *WixManifest, odir string, output string) string {
-  targetFile := filepath.Join(odir, "build.cmd")
-
-  cmd := ""
-
-  for i, dir := range wixFile.Directories {
-    cmd += "heat dir "+dir+" -nologo -cg AppFiles"+i+" -gg -g1 -srd -sfrag -template fragment -dr APPDIR"+i+" -var var.SourceDir"+i+" -out "+odir+"/AppFiles"+i+".wxs"
-  }
-  cmd += "\n"
-  cmd += "candle -o "+odir+"\\"
-  for i, dir := range wixFile.Directories {
-    cmd += " -dSourceDir"+i+"="+dir
-  }
-  for i, dir := range wixFile.Directories {
-    cmd += " "+odir+"\\AppFiles"+i+".wxs"
-  }
-  cmd += " "+odir+"\\LicenseAgreementDlg_HK.wxs "+odir+"\\WixUI_HK.wxs "+odir+"\\product.wxs"
-  cmd += "\n"
-  cmd += "light -ext WixUIExtension -ext WixUtilExtension -sacl "
-  cmd += " -out "+output
-  for i, dir := range wixFile.Directories {
-    cmd += " "+odir+"\\AppFiles"+i+".wixobj"
-  }
-  cmd += " "+odir+"\\LicenseAgreementDlg_HK.wixobj "+odir+"\\WixUI_HK.wixobj "+odir+"\\product.wixobj"
-  cmd += "\n"
-  cmd += "@pause"
-  cmd += "\n"
-
-  return cmd
-}
-
-func RewriteLicenseFile (s string, odir string) (string, error) {
-  f, err := os.Open(s)
-  if err != nil {
-      return s, err
-  }
-  defer f.Close()
-
-  targetFile := filepath.Join(odir, "license.rtf")
-  out, err := os.Create(targetFile)
-  if err != nil {
-      return s, err
-  }
-  defer out.Close()
-
-  wInUTF8 := transform.NewWriter(out, charmap.Windows1252.NewEncoder())
-
-  _, err = io.Copy(wInUTF8, f)
-  if err != nil {
-      return s, err
-  }
-
-  return targetFile, nil
-}
-
-func GenerateTemplates (wixFile *WixManifest, p string, o string) error {
-  os.MkdirAll(o, 0644)
-
-  var err error
-
-  product := template.ParseFiles(filepath.Join(p, "product.wxs"))
-  licenseDlg := template.ParseFiles(filepath.Join(p, "LicenseAgreementDlg_HK.wxs"))
-  ui := template.ParseFiles(filepath.Join(p, "WixUI_HK.wxs"))
-
-  wProduct := os.Create(filepath.Join(o, "product.wxs"))
-  defer wProduct.Close()
-  err = t.Execute(wProduct, wixFile)
-  if err!=nil {
-    return error
-  }
-
-  wLicenseDlg := os.Create(filepath.Join(o, "LicenseAgreementDlg_HK.wxs"))
-  defer wLicenseDlg.Close()
-  err = t.Execute(wLicenseDlg, wixFile)
-  if err!=nil {
-    return error
-  }
-
-  wUi := os.Create(filepath.Join(o, "WixUI_HK.wxs"))
-  defer wUi.Close()
-  err = t.Execute(wUi, wixFile)
-  if err!=nil {
-    return error
-  }
-
-  return nil
-}
-
-func WriteWixManifest(wixFile *WixManifest, p string) error {
-  byt, err := json.MarshalIndent(wixFile, "", "  ")
-  if err != nil {
-    return err
-  }
-  err = ioutil.WriteFile(p, byt, 0644)
-  if err != nil {
-    return err
-  }
-  return nil
-}
-
-func LoadWixManifest (p string) (*WixManifest, err){
-  if p=="" {
-    p = "wix.json"
-  }
-  var wixFile WixManifest
-  dat, err := ioutil.ReadFile(p)
-  if err != nil {
-    return nil, err
-  }
-  err = json.Unmarshal(dat, &wixFile);
-  if  err != nil {
-    return nil, err
-  }
-  return &wixFile, err
-}
-
-func CheckWixManifest (wixFile *WixManifest) (bool, error) {
-  var err error
-  updated := false
-  if wixFile.UpgradeCode=="" {
-    wixFile.UpgradeCode, err = MakeNewGuid()
-    if err!=nil {
-      return false, err
-    }
-    updated = true
-  }
-  if wixFile.Files!=nil {
-    if wixFile.Files.Guid=="" {
-      wixFile.Files.Guid, err = MakeNewGuid()
-      if err!=nil {
-        return false, err
-      }
-      updated = true
-    }
-  }
-  for _, env := range wixFile.Env {
-    if env.Guid=="" && len(env.Vars)>0 {
-      env.Guid, err = MakeNewGuid()
-      if err!=nil {
-        return false, err
-      }
-      updated = true
-    }
-  }
-  for _, shortcut := range wixFile.Shortcuts.Items {
-    if shortcut.Guid=="" {
-      shortcut.Guid, err = MakeNewGuid()
-      if err!=nil {
-        return false, err
-      }
-      updated = true
-    }
-  }
-  return updated, nil
-}
-
-func MakeNewGuid () (string, error) {
-  if runtime.GOOS == "windows" {
-    cmd := "cscript.exe"
-  	args := []string{filepath.Join(filepath.Base(os.Args[0]), "utils", "myuuid.vbs")}
-    out, err := exec.Command(cmd, args...).CombinedOutput();
-  	if  err != nil {
-  		return "", err
-  	}
-		return string(out), nil
+    fmt.Println("The manifest was updated")
   } else {
-    cmd := "uuidgen"
-  	args := []string{"-t"}
-    out, err := exec.Command(cmd, args...).CombinedOutput();
-  	if  err != nil {
-  		return "", err
-  	}
-		return string(out), nil
+    fmt.Println("The manifest was not updated")
   }
+
+  err := wixFile.Write(path)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+  fmt.Println("The file is saved on disk")
+
+  return nil
+}
+
+func generateTemplates(c *cli.Context) error {
+  path := c.String("path")
+  src := c.String("src")
+  out := c.String("out")
+  version := c.String("version")
+  license := c.String("license")
+
+  var wixFile *manifest.WixManifest
+  err = wixFile.Load(path)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+
+  if wixFile.NeedGuid() {
+    fmt.Println("The manifest needs Guid")
+    fmt.Println("To update your file automatically run:")
+    fmt.Println("     go-msi set-guid")
+    return cli.NewExitError("Cannot proceed, manifest file is incomplete", 1)
+  }
+
+  wixFile.RewriteFilePaths(out)
+
+  if version!="" {
+    wixFile.Version = version
+  }
+
+  if license!="" {
+    wixFile.License = license
+  }
+
+  templates, err := tpls.Find(src)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+  if len(templates)==0 {
+    return cli.NewExitError("No templates *.wxs found in this directory", 1)
+  }
+
+  err = os.MkdirAll(out, 0744)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+
+  for _, tpl := range templates {
+    dst := filepath.Join(out, filepath.Base(tpl))
+    err = tpls.GenerateTemplate(wixFile, tpl, dst)
+    if err!=nil {
+      return cli.NewExitError(err.Error(), 1)
+    }
+  }
+
+  fmt.Printf("Generated %s templates\n", len(templates))
+  for _, tpl := range templates {
+    dst := filepath.Join(out, filepath.Base(tpl))
+    fmt.Println("- %s", dst)
+  }
+
+  return nil
+}
+
+func toWindows1252(c *cli.Context) error {
+  src := c.String("src")
+  out := c.String("out")
+
+  if src=="" {
+    return cli.NewExitError("--src argument is required", 1)
+  }
+  if out=="" {
+    return cli.NewExitError("--out argument is required", 1)
+  }
+  if _, err := os.Stat(src); os.IsNotExist(err) {
+    return cli.NewExitError(err.Error(), 1)
+  }
+  os.MkdirAll(filepath.Dir(out), 0744)
+  err := rtf.WriteAsWindows1252(src, out)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+  return nil
+}
+
+func toRtf(c *cli.Context) error {
+  src := c.String("src")
+  out := c.String("out")
+  reencode := c.Bool("reencode")
+
+  if src=="" {
+    return cli.NewExitError("--src argument is required", 1)
+  }
+  if out=="" {
+    return cli.NewExitError("--out argument is required", 1)
+  }
+  if _, err := os.Stat(src); os.IsNotExist(err) {
+    return cli.NewExitError(err.Error(), 1)
+  }
+
+  os.MkdirAll(filepath.Dir(out), 0744)
+
+  err := rtf.WriteAsRtf(src, out, reencode)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+
+  return nil
+}
+
+func generateWixCommands(c *cli.Context) error {
+  path := c.String("path")
+  src := c.String("src")
+  out := c.String("out")
+  msi := c.String("msi")
+  arch := c.String("arch")
+
+  templates, err := tpls.Find(src)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+  if len(templates)==0 {
+    return cli.NewExitError("No templates *.wxs found in this directory", 1)
+  }
+
+  var wixFile *manifest.WixManifest
+  err = wixFile.Load(path)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+
+  if wixFile.NeedGuid() {
+    fmt.Println("The manifest needs Guid")
+    fmt.Println("To update your file automatically run:")
+    fmt.Println("     go-msi set-guid")
+    return cli.NewExitError("Cannot proceed, manifest file is incomplete", 1)
+  }
+
+  wixFile.RewriteFilePaths(out)
+
+  cmdStr := GenerateCmd(wixFile, out, msi, arch)
+
+  targetFile := filepath.Join(out, "build.bat")
+  err := ioutil.WriteFile(targetFile, []byte(cmdStr), 0644)
+  if err != nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+
+  return nil
+}
+
+func runWixCommands(c *cli.Context) error {
+  out := c.String("out")
+
+  bin, err := exec.LookPath("cmd.exe")
+  if err != nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+  args := []string{"/C", "build.bat"}
+  oCmd := exec.Command(bin, args...)
+  oCmd.Dir = out
+  oCmd.Stdout = os.Stdout
+  oCmd.Stderr = os.Stderr
+  err = oCmd.Run();
+  if  err != nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+
+  return nil
+}
+
+func make(c *cli.Context) error {
+  path := c.String("path")
+  src := c.String("src")
+  out := c.String("out")
+  version := c.String("version")
+  license := c.String("license")
+  msi := c.String("msi")
+  arch := c.String("arch")
+
+  var wixFile *manifest.WixManifest
+  err = wixFile.Load(path)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+
+  if wixFile.NeedGuid() {
+    _, err := wixFile.SetGuids()
+    if err!=nil {
+      return cli.NewExitError(err.Error(), 1)
+    }
+  }
+
+  wixFile.RewriteFilePaths(out)
+
+  if version!="" {
+    wixFile.Version = version
+  }
+
+  if license!="" {
+    wixFile.License = license
+  }
+
+  if wixFile.License!="" {
+    if !rtf.IsRtf(wixFile.License) {
+      target := filepath.Join(out, filepath.Base(wixFile.License)+".rtf")
+      err := rtf.WriteAsRtf(wixFile.License, target, true)
+      if err!=nil {
+        return cli.NewExitError(err.Error(), 1)
+      }
+      wixFile.License = target
+    }
+  }
+
+  templates, err := tpls.Find(src)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+  if len(templates)==0 {
+    return cli.NewExitError("No templates *.wxs found in this directory", 1)
+  }
+
+  err = os.MkdirAll(out, 0744)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+
+  for _, tpl := range templates {
+    dst := filepath.Join(out, filepath.Base(tpl))
+    err = tpls.GenerateTemplate(wixFile, tpl, dst)
+    if err!=nil {
+      return cli.NewExitError(err.Error(), 1)
+    }
+  }
+
+  cmdStr := GenerateCmd(wixFile, out, msi, arch)
+
+  targetFile := filepath.Join(out, "build.bat")
+  err := ioutil.WriteFile(targetFile, []byte(cmdStr), 0644)
+  if err != nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+
+  bin, err := exec.LookPath("cmd.exe")
+  if err != nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+  args := []string{"/C", "build.bat"}
+  oCmd := exec.Command(bin, args...)
+  oCmd.Dir = out
+  oCmd.Stdout = os.Stdout
+  oCmd.Stderr = os.Stderr
+  err = oCmd.Run();
+  if  err != nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+
+  return nil
 }

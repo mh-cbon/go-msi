@@ -31,7 +31,7 @@
          <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
 
          <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog"
-         {{if len(.License)>0}}
+         {{if gt (.License | len) 0}}
          Value="LicenseAgreementDlg_HK"
          {{else}}
          Value="InstallDirDlg"
