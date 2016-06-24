@@ -3,6 +3,7 @@ package wix
 import (
   "strconv"
   "strings"
+  "path/filepath"
 
   "github.com/mh-cbon/go-msi/manifest"
 )
@@ -19,7 +20,10 @@ func GenerateCmd (wixFile *manifest.WixManifest, templates []string, msiOutFile 
     cmd += " -out AppFiles"+sI+".wxs"
     cmd += "\r\n"
   }
-  cmd += "candle -arch "+arch
+  cmd += "candle"
+  if arch!="" {
+  cmd += " -arch "+arch
+  }
   for i, dir := range wixFile.RelDirs {
     sI := strconv.Itoa(i)
     cmd += " -dSourceDir"+sI+"="+dir
@@ -29,7 +33,7 @@ func GenerateCmd (wixFile *manifest.WixManifest, templates []string, msiOutFile 
     cmd += " AppFiles"+sI+".wxs"
   }
   for _, tpl := range templates {
-    cmd += " "+tpl
+    cmd += " "+filepath.Base(tpl)
   }
   cmd += "\r\n"
   cmd += "light -ext WixUIExtension -ext WixUtilExtension -sacl -spdb "
@@ -39,7 +43,7 @@ func GenerateCmd (wixFile *manifest.WixManifest, templates []string, msiOutFile 
     cmd += " AppFiles"+sI+".wixobj"
   }
   for _, tpl := range templates {
-    cmd += " "+strings.Replace(tpl, ".wxs", ".wixobj", -1)
+    cmd += " "+strings.Replace(filepath.Base(tpl), ".wxs", ".wixobj", -1)
   }
   cmd += "\r\n"
 

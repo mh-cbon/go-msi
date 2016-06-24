@@ -102,12 +102,12 @@ If you only `halt` the machine, you can jump to the next section.
 To generate the package, you can run
 
 ```sh
-vagrant winrm -c "cd C:\\vagrant && go-msi make --out program.msi"
+vagrant winrm -c "cd C:\\vagrant; .\\go-msi.exe make -m go-msi.msi --version 0.0.1"
 ```
 
 Then `halt` the machine.
 
-The resulting msi package will be placed into your project root.
+The resulting `msi` package will be placed into your project root.
 
 ### That's it
 

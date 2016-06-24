@@ -167,7 +167,7 @@ func main() {
 		{
 			Name:   "make",
 			Usage:  "All-in-one command to make MSI files",
-			Action: make,
+			Action: quickMake,
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "path, p",
@@ -203,6 +203,10 @@ func main() {
 					Name:  "license, l",
 					Value: "",
 					Usage: "Path to the license file",
+				},
+				cli.BoolFlag{
+					Name:  "keep, k",
+					Usage: "Keep output directory containing build files (useful for debug)",
 				},
 			},
 		},
@@ -381,6 +385,11 @@ func generateWixCommands(c *cli.Context) error {
     return cli.NewExitError("No templates *.wxs found in this directory", 1)
   }
 
+  builtTemplates := make([]string, len(templates))
+  for i, tpl := range templates {
+    builtTemplates[i] = filepath.Join(out, filepath.Base(tpl))
+  }
+
   wixFile := manifest.WixManifest{}
   err = wixFile.Load(path)
   if err!=nil {
@@ -401,7 +410,7 @@ func generateWixCommands(c *cli.Context) error {
     return cli.NewExitError(err.Error(), 1)
   }
 
-  cmdStr := wix.GenerateCmd(&wixFile, templates, msi, arch)
+  cmdStr := wix.GenerateCmd(&wixFile, builtTemplates, msi, arch)
 
   targetFile := filepath.Join(out, "build.bat")
   err = ioutil.WriteFile(targetFile, []byte(cmdStr), 0644)
@@ -432,7 +441,7 @@ func runWixCommands(c *cli.Context) error {
   return nil
 }
 
-func make(c *cli.Context) error {
+func quickMake(c *cli.Context) error {
   path := c.String("path")
   src := c.String("src")
   out := c.String("out")
@@ -440,6 +449,7 @@ func make(c *cli.Context) error {
   license := c.String("license")
   msi := c.String("msi")
   arch := c.String("arch")
+  keep := c.Bool("keep")
 
   wixFile := manifest.WixManifest{}
   err := wixFile.Load(path)
@@ -452,6 +462,15 @@ func make(c *cli.Context) error {
     if err!=nil {
       return cli.NewExitError(err.Error(), 1)
     }
+  }
+
+  err = os.RemoveAll(out)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
+  err = os.MkdirAll(out, 0744)
+  if err!=nil {
+    return cli.NewExitError(err.Error(), 1)
   }
 
   wixFile.RewriteFilePaths(out)
@@ -471,7 +490,10 @@ func make(c *cli.Context) error {
       if err!=nil {
         return cli.NewExitError(err.Error(), 1)
       }
-      wixFile.License = target
+      wixFile.License, err = filepath.Rel(out, target)
+      if err!=nil {
+        return cli.NewExitError(err.Error(), 1)
+      }
     }
   }
 
@@ -483,14 +505,11 @@ func make(c *cli.Context) error {
     return cli.NewExitError("No templates *.wxs found in this directory", 1)
   }
 
-  err = os.MkdirAll(out, 0744)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
-
-  for _, tpl := range templates {
+  builtTemplates := make([]string, len(templates))
+  for i, tpl := range templates {
     dst := filepath.Join(out, filepath.Base(tpl))
     err = tpls.GenerateTemplate(&wixFile, tpl, dst)
+    builtTemplates[i] = dst
     if err!=nil {
       return cli.NewExitError(err.Error(), 1)
     }
@@ -501,7 +520,7 @@ func make(c *cli.Context) error {
     return cli.NewExitError(err.Error(), 1)
   }
 
-  cmdStr := wix.GenerateCmd(&wixFile, templates, msi, arch)
+  cmdStr := wix.GenerateCmd(&wixFile, builtTemplates, msi, arch)
 
   targetFile := filepath.Join(out, "build.bat")
   err = ioutil.WriteFile(targetFile, []byte(cmdStr), 0644)
@@ -522,6 +541,15 @@ func make(c *cli.Context) error {
   if  err != nil {
     return cli.NewExitError(err.Error(), 1)
   }
+
+  if keep==false {
+    err = os.RemoveAll(out)
+    if err!=nil {
+      return cli.NewExitError(err.Error(), 1)
+    }
+  }
+
+  fmt.Println("All Done!!")
 
   return nil
 }
