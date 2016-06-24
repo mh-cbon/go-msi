@@ -17,9 +17,9 @@ It s not very difficult, but its time consuming, especially the first time.
 
 Start by installing vagrant using the sources available [here](https://www.vagrantup.com/downloads.html)
 
-Install virtualbox from [here](https://www.virtualbox.org/wiki/Linux_Downloads) (I can t remember if distro package are fine, let me know if you try it)
+Install virtualbox from [here](https://www.virtualbox.org/wiki/Linux_Downloads) (I can t remember if the distro packages are fine, let me know if you try it)
 
-Install thoe vagrant plugin
+Install the vagrant plugins
 
 ```sh
 vagrant plugin install winrm
@@ -30,7 +30,7 @@ vagrant plugin install vagrant-share
 
 Initialize a new windows vagrant box on root of your directory with a content similar to [this one](https://github.com/mh-cbon/go-msi/blob/master/Vagrantfile)
 
-A that point you should be ready to up the machine,
+A that point you should be ready to `up` the machine,
 
 ```sh
 vagrant up
@@ -41,7 +41,7 @@ And get yourself a coffee. At first init it will start to download the vagrant i
 Once the machine is up, ensure `winrm` works correctly
 
 ```sh
-vagrant winrm dir C:\\vagrant
+vagrant winrm -c "dir C:\\vagrant"
 ```
 
 The command should display your project files.
@@ -99,3 +99,9 @@ vagrant winrm -c "cd C:\\vagrant && go-msi make --out program.msi"
 Then `halt` the machine.
 
 The resulting msi package will be placed into your project root.
+
+### That's it
+
+I hope it works for you too,
+
+~~ Happy Coding
