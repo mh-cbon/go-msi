@@ -39,6 +39,7 @@ Always double check the documentation and SO when you face a difficulty with `he
 - http://wixtoolset.org/documentation/
 - http://stackoverflow.com/questions/tagged/wix
 
+If you wonder why `INSTALLDIR`, `[INSTALLDIR]`, this is part of wix rules, please check their documentation.
 
 ### wix templates
 
