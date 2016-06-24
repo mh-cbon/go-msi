@@ -24,7 +24,7 @@ go install
 
 For simple cases,
 
-- Create a `wix.json` file like [this one]()
+- Create a `wix.json` file like [this one](https://github.com/mh-cbon/go-msi/blob/master/wix.json)
 - Apply it guids with `go-msi set-guid`
 - Run `go-msi make`
 
@@ -34,7 +34,7 @@ For simple cases,
 
 Post an issue if it is not self-explanatory.
 
-Always double check the documentation and SO when you face a difficulty
+Always double check the documentation and SO when you face a difficulty with `heat`, `candle`, `light`
 
 - http://wixtoolset.org/documentation/
 - http://stackoverflow.com/questions/tagged/wix
@@ -44,10 +44,11 @@ Always double check the documentation and SO when you face a difficulty
 
 For simplicity a default install flow is provided, which you can find [here]()
 
-You can create a new one for your own personalization, you should only take care to reproduce the go templating already defined for `files`, `directories`, `environment variables`, `license` and `shortcuts`.
+You can create a new one for your own personalization,
+you should only take care to reproduce the go templating already
+defined for `files`, `directories`, `environment variables`, `license` and `shortcuts`.
 
 I guess most of your changes will be about the `WixUI_HK.wxs` file.
-
 
 ### License file
 
