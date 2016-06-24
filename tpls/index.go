@@ -6,6 +6,7 @@ import (
   "path/filepath"
 
   "github.com/mh-cbon/go-msi/manifest"
+  "github.com/mattn/go-zglob"
 )
 
 func Find (srcDir string) ([]string, error) {
@@ -13,7 +14,7 @@ func Find (srcDir string) ([]string, error) {
   return zglob.Glob(glob)
 }
 
-func GenerateTemplate (wixFile *WixManifest, src string, out string) error {
+func GenerateTemplate (wixFile *manifest.WixManifest, src string, out string) error {
   tpl, err := template.ParseFiles(src)
   if err!=nil {
     return err

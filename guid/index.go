@@ -3,6 +3,7 @@ package guid
 import (
   "runtime"
   "os/exec"
+  "os"
   "strings"
   "path/filepath"
 )

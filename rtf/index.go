@@ -1,9 +1,11 @@
 package rtf
 
 import (
-  "path/filepath"
   "io"
+  "io/ioutil"
   "os"
+  "bytes"
+  "bufio"
 
   "golang.org/x/text/encoding/charmap"
   "golang.org/x/text/transform"
@@ -35,13 +37,13 @@ func WriteAsWindows1252 (src string, dst string) error {
 
 func WriteAsRtf (src string, dst string, reencode bool) error {
 
-  dat, err := ReadFile(src)
+  dat, err := ioutil.ReadFile(src)
   if err != nil {
       return err
   }
   r := bytes.NewReader(dat)
   var b bytes.Buffer
-  o := bytes.NewWriter(&b)
+  o := bufio.NewWriter(&b)
   if reencode {
     wInUTF8 := transform.NewWriter(o, charmap.Windows1252.NewEncoder())
 
@@ -56,14 +58,14 @@ func WriteAsRtf (src string, dst string, reencode bool) error {
     }
   }
 
-  sDat := string(b)
+  sDat := string(b.Bytes())
   sDat = "{\\rtf1\\ansi\n"+sDat+"\n}"
 
-  return WriteFile(out, []byte(sDat), 0644)
+  return ioutil.WriteFile(dst, []byte(sDat), 0644)
 }
 
 func IsRtf(src string) bool {
-  dat, err := ReadFile(src)
+  dat, err := ioutil.ReadFile(src)
   if err != nil {
       return false
   }

@@ -1,23 +1,17 @@
 package main
 
 import (
-  "encoding/json"
   "io/ioutil"
   "path/filepath"
-  "text/template"
-  "io"
   "os"
   "fmt"
-  "strings"
-  "strconv"
-  "runtime"
   "os/exec"
 
-  "golang.org/x/text/encoding/charmap"
-  "golang.org/x/text/transform"
   "github.com/mh-cbon/go-msi/manifest"
   "github.com/mh-cbon/go-msi/tpls"
   "github.com/mh-cbon/go-msi/rtf"
+  "github.com/mh-cbon/go-msi/wix"
+	"github.com/urfave/cli"
 )
 
 var VERSION = "0.0.0"
@@ -189,7 +183,7 @@ func checkJson(c *cli.Context) error {
   path := c.String("path")
 
   var wixFile *manifest.WixManifest
-  err = wixFile.Load(path)
+  err := wixFile.Load(path)
   if err!=nil {
     return cli.NewExitError(err.Error(), 1)
   }
@@ -209,7 +203,7 @@ func setGuid(c *cli.Context) error {
   path := c.String("path")
 
   var wixFile *manifest.WixManifest
-  err = wixFile.Load(path)
+  err := wixFile.Load(path)
   if err!=nil {
     return cli.NewExitError(err.Error(), 1)
   }
@@ -225,7 +219,7 @@ func setGuid(c *cli.Context) error {
     fmt.Println("The manifest was not updated")
   }
 
-  err := wixFile.Write(path)
+  err = wixFile.Write(path)
   if err!=nil {
     return cli.NewExitError(err.Error(), 1)
   }
@@ -242,7 +236,7 @@ func generateTemplates(c *cli.Context) error {
   license := c.String("license")
 
   var wixFile *manifest.WixManifest
-  err = wixFile.Load(path)
+  err := wixFile.Load(path)
   if err!=nil {
     return cli.NewExitError(err.Error(), 1)
   }
@@ -370,10 +364,10 @@ func generateWixCommands(c *cli.Context) error {
 
   wixFile.RewriteFilePaths(out)
 
-  cmdStr := GenerateCmd(wixFile, out, msi, arch)
+  cmdStr := wix.GenerateCmd(wixFile, templates, msi, arch)
 
   targetFile := filepath.Join(out, "build.bat")
-  err := ioutil.WriteFile(targetFile, []byte(cmdStr), 0644)
+  err = ioutil.WriteFile(targetFile, []byte(cmdStr), 0644)
   if err != nil {
     return cli.NewExitError(err.Error(), 1)
   }
@@ -411,7 +405,7 @@ func make(c *cli.Context) error {
   arch := c.String("arch")
 
   var wixFile *manifest.WixManifest
-  err = wixFile.Load(path)
+  err := wixFile.Load(path)
   if err!=nil {
     return cli.NewExitError(err.Error(), 1)
   }
@@ -465,10 +459,10 @@ func make(c *cli.Context) error {
     }
   }
 
-  cmdStr := GenerateCmd(wixFile, out, msi, arch)
+  cmdStr := wix.GenerateCmd(wixFile, templates, msi, arch)
 
   targetFile := filepath.Join(out, "build.bat")
-  err := ioutil.WriteFile(targetFile, []byte(cmdStr), 0644)
+  err = ioutil.WriteFile(targetFile, []byte(cmdStr), 0644)
   if err != nil {
     return cli.NewExitError(err.Error(), 1)
   }

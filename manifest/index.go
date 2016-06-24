@@ -3,6 +3,8 @@ package manifest
 import (
   "encoding/json"
   "io/ioutil"
+  "os"
+  "path/filepath"
 
   "github.com/mh-cbon/go-msi/guid"
 )
@@ -117,7 +119,6 @@ func (wixFile *WixManifest) SetGuids () (bool, error) {
 }
 
 func (wixFile *WixManifest) NeedGuid () bool {
-  var err error
   need := false
   if wixFile.UpgradeCode=="" {
     need = true

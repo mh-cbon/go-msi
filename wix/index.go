@@ -1,6 +1,13 @@
 package wix
 
-func GenerateCmd (wixFile *WixManifest, templates []string, msiOutFile string, arch string) string {
+import (
+  "strconv"
+  "strings"
+
+  "github.com/mh-cbon/go-msi/manifest"
+)
+
+func GenerateCmd (wixFile *manifest.WixManifest, templates []string, msiOutFile string, arch string) string {
 
   cmd := ""
 
@@ -32,7 +39,7 @@ func GenerateCmd (wixFile *WixManifest, templates []string, msiOutFile string, a
     cmd += " AppFiles"+sI+".wixobj"
   }
   for _, tpl := range templates {
-    cmd += " "+strings.Replace(tpl, ".wxs", ".wixobj")
+    cmd += " "+strings.Replace(tpl, ".wxs", ".wixobj", -1)
   }
   cmd += "\r\n"
 
