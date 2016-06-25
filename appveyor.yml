@@ -26,7 +26,7 @@ install:
 build_script:
   - glide install
   - go build -o go-msi.exe main.go
-  - .\go-msi.exe make -m go-msi-%APPVEYOR_REPO_TAG_NAME%.msi --version %APPVEYOR_REPO_TAG_NAME%
+  - .\go-msi.exe make --msi go-msi-%APPVEYOR_REPO_TAG_NAME%.msi --version %APPVEYOR_REPO_TAG_NAME%
 
 # to disable automatic tests
 test: off
