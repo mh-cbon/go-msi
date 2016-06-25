@@ -28,8 +28,8 @@ install:
 build_script:
   - glide install
   - go build -o go-msi.exe main.go
-  - .\go-msi.exe make --msi go-msi-%APPVEYOR_REPO_TAG_NAME%-x86.msi --version %APPVEYOR_REPO_TAG_NAME% --arch x86
-  - .\go-msi.exe make --msi go-msi-%APPVEYOR_REPO_TAG_NAME%-x64.msi --version %APPVEYOR_REPO_TAG_NAME% --arch x64
+  - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\go-msi-%APPVEYOR_REPO_TAG_NAME%-x86.msi --version %APPVEYOR_REPO_TAG_NAME% --arch x86
+  - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\go-msi-%APPVEYOR_REPO_TAG_NAME%-x64.msi --version %APPVEYOR_REPO_TAG_NAME% --arch x64
   - dir
 
 # to disable automatic tests
@@ -37,9 +37,9 @@ test: off
 
 # ?
 artifacts:
-  - path: 'C:/gopath/src/github.com/mh-cbon/go-msi/go-msi-*-x86.msi'
+  - path: '*-x86.msi'
     name: msi-x86
-  - path: 'C:/gopath/src/github.com/mh-cbon/go-msi/go-msi-*-x64.msi'
+  - path: '*-x64.msi'
     name: msi-x64
 
 # to disable deployment
