@@ -38,7 +38,7 @@ test: off
 # to disable deployment
 deploy:
   - provider: GitHub
-    artifact: /.*\.msi/
+    artifact: /c:\\gopath\\src\\github.com\\mh-cbon\\go-msi\\.*\.msi/
     draft: false
     prerelease: false
     desription: "Release {APPVEYOR_REPO_TAG_NAME}"
