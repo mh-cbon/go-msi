@@ -1,0 +1,49 @@
+# version format
+version: "{build}"
+
+# Operating system (build VM template)
+os: Windows Server 2012 R2
+
+clone_folder: c:\gopath\src\github.com\mh-cbon\go-msi
+
+# environment variables
+environment:
+  GOPATH: c:\gopath
+  GO15VENDOREXPERIMENT: 1
+
+# scripts that run after cloning repository
+install:
+  - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
+  - go version
+  - go env
+  - go get -u github.com/Masterminds/glide
+  - go get -u github.com/golang/lint/golint
+  - go get -u github.com/remyoudompheng/go-misc/deadcode
+  - go get -u github.com/gordonklaus/ineffassign
+  - curl -O http://wixtoolset.org/downloads/v3.10.3.3007/wix310-binaries.zip
+  - 7z e -y -x -o C:\wix310 wix310-binaries.zip
+  - set PATH=C:\wix310;%PATH%
+
+# to run your custom scripts instead of automatic MSBuild
+build_script:
+  - glide install
+  - go vet ./...
+  - gofmt -s -l .
+  - golint github.com/mh-cbon/go-msi...
+  - deadcode
+  - ineffassign .
+  - go build -o go-msi.exe main.go
+  - .\go-msi.exe make -m go-msi-%APPVEYOR_REPO_TAG_NAME%.msi --version %APPVEYOR_REPO_TAG_NAME%
+
+# to disable automatic tests
+test: off
+
+# to disable deployment
+deploy:
+  - provider: GitHub
+    artifact: /.*\.msi/           # upload all NuGet packages to release assets
+    draft: true
+    prerelease: false
+    on:
+      branch: master                # release from master branch only
+      appveyor_repo_tag: true       # deploy on tag push only
