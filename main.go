@@ -584,7 +584,7 @@ func getBinPath() (string, error) {
 	if filepath.Base(os.Args[0]) == "main" { // go run ...
 		wd, err = os.Getwd()
 	} else {
-    bin := ""
+		bin := ""
 		bin, err = exec.LookPath(os.Args[0])
 		if err == nil {
 			wd = filepath.Dir(bin)
