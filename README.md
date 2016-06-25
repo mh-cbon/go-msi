@@ -113,7 +113,7 @@ USAGE:
 
 OPTIONS:
    --path value, -p value     Path to the wix manifest file (default: "wix.json")
-   --src value, -s value      Diretory path to the wix templates files (default: "go-msi/templates")
+   --src value, -s value      Directory path to the wix templates files (default: "go-msi/templates")
    --out value, -o value      Directory path to the generated wix templates files (default: "builder")
    --version value            The version of your program
    --license value, -l value  Path to the license file
@@ -159,7 +159,7 @@ USAGE:
 
 OPTIONS:
    --path value, -p value  Path to the wix manifest file (default: "wix.json")
-   --src value, -s value   Diretory path to the wix templates files (default: "go-msi/templates")
+   --src value, -s value   Directory path to the wix templates files (default: "go-msi/templates")
    --out value, -o value   Directory path to the generated wix cmd file (default: "builder")
    --arch value, -a value  A target architecture , x64 or x86 (ia64 is not handled)
    --msi value, -m value   Path to write resulting msi file to
@@ -189,7 +189,7 @@ USAGE:
 
 OPTIONS:
    --path value, -p value       Path to the wix manifest file (default: "wix.json")
-   --src value, -s value        Diretory path to the wix templates files (default: "go-msi/templates")
+   --src value, -s value        Directory path to the wix templates files (default: "go-msi/templates")
    --out value, -o value        Directory path to the generated wix cmd file (default: "builder")
    --arch value, -a value	      A target architecture , x64 or x86 (ia64 is not handled)
    --msi value, -m value        Path to write resulting msi file to

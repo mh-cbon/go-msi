@@ -70,7 +70,7 @@ func main() {
 				cli.StringFlag{
 					Name:  "src, s",
 					Value: filepath.Join(b, "templates"),
-					Usage: "Diretory path to the wix templates files",
+					Usage: "Directory path to the wix templates files",
 				},
 				cli.StringFlag{
 					Name:  "out, o",
@@ -140,7 +140,7 @@ func main() {
 				cli.StringFlag{
 					Name:  "src, s",
 					Value: filepath.Join(b, "templates"),
-					Usage: "Diretory path to the wix templates files",
+					Usage: "Directory path to the wix templates files",
 				},
 				cli.StringFlag{
 					Name:  "out, o",
@@ -184,7 +184,7 @@ func main() {
 				cli.StringFlag{
 					Name:  "src, s",
 					Value: filepath.Join(b, "templates"),
-					Usage: "Diretory path to the wix templates files",
+					Usage: "Directory path to the wix templates files",
 				},
 				cli.StringFlag{
 					Name:  "out, o",
