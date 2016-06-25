@@ -1,16 +1,16 @@
 package main
 
 import (
-  "io/ioutil"
-  "path/filepath"
-  "os"
-  "fmt"
-  "os/exec"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"os/exec"
+	"path/filepath"
 
-  "github.com/mh-cbon/go-msi/manifest"
-  "github.com/mh-cbon/go-msi/tpls"
-  "github.com/mh-cbon/go-msi/rtf"
-  "github.com/mh-cbon/go-msi/wix"
+	"github.com/mh-cbon/go-msi/manifest"
+	"github.com/mh-cbon/go-msi/rtf"
+	"github.com/mh-cbon/go-msi/tpls"
+	"github.com/mh-cbon/go-msi/wix"
 	"github.com/urfave/cli"
 )
 
@@ -18,11 +18,11 @@ var VERSION = "0.0.0"
 
 func main() {
 
-  b := getBinPath()
-  tmpBuildDir, err := ioutil.TempDir("", "go-msi")
-  if err != nil {
-    panic(err)
-  }
+	b := getBinPath()
+	tmpBuildDir, err := ioutil.TempDir("", "go-msi")
+	if err != nil {
+		panic(err)
+	}
 
 	app := cli.NewApp()
 	app.Name = "go-msi"
@@ -220,367 +220,367 @@ func main() {
 }
 
 func checkJson(c *cli.Context) error {
-  path := c.String("path")
+	path := c.String("path")
 
-  wixFile := manifest.WixManifest{}
-  err := wixFile.Load(path)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	wixFile := manifest.WixManifest{}
+	err := wixFile.Load(path)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  fmt.Println("The manifest is syntaxically correct !")
+	fmt.Println("The manifest is syntaxically correct !")
 
-  if wixFile.NeedGuid() {
-    fmt.Println("The manifest needs Guid")
-    fmt.Println("To update your file automatically run:")
-    fmt.Println("     go-msi set-guid")
-    return cli.NewExitError("Incomplete manifest file detected", 1)
-  }
-  return nil
+	if wixFile.NeedGuid() {
+		fmt.Println("The manifest needs Guid")
+		fmt.Println("To update your file automatically run:")
+		fmt.Println("     go-msi set-guid")
+		return cli.NewExitError("Incomplete manifest file detected", 1)
+	}
+	return nil
 }
 
 func setGuid(c *cli.Context) error {
-  path := c.String("path")
+	path := c.String("path")
 
-  wixFile := manifest.WixManifest{}
-  err := wixFile.Load(path)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	wixFile := manifest.WixManifest{}
+	err := wixFile.Load(path)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  updated, err := wixFile.SetGuids()
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	updated, err := wixFile.SetGuids()
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  if updated {
-    fmt.Println("The manifest was updated")
-  } else {
-    fmt.Println("The manifest was not updated")
-  }
+	if updated {
+		fmt.Println("The manifest was updated")
+	} else {
+		fmt.Println("The manifest was not updated")
+	}
 
-  err = wixFile.Write(path)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
-  fmt.Println("The file is saved on disk")
+	err = wixFile.Write(path)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+	fmt.Println("The file is saved on disk")
 
-  return nil
+	return nil
 }
 
 func generateTemplates(c *cli.Context) error {
-  path := c.String("path")
-  src := c.String("src")
-  out := c.String("out")
-  version := c.String("version")
-  license := c.String("license")
+	path := c.String("path")
+	src := c.String("src")
+	out := c.String("out")
+	version := c.String("version")
+	license := c.String("license")
 
-  wixFile := manifest.WixManifest{}
-  err := wixFile.Load(path)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	wixFile := manifest.WixManifest{}
+	err := wixFile.Load(path)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  if wixFile.NeedGuid() {
-    fmt.Println("The manifest needs Guid")
-    fmt.Println("To update your file automatically run:")
-    fmt.Println("     go-msi set-guid")
-    return cli.NewExitError("Cannot proceed, manifest file is incomplete", 1)
-  }
+	if wixFile.NeedGuid() {
+		fmt.Println("The manifest needs Guid")
+		fmt.Println("To update your file automatically run:")
+		fmt.Println("     go-msi set-guid")
+		return cli.NewExitError("Cannot proceed, manifest file is incomplete", 1)
+	}
 
-  err = wixFile.RewriteFilePaths(out)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	err = wixFile.RewriteFilePaths(out)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  if c.IsSet("version") {
-    wixFile.Version = version
-  }
+	if c.IsSet("version") {
+		wixFile.Version = version
+	}
 
-  if c.IsSet("license") {
-    wixFile.License = license
-  }
+	if c.IsSet("license") {
+		wixFile.License = license
+	}
 
-  templates, err := tpls.Find(src)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
-  if len(templates)==0 {
-    return cli.NewExitError("No templates *.wxs found in this directory", 1)
-  }
+	templates, err := tpls.Find(src)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+	if len(templates) == 0 {
+		return cli.NewExitError("No templates *.wxs found in this directory", 1)
+	}
 
-  err = os.MkdirAll(out, 0744)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	err = os.MkdirAll(out, 0744)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  for _, tpl := range templates {
-    dst := filepath.Join(out, filepath.Base(tpl))
-    err = tpls.GenerateTemplate(&wixFile, tpl, dst)
-    if err!=nil {
-      return cli.NewExitError(err.Error(), 1)
-    }
-  }
+	for _, tpl := range templates {
+		dst := filepath.Join(out, filepath.Base(tpl))
+		err = tpls.GenerateTemplate(&wixFile, tpl, dst)
+		if err != nil {
+			return cli.NewExitError(err.Error(), 1)
+		}
+	}
 
-  fmt.Printf("Generated %d templates\n", len(templates))
-  for _, tpl := range templates {
-    dst := filepath.Join(out, filepath.Base(tpl))
-    fmt.Printf("- %s\n", dst)
-  }
+	fmt.Printf("Generated %d templates\n", len(templates))
+	for _, tpl := range templates {
+		dst := filepath.Join(out, filepath.Base(tpl))
+		fmt.Printf("- %s\n", dst)
+	}
 
-  return nil
+	return nil
 }
 
 func toWindows1252(c *cli.Context) error {
-  src := c.String("src")
-  out := c.String("out")
+	src := c.String("src")
+	out := c.String("out")
 
-  if src=="" {
-    return cli.NewExitError("--src argument is required", 1)
-  }
-  if out=="" {
-    return cli.NewExitError("--out argument is required", 1)
-  }
-  if _, err := os.Stat(src); os.IsNotExist(err) {
-    return cli.NewExitError(err.Error(), 1)
-  }
-  os.MkdirAll(filepath.Dir(out), 0744)
-  err := rtf.WriteAsWindows1252(src, out)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
-  return nil
+	if src == "" {
+		return cli.NewExitError("--src argument is required", 1)
+	}
+	if out == "" {
+		return cli.NewExitError("--out argument is required", 1)
+	}
+	if _, err := os.Stat(src); os.IsNotExist(err) {
+		return cli.NewExitError(err.Error(), 1)
+	}
+	os.MkdirAll(filepath.Dir(out), 0744)
+	err := rtf.WriteAsWindows1252(src, out)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+	return nil
 }
 
 func toRtf(c *cli.Context) error {
-  src := c.String("src")
-  out := c.String("out")
-  reencode := c.Bool("reencode")
+	src := c.String("src")
+	out := c.String("out")
+	reencode := c.Bool("reencode")
 
-  if src=="" {
-    return cli.NewExitError("--src argument is required", 1)
-  }
-  if out=="" {
-    return cli.NewExitError("--out argument is required", 1)
-  }
-  if _, err := os.Stat(src); os.IsNotExist(err) {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	if src == "" {
+		return cli.NewExitError("--src argument is required", 1)
+	}
+	if out == "" {
+		return cli.NewExitError("--out argument is required", 1)
+	}
+	if _, err := os.Stat(src); os.IsNotExist(err) {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  os.MkdirAll(filepath.Dir(out), 0744)
+	os.MkdirAll(filepath.Dir(out), 0744)
 
-  err := rtf.WriteAsRtf(src, out, reencode)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	err := rtf.WriteAsRtf(src, out, reencode)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  return nil
+	return nil
 }
 
 func generateWixCommands(c *cli.Context) error {
-  path := c.String("path")
-  src := c.String("src")
-  out := c.String("out")
-  msi := c.String("msi")
-  arch := c.String("arch")
+	path := c.String("path")
+	src := c.String("src")
+	out := c.String("out")
+	msi := c.String("msi")
+	arch := c.String("arch")
 
-  templates, err := tpls.Find(src)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
-  if len(templates)==0 {
-    return cli.NewExitError("No templates *.wxs found in this directory", 1)
-  }
+	templates, err := tpls.Find(src)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+	if len(templates) == 0 {
+		return cli.NewExitError("No templates *.wxs found in this directory", 1)
+	}
 
-  builtTemplates := make([]string, len(templates))
-  for i, tpl := range templates {
-    builtTemplates[i] = filepath.Join(out, filepath.Base(tpl))
-  }
+	builtTemplates := make([]string, len(templates))
+	for i, tpl := range templates {
+		builtTemplates[i] = filepath.Join(out, filepath.Base(tpl))
+	}
 
-  wixFile := manifest.WixManifest{}
-  err = wixFile.Load(path)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	wixFile := manifest.WixManifest{}
+	err = wixFile.Load(path)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  if wixFile.NeedGuid() {
-    fmt.Println("The manifest needs Guid")
-    fmt.Println("To update your file automatically run:")
-    fmt.Println("     go-msi set-guid")
-    return cli.NewExitError("Cannot proceed, manifest file is incomplete", 1)
-  }
+	if wixFile.NeedGuid() {
+		fmt.Println("The manifest needs Guid")
+		fmt.Println("To update your file automatically run:")
+		fmt.Println("     go-msi set-guid")
+		return cli.NewExitError("Cannot proceed, manifest file is incomplete", 1)
+	}
 
-  err = wixFile.RewriteFilePaths(out)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	err = wixFile.RewriteFilePaths(out)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  msi, err = filepath.Abs(msi)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
-  msi, err = filepath.Rel(out, msi)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	msi, err = filepath.Abs(msi)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+	msi, err = filepath.Rel(out, msi)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  cmdStr := wix.GenerateCmd(&wixFile, builtTemplates, msi, arch)
+	cmdStr := wix.GenerateCmd(&wixFile, builtTemplates, msi, arch)
 
-  targetFile := filepath.Join(out, "build.bat")
-  err = ioutil.WriteFile(targetFile, []byte(cmdStr), 0644)
-  if err != nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	targetFile := filepath.Join(out, "build.bat")
+	err = ioutil.WriteFile(targetFile, []byte(cmdStr), 0644)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  return nil
+	return nil
 }
 
 func runWixCommands(c *cli.Context) error {
-  out := c.String("out")
+	out := c.String("out")
 
-  bin, err := exec.LookPath("cmd.exe")
-  if err != nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
-  args := []string{"/C", "build.bat"}
-  oCmd := exec.Command(bin, args...)
-  oCmd.Dir = out
-  oCmd.Stdout = os.Stdout
-  oCmd.Stderr = os.Stderr
-  err = oCmd.Run();
-  if  err != nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	bin, err := exec.LookPath("cmd.exe")
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+	args := []string{"/C", "build.bat"}
+	oCmd := exec.Command(bin, args...)
+	oCmd.Dir = out
+	oCmd.Stdout = os.Stdout
+	oCmd.Stderr = os.Stderr
+	err = oCmd.Run()
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  return nil
+	return nil
 }
 
 func quickMake(c *cli.Context) error {
-  path := c.String("path")
-  src := c.String("src")
-  out := c.String("out")
-  version := c.String("version")
-  license := c.String("license")
-  msi := c.String("msi")
-  arch := c.String("arch")
-  keep := c.Bool("keep")
+	path := c.String("path")
+	src := c.String("src")
+	out := c.String("out")
+	version := c.String("version")
+	license := c.String("license")
+	msi := c.String("msi")
+	arch := c.String("arch")
+	keep := c.Bool("keep")
 
-  wixFile := manifest.WixManifest{}
-  err := wixFile.Load(path)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	wixFile := manifest.WixManifest{}
+	err := wixFile.Load(path)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  if wixFile.NeedGuid() {
-    _, err := wixFile.SetGuids()
-    if err!=nil {
-      return cli.NewExitError(err.Error(), 1)
-    }
-  }
+	if wixFile.NeedGuid() {
+		_, err := wixFile.SetGuids()
+		if err != nil {
+			return cli.NewExitError(err.Error(), 1)
+		}
+	}
 
-  err = os.RemoveAll(out)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
-  err = os.MkdirAll(out, 0744)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	err = os.RemoveAll(out)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+	err = os.MkdirAll(out, 0744)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  err = wixFile.RewriteFilePaths(out)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	err = wixFile.RewriteFilePaths(out)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  if c.IsSet("version") {
-    wixFile.Version = version
-  }
+	if c.IsSet("version") {
+		wixFile.Version = version
+	}
 
-  if c.IsSet("license") {
-    wixFile.License = license
-  }
+	if c.IsSet("license") {
+		wixFile.License = license
+	}
 
-  if wixFile.License!="" {
-    if !rtf.IsRtf(wixFile.License) {
-      target := filepath.Join(out, filepath.Base(wixFile.License)+".rtf")
-      err := rtf.WriteAsRtf(wixFile.License, target, true)
-      if err!=nil {
-        return cli.NewExitError(err.Error(), 1)
-      }
-      wixFile.License, err = filepath.Rel(out, target)
-      if err!=nil {
-        return cli.NewExitError(err.Error(), 1)
-      }
-    }
-  }
+	if wixFile.License != "" {
+		if !rtf.IsRtf(wixFile.License) {
+			target := filepath.Join(out, filepath.Base(wixFile.License)+".rtf")
+			err := rtf.WriteAsRtf(wixFile.License, target, true)
+			if err != nil {
+				return cli.NewExitError(err.Error(), 1)
+			}
+			wixFile.License, err = filepath.Rel(out, target)
+			if err != nil {
+				return cli.NewExitError(err.Error(), 1)
+			}
+		}
+	}
 
-  templates, err := tpls.Find(src)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
-  if len(templates)==0 {
-    return cli.NewExitError("No templates *.wxs found in this directory", 1)
-  }
+	templates, err := tpls.Find(src)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+	if len(templates) == 0 {
+		return cli.NewExitError("No templates *.wxs found in this directory", 1)
+	}
 
-  builtTemplates := make([]string, len(templates))
-  for i, tpl := range templates {
-    dst := filepath.Join(out, filepath.Base(tpl))
-    err = tpls.GenerateTemplate(&wixFile, tpl, dst)
-    builtTemplates[i] = dst
-    if err!=nil {
-      return cli.NewExitError(err.Error(), 1)
-    }
-  }
+	builtTemplates := make([]string, len(templates))
+	for i, tpl := range templates {
+		dst := filepath.Join(out, filepath.Base(tpl))
+		err = tpls.GenerateTemplate(&wixFile, tpl, dst)
+		builtTemplates[i] = dst
+		if err != nil {
+			return cli.NewExitError(err.Error(), 1)
+		}
+	}
 
-  msi, err = filepath.Abs(msi)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
-  msi, err = filepath.Rel(out, msi)
-  if err!=nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	msi, err = filepath.Abs(msi)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+	msi, err = filepath.Rel(out, msi)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  cmdStr := wix.GenerateCmd(&wixFile, builtTemplates, msi, arch)
+	cmdStr := wix.GenerateCmd(&wixFile, builtTemplates, msi, arch)
 
-  targetFile := filepath.Join(out, "build.bat")
-  err = ioutil.WriteFile(targetFile, []byte(cmdStr), 0644)
-  if err != nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	targetFile := filepath.Join(out, "build.bat")
+	err = ioutil.WriteFile(targetFile, []byte(cmdStr), 0644)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  bin, err := exec.LookPath("cmd.exe")
-  if err != nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
-  args := []string{"/C", "build.bat"}
-  oCmd := exec.Command(bin, args...)
-  oCmd.Dir = out
-  oCmd.Stdout = os.Stdout
-  oCmd.Stderr = os.Stderr
-  err = oCmd.Run();
-  if  err != nil {
-    return cli.NewExitError(err.Error(), 1)
-  }
+	bin, err := exec.LookPath("cmd.exe")
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+	args := []string{"/C", "build.bat"}
+	oCmd := exec.Command(bin, args...)
+	oCmd.Dir = out
+	oCmd.Stdout = os.Stdout
+	oCmd.Stderr = os.Stderr
+	err = oCmd.Run()
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
-  if keep==false {
-    err = os.RemoveAll(out)
-    if err!=nil {
-      return cli.NewExitError(err.Error(), 1)
-    }
-  }
+	if keep == false {
+		err = os.RemoveAll(out)
+		if err != nil {
+			return cli.NewExitError(err.Error(), 1)
+		}
+	}
 
-  fmt.Println("All Done!!")
+	fmt.Println("All Done!!")
 
-  return nil
+	return nil
 }
 
-func getBinPath () string {
-  wd := ""
-  if filepath.Base(os.Args[0])=="main" { // go run ...
-    wd, _ = os.Getwd()
-  } else {
-    wd = filepath.Dir(os.Args[0])
-  }
-  return wd
+func getBinPath() string {
+	wd := ""
+	if filepath.Base(os.Args[0]) == "main" { // go run ...
+		wd, _ = os.Getwd()
+	} else {
+		wd = filepath.Dir(os.Args[0])
+	}
+	return wd
 }
