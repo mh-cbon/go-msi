@@ -28,8 +28,9 @@ install:
 build_script:
   - glide install
   - go build -o go-msi.exe main.go
-  - .\go-msi.exe make --msi go-msi-x86-%APPVEYOR_REPO_TAG_NAME%.msi --version %APPVEYOR_REPO_TAG_NAME% --arch x86
-  - .\go-msi.exe make --msi go-msi-x64-%APPVEYOR_REPO_TAG_NAME%.msi --version %APPVEYOR_REPO_TAG_NAME% --arch x64
+  - .\go-msi.exe make --msi go-msi-%APPVEYOR_REPO_TAG_NAME%-x86.msi --version %APPVEYOR_REPO_TAG_NAME% --arch x86
+  - .\go-msi.exe make --msi go-msi-%APPVEYOR_REPO_TAG_NAME%-x64.msi --version %APPVEYOR_REPO_TAG_NAME% --arch x64
+  - dir
 
 # to disable automatic tests
 test: off
@@ -37,7 +38,7 @@ test: off
 # to disable deployment
 deploy:
   - provider: GitHub
-    artifact: /.*\.msi/           # upload all NuGet packages to release assets
+    artifact: /.*\.msi/
     draft: false
     prerelease: false
     desription: "Release {APPVEYOR_REPO_TAG_NAME}"
