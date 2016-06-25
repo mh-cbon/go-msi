@@ -37,13 +37,15 @@ test: off
 
 # ?
 artifacts:
-  - path: C:\gopath\src\github.com\mh-cbon\go-msi\*.msi
-    name: msifiles
+  - path: C:\gopath\src\github.com\mh-cbon\go-msi\*-x86.msi
+    name: msi-x86
+  - path: C:\gopath\src\github.com\mh-cbon\go-msi\*-x64.msi
+    name: msi-x64
 
 # to disable deployment
 deploy:
   - provider: GitHub
-    artifact: msifiles
+    artifact: /msi-.*/
     draft: false
     prerelease: false
     desription: "Release {APPVEYOR_REPO_TAG_NAME}"
