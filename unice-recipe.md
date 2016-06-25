@@ -78,15 +78,15 @@ vagrant winrm -c "heat.exe -v"
 From your local computer, download [go-msi](https://github.com/mh-cbon/go-msi/releases) msi package,
 
 ```sh
-wget -O go-msi.msi https://github.com/mh-cbon/go-msi/releases/download/0.0.15/go-msi-0.0.15-x64.msi
+wget -O go-msi.msi https://github.com/mh-cbon/go-msi/releases/download/0.0.17/go-msi-0.0.17-x64.msi
 # or
-curl -O https://github.com/mh-cbon/go-msi/releases/download/0.0.15/go-msi-0.0.15-x64.msi
+curl -O https://github.com/mh-cbon/go-msi/releases/download/0.0.17/go-msi-0.0.17-x64.msi
 ```
 
 Trigger `go-msi` setup on the remote windows machine,
 
 ```sh
-vagrant winrm -c "msiexec.exe /i C:\\vagrant\\go-msi-0.0.15-x64.msi /quiet"
+vagrant winrm -c "msiexec.exe /i C:\\vagrant\\go-msi-0.0.17-x64.msi /quiet"
 ```
 
 __At that point, the machine is ready__
