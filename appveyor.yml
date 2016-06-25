@@ -35,10 +35,15 @@ build_script:
 # to disable automatic tests
 test: off
 
+# ?
+artifacts:
+  - path: C:\gopath\src\github.com\mh-cbon\go-msi\.\*.msi
+    name: msifiles
+
 # to disable deployment
 deploy:
   - provider: GitHub
-    artifact: /c:\\gopath\\src\\github.com\\mh-cbon\\go-msi\\.*\.msi/
+    artifact: msifiles
     draft: false
     prerelease: false
     desription: "Release {APPVEYOR_REPO_TAG_NAME}"
