@@ -51,11 +51,9 @@ build_script:
   - set GOARCH=386
   - go build -o go-msi.exe main.go             # Change this
   - go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\go-msi-%APPVEYOR_REPO_TAG_NAME%-x86.msi --version %APPVEYOR_REPO_TAG_NAME% --arch x86             # Change this
-  - echo %GOARCH%
   - set GOARCH=amd64
   - go build -o go-msi.exe main.go             # Change this
   - go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\go-msi-%APPVEYOR_REPO_TAG_NAME%-x64.msi --version %APPVEYOR_REPO_TAG_NAME% --arch x64             # Change this
-  - echo %GOARCH%
 
 # to disable automatic tests
 test: off

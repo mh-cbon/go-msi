@@ -27,10 +27,14 @@ install:
 # to run your custom scripts instead of automatic MSBuild
 build_script:
   - glide install
-  - GOARCh=386 go build -o go-msi.exe main.go
+  - set GOARCH=386
+  - go build -o go-msi.exe main.go
   - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\go-msi-%APPVEYOR_REPO_TAG_NAME%-x86.msi --version %APPVEYOR_REPO_TAG_NAME% --arch x86
-  - GOARCh=amd64 go build -o go-msi.exe main.go
+  - echo %GOARCH%
+  - set GOARCH=amd64
+  - go build -o go-msi.exe main.go
   - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\go-msi-%APPVEYOR_REPO_TAG_NAME%-x64.msi --version %APPVEYOR_REPO_TAG_NAME% --arch x64
+  - echo %GOARCH%
 
 # to disable automatic tests
 test: off
