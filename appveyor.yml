@@ -21,18 +21,10 @@ install:
   - go version
   - go env
   - go get -u github.com/Masterminds/glide
-  - go get -u github.com/golang/lint/golint
-  - go get -u github.com/remyoudompheng/go-misc/deadcode
-  - go get -u github.com/gordonklaus/ineffassign
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
   - glide install
-  - go vet ./...
-  - gofmt -s -l .
-  - golint github.com/mh-cbon/go-msi...
-  - deadcode
-  - ineffassign .
   - go build -o go-msi.exe main.go
   - .\go-msi.exe make -m go-msi-%APPVEYOR_REPO_TAG_NAME%.msi --version %APPVEYOR_REPO_TAG_NAME%
 
