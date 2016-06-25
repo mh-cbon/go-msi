@@ -2,8 +2,6 @@
 
 Easy way to generate msi package for a Go project.
 
-__wip__
-
 # Install
 
 ```sh
