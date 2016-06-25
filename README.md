@@ -4,14 +4,7 @@ Easy way to generate msi package for a Go project.
 
 # Install
 
-```sh
-mkdir -p $GOPATH/github.com/mh-cbon
-cd $GOPATH/github.com/mh-cbon
-git clone https://github.com/mh-cbon/go-msi.git
-cd go-msi
-glide install
-go install
-```
+Pick an msi package [here](https://github.com/mh-cbon/go-msi/releases) !
 
 # Requirements
 
