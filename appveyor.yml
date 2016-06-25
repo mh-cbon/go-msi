@@ -21,7 +21,7 @@ install:
   - go get -u github.com/remyoudompheng/go-misc/deadcode
   - go get -u github.com/gordonklaus/ineffassign
   - curl -O http://wixtoolset.org/downloads/v3.10.3.3007/wix310-binaries.zip
-  - 7z e -y -x -o C:\wix310 wix310-binaries.zip
+  - 7z x wix310-binaries.zip -y -o C:\wix310
   - set PATH=C:\wix310;%PATH%
 
 # to run your custom scripts instead of automatic MSBuild
