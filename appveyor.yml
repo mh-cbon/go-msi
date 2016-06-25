@@ -10,6 +10,7 @@ clone_folder: c:\gopath\src\github.com\mh-cbon\go-msi
 environment:
   GOPATH: c:\gopath
   GO15VENDOREXPERIMENT: 1
+  APPVEYOR_REPO_TAG_NAME: 1.0.0
 
 # scripts that run after cloning repository
 install:
