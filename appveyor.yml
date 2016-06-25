@@ -45,7 +45,7 @@ artifacts:
 # to disable deployment
 deploy:
   - provider: GitHub
-    artifact: /msi-.*/
+    artifact: msi-x86, msi-x64
     draft: false
     prerelease: false
     desription: "Release {APPVEYOR_REPO_TAG_NAME}"
