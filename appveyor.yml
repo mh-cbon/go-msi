@@ -6,11 +6,12 @@ os: Windows Server 2012 R2
 
 clone_folder: c:\gopath\src\github.com\mh-cbon\go-msi
 
+skip_non_tags: true
+
 # environment variables
 environment:
   GOPATH: c:\gopath
   GO15VENDOREXPERIMENT: 1
-  APPVEYOR_REPO_TAG_NAME: 1.0.0
 
 # scripts that run after cloning repository
 install:
@@ -27,7 +28,8 @@ install:
 build_script:
   - glide install
   - go build -o go-msi.exe main.go
-  - .\go-msi.exe make --msi go-msi-%APPVEYOR_REPO_TAG_NAME%.msi --version %APPVEYOR_REPO_TAG_NAME%
+  - .\go-msi.exe make --msi go-msi-x86-%APPVEYOR_REPO_TAG_NAME%.msi --version %APPVEYOR_REPO_TAG_NAME% --arch x86
+  - .\go-msi.exe make --msi go-msi-x64-%APPVEYOR_REPO_TAG_NAME%.msi --version %APPVEYOR_REPO_TAG_NAME% --arch x64
 
 # to disable automatic tests
 test: off
@@ -36,7 +38,7 @@ test: off
 deploy:
   - provider: GitHub
     artifact: /.*\.msi/           # upload all NuGet packages to release assets
-    draft: true
+    draft: false
     prerelease: false
     on:
       branch: master                # release from master branch only
