@@ -37,9 +37,9 @@ test: off
 
 # ?
 artifacts:
-  - path: 'C:\gopath\src\github.com\mh-cbon\go-msi\go-msi-*-x86.msi'
+  - path: 'C:/gopath/src/github.com/mh-cbon/go-msi/go-msi-*-x86.msi'
     name: msi-x86
-  - path: 'C:\gopath\src\github.com\mh-cbon\go-msi\go-msi-*-x64.msi'
+  - path: 'C:/gopath/src/github.com/mh-cbon/go-msi/go-msi-*-x64.msi'
     name: msi-x64
 
 # to disable deployment
