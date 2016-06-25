@@ -13,6 +13,9 @@ environment:
 
 # scripts that run after cloning repository
 install:
+  - curl -fsS -o http://wixtoolset.org/downloads/v3.10.3.3007/wix310-binaries.zip
+  - 7z x wix310-binaries.zip -y -r -oC:\wix310
+  - set PATH=C:\wix310;%PATH%
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
   - go version
   - go env
@@ -20,9 +23,6 @@ install:
   - go get -u github.com/golang/lint/golint
   - go get -u github.com/remyoudompheng/go-misc/deadcode
   - go get -u github.com/gordonklaus/ineffassign
-  - curl -O http://wixtoolset.org/downloads/v3.10.3.3007/wix310-binaries.zip
-  - 7z x wix310-binaries.zip -y -r -oC:\wix310
-  - set PATH=C:\wix310;%PATH%
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
