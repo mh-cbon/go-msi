@@ -13,7 +13,7 @@ environment:
 
 # scripts that run after cloning repository
 install:
-  - Start-FileDownload 'http://wixtoolset.org/downloads/v3.10.3.3007/wix310-binaries.zip'
+  - ps: Start-FileDownload 'http://wixtoolset.org/downloads/v3.10.3.3007/wix310-binaries.zip'
   - curl -fsSv -o C:\wix310-binaries.zip http://wixtoolset.org/downloads/v3.10.3.3007/wix310-binaries.zip
   - dir C:\
   - 7z x C:\wix310-binaries.zip -y -r -oC:\wix310
