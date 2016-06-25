@@ -17,7 +17,7 @@ go install
 
 # Requirements
 
-- A windows machine (see [here](https://github.com/mh-cbon/go-msi/blob/master/unice-recipe.md) for unix friendly users)
+- A windows machine (see [here](https://github.com/mh-cbon/go-msi/blob/master/appveyor-recipe.md) for an appveyor file, see [here](https://github.com/mh-cbon/go-msi/blob/master/unice-recipe.md) for unix friendly users)
 - wix >= 3.10 (may work on older release, but it is untested, feel free to report)
 - you must add wix bin to your PATH
 
