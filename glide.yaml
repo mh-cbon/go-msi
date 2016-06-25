@@ -1,4 +1,11 @@
 package: github.com/mh-cbon/go-msi
+scripts:
+  prebump: 666 git fetch --tags
+  preversion: |
+    philea -s "666 go vet %s" "666 go-fmt-fail %s"
+  postversion: |
+    666 git push && 666 git push --tags \
+    && 666 gh-api-cli create-release -n release -o mh-cbon -r gump --ver !newversion!
 import:
 - package: github.com/urfave/cli
   version: ^1.17.0
