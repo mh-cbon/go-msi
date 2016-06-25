@@ -18,7 +18,10 @@ var VERSION = "0.0.0"
 
 func main() {
 
-	b := getBinPath()
+	b, err := getBinPath()
+	if err != nil {
+		panic(err)
+	}
 	tmpBuildDir, err := ioutil.TempDir("", "go-msi")
 	if err != nil {
 		panic(err)
@@ -575,12 +578,16 @@ func quickMake(c *cli.Context) error {
 	return nil
 }
 
-func getBinPath() string {
-	wd := ""
+func getBinPath() (string, error) {
+  var err error
+  wd := ""
 	if filepath.Base(os.Args[0]) == "main" { // go run ...
-		wd, _ = os.Getwd()
+		wd, err = os.Getwd()
 	} else {
-		wd = filepath.Dir(os.Args[0])
+  	bin, err := exec.LookPath(os.Args[0])
+  	if err == nil {
+  		wd = filepath.Dir(bin)
+  	}
 	}
-	return wd
+	return wd, err
 }
