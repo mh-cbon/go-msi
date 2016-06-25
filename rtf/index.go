@@ -3,7 +3,7 @@ package rtf
 import (
   "io/ioutil"
   "unicode"
-  "regexp"
+  "strings"
 
   "golang.org/x/text/runes"
   "golang.org/x/text/transform"
@@ -29,10 +29,7 @@ func WriteAsWindows1252 (src string, dst string) error {
       return err
   }
 
-  // not sure how to catch for [^\r]\n...
-  re := regexp.MustCompile(`\n`)
-  dS := re.ReplaceAllString(string(bDst), "\r\n")
-
+  dS := strings.NewReplacer("\r\n", "\r\n", "\n", "\r\n").Replace(string(bDst))
   return ioutil.WriteFile(dst, []byte(dS), 0644)
 }
 
@@ -59,8 +56,7 @@ func WriteAsRtf (src string, dst string, reencode bool) error {
         return err
     }
 
-    re := regexp.MustCompile(`\n`)
-    dS := re.ReplaceAllString(string(bDst), "\r\n")
+    dS := strings.NewReplacer("\r\n", "\r\n", "\n", "\r\n").Replace(string(bDst))
 
     bDst = []byte(dS)
 
@@ -68,9 +64,8 @@ func WriteAsRtf (src string, dst string, reencode bool) error {
     bDst = bSrc
   }
 
-  re := regexp.MustCompile(`(\r\n|\n)`)
-  sDat := re.ReplaceAllString(string(bDst), "\n\\line ")
-  sDat = "{\\rtf1\\ansi\n"+sDat+"\n}"
+  sDat := strings.NewReplacer("\n", "\n\\line ").Replace(string(bDst))
+  sDat = "{\\rtf1\\ansi\r\n"+sDat+"\r\n}"
 
   return ioutil.WriteFile(dst, []byte(sDat), 0644)
 }
