@@ -37,7 +37,7 @@ test: off
 
 # ?
 artifacts:
-  - path: C:\gopath\src\github.com\mh-cbon\go-msi\.\*.msi
+  - path: C:\gopath\src\github.com\mh-cbon\go-msi\*.msi
     name: msifiles
 
 # to disable deployment
