@@ -40,6 +40,9 @@ deploy:
     artifact: /.*\.msi/           # upload all NuGet packages to release assets
     draft: false
     prerelease: false
+    desription: "Release {APPVEYOR_REPO_TAG_NAME}"
+    auth_token:
+      secure: KCSQ5Lux18jVHKiuoiw50YTHG82Ii5PoBOhynj8kEqT/Rwm7sjKwdoUfnuT5i+JS
     on:
       branch:
         - master
