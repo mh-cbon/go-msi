@@ -2,7 +2,8 @@ package: github.com/mh-cbon/go-msi
 scripts:
   prebump: 666 git fetch --tags
   preversion: |
-    philea -s "666 go vet %s" "666 go-fmt-fail %s"
+    philea -s "666 go vet %s" "666 go-fmt-fail %s" \
+    && go run main.go -v
   postversion: |
     666 git push && 666 git push --tags \
     && 666 gh-api-cli create-release -n release -o mh-cbon -r go-msi --ver !newversion!

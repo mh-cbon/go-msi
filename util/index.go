@@ -1,5 +1,11 @@
 package util
 
+import (
+	"os"
+	"os/exec"
+	"path/filepath"
+)
+
 func GetBinPath() (string, error) {
 	var err error
 	wd := ""
