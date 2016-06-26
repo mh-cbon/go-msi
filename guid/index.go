@@ -13,10 +13,10 @@ import (
 func Make() (string, error) {
 	if runtime.GOOS == "windows" {
 
-  	b, err := util.GetBinPath()
-  	if err != nil {
+		b, err := util.GetBinPath()
+		if err != nil {
 			return "", err
-  	}
+		}
 
 		cmd := "cscript.exe"
 		args := []string{filepath.Join(filepath.Base(b), "utils", "myuuid.vbs")}
