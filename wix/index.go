@@ -22,11 +22,11 @@ func GenerateCmd(wixFile *manifest.WixManifest, templates []string, msiOutFile s
 	}
 	cmd += "candle"
 	if arch != "" {
-    if arch=="386" {
-      arch = "x86"
-    } else if arch=="amd64" {
-      arch = "x64"
-    }
+		if arch == "386" {
+			arch = "x86"
+		} else if arch == "amd64" {
+			arch = "x64"
+		}
 		cmd += " -arch " + arch
 	}
 	for i, dir := range wixFile.RelDirs {
