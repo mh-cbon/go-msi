@@ -78,15 +78,15 @@ vagrant winrm -c "heat.exe -v"
 From your local computer, download [go-msi](https://github.com/mh-cbon/go-msi/releases) msi package,
 
 ```sh
-wget -O go-msi.msi https://github.com/mh-cbon/go-msi/releases/download/0.0.20/go-msi-0.0.20-x64.msi
+wget -O go-msi.msi https://github.com/mh-cbon/go-msi/releases/download/0.0.22/go-msi-amd64.msi
 # or
-curl -O https://github.com/mh-cbon/go-msi/releases/download/0.0.20/go-msi-0.0.20-x64.msi
+curl -O https://github.com/mh-cbon/go-msi/releases/download/0.0.22/go-msi-amd64.msi
 ```
 
 Trigger `go-msi` setup on the remote windows machine,
 
 ```sh
-vagrant winrm -c "msiexec.exe /i C:\\vagrant\\go-msi-0.0.20-x64.msi /quiet"
+vagrant winrm -c "msiexec.exe /i C:\\vagrant\\go-msi-amd64.msi /quiet"
 ```
 
 __At that point, the machine is ready__
@@ -100,7 +100,7 @@ If you only `halt` the machine, you can jump to the next section.
 To generate the package, you can run
 
 ```sh
-vagrant winrm -c "cd C:\\vagrant; .\\go-msi.exe make -m go-msi.msi --version 0.0.1"
+vagrant winrm -c "cd C:\\vagrant; go-msi make -m go-msi.msi --version 0.0.1"
 ```
 
 Then `halt` the machine.

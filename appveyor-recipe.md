@@ -49,7 +49,7 @@ install:
     # glide setup, if your package uses it
   - go get -u github.com/Masterminds/glide
     # go-msi setup
-  - curl -fsSv -o C:\go-msi.msi https://github.com/mh-cbon/go-msi/releases/download/0.0.20/go-msi-0.0.20-x64.msi
+  - curl -fsSv -o C:\go-msi.msi https://github.com/mh-cbon/go-msi/releases/download/0.0.22/go-msi-amd64.msi
   - msiexec.exe /i C:\go-msi.msi /quiet
 
 build_script:
