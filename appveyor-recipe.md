@@ -43,7 +43,7 @@ install:
   - go version
   - go env
   - go get -u github.com/Masterminds/glide
-  - curl -fsSv -o C:\go-msi.msi https://github.com/mh-cbon/go-msi/releases/download/0.0.17/go-msi-0.0.17-x64.msi
+  - curl -fsSv -o C:\go-msi.msi https://github.com/mh-cbon/go-msi/releases/download/0.0.20/go-msi-0.0.20-x64.msi
   - msiexec.exe /i C:\go-msi.msi /quiet
 
 build_script:
