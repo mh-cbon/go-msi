@@ -11,6 +11,7 @@ import (
 	"github.com/mh-cbon/go-msi/rtf"
 	"github.com/mh-cbon/go-msi/tpls"
 	"github.com/mh-cbon/go-msi/wix"
+	"github.com/mh-cbon/go-msi/util"
 	"github.com/urfave/cli"
 )
 
@@ -18,7 +19,7 @@ var VERSION = "0.0.0"
 
 func main() {
 
-	b, err := getBinPath()
+	b, err := util.GetBinPath()
 	if err != nil {
 		panic(err)
 	}
@@ -576,19 +577,4 @@ func quickMake(c *cli.Context) error {
 	fmt.Println("All Done!!")
 
 	return nil
-}
-
-func getBinPath() (string, error) {
-	var err error
-	wd := ""
-	if filepath.Base(os.Args[0]) == "main" { // go run ...
-		wd, err = os.Getwd()
-	} else {
-		bin := ""
-		bin, err = exec.LookPath(os.Args[0])
-		if err == nil {
-			wd = filepath.Dir(bin)
-		}
-	}
-	return wd, err
 }
