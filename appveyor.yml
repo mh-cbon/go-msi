@@ -28,11 +28,11 @@ install:
 build_script:
   - glide install
   - set GOARCH=386
-  - go build -x -o go-msi.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
+  - go build -o go-msi.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
   - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\go-msi-%APPVEYOR_REPO_TAG_NAME%-x86.msi --version %APPVEYOR_REPO_TAG_NAME% --arch x86
   - echo %GOARCH%
   - set GOARCH=amd64
-  - go build -x -o go-msi.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
+  - go build -o go-msi.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
   - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\go-msi-%APPVEYOR_REPO_TAG_NAME%-x64.msi --version %APPVEYOR_REPO_TAG_NAME% --arch x64
   - echo %GOARCH%
 
