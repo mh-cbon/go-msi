@@ -49,10 +49,10 @@ install:
 build_script:
   - glide install
   - set GOARCH=386
-  - go build -o go-msi.exe main.go             # Change this
+  - go build -o go-msi.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go             # Change this
   - go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\go-msi-%APPVEYOR_REPO_TAG_NAME%-x86.msi --version %APPVEYOR_REPO_TAG_NAME% --arch x86             # Change this
   - set GOARCH=amd64
-  - go build -o go-msi.exe main.go             # Change this
+  - go build -o go-msi.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go             # Change this
   - go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\go-msi-%APPVEYOR_REPO_TAG_NAME%-x64.msi --version %APPVEYOR_REPO_TAG_NAME% --arch x64             # Change this
 
 # to disable automatic tests
@@ -92,7 +92,8 @@ For an easy way to release, you can use [gump](https://github.com/mh-cbon/gump),
 scripts:
   prebump: 666 git fetch --tags
   preversion: |
-    philea -s "666 go vet %s" "666 go-fmt-fail %s"
+    philea -s "666 go vet %s" "666 go-fmt-fail %s" \
+    && go run main.go -v
   postversion: |
     666 git push && 666 git push --tags \
     && 666 gh-api-cli create-release -n release -o YOURUSER -r YOURREPO --ver !newversion!
