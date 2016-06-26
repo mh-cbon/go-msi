@@ -71,9 +71,9 @@ test: off
 # need this to deploy assets,
 # note that each MUST must match only one file
 artifacts:
-  - path: '*-x86.msi'
+  - path: '*-386.msi'
     name: msi-x86
-  - path: '*-x64.msi'
+  - path: '*-amd64.msi'
     name: msi-x64
 
 # deploy section to github releases

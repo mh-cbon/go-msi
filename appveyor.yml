@@ -38,9 +38,9 @@ build_script:
 test: off
 
 artifacts:
-  - path: '*-x86.msi'
+  - path: '*-386.msi'
     name: msi-x86
-  - path: '*-x64.msi'
+  - path: '*-amd64.msi'
     name: msi-x64
 
 deploy:
