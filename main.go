@@ -151,7 +151,7 @@ func main() {
 				cli.StringFlag{
 					Name:  "arch, a",
 					Value: "",
-					Usage: "A target architecture , x64 or x86 (ia64 is not handled)",
+					Usage: "A target architecture, amd64 or 386 (ia64 is not handled)",
 				},
 				cli.StringFlag{
 					Name:  "msi, m",
@@ -195,7 +195,7 @@ func main() {
 				cli.StringFlag{
 					Name:  "arch, a",
 					Value: "",
-					Usage: "A target architecture , x64 or x86 (ia64 is not handled)",
+					Usage: "A target architecture, amd64 or 386 (ia64 is not handled)",
 				},
 				cli.StringFlag{
 					Name:  "msi, m",
