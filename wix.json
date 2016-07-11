@@ -20,7 +20,7 @@
         "name": "PATH",
         "value": "[INSTALLDIR]",
         "permanent": "no",
-        "system": "yes",
+        "system": "no",
         "action": "set",
         "part": "last"
       }
