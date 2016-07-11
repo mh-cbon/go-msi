@@ -40,8 +40,8 @@ type WixEnv struct {
 	Part      string `json:"part"`
 }
 type WixShortcuts struct {
-	Guid  string        `json:"guid"`
-	Items []WixShortcut `json:"items"`
+	Guid  string        `json:"guid,omitempty"`
+	Items []WixShortcut `json:"items,omitempty"`
 }
 type WixShortcut struct {
 	Name        string `json:"name"`
