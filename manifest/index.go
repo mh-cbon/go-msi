@@ -12,7 +12,7 @@ import (
 type WixManifest struct {
 	Product     string       `json:"product"`
 	Company     string       `json:"company"`
-	Version     string       `json:"version"`
+	Version     string       `json:"version,omitempty"`
 	License     string       `json:"license,omitempty"`
 	UpgradeCode string       `json:"upgrade-code"`
 	Files       WixFiles     `json:"files,omitempty"`
