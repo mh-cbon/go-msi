@@ -1,0 +1,32 @@
+language: go
+go:
+- tip
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install build-essential lintian -y
+  - mkdir -p ${GOPATH}/bin
+  - cd ~
+  - curl https://glide.sh/get | sh
+  - wget -q -O - --no-check-certificate https://raw.githubusercontent.com/mh-cbon/go-bin-deb/master/install.sh | sh
+install:
+  - cd $GOPATH/src/github.com/mh-cbon/go-msi
+  - glide install
+  - go install
+script:
+  - echo "pass, ok."
+before_deploy:
+  - mkdir -p build/{386,amd64}
+  - GOOS=linux GOARCH=386 go build --ldflags "-X main.TPLPATH=/usr/share/go-msi/" --ldflags "-X main.VERSION=${TRAVIS_TAG}" -o build/386/go-msi main.go
+  - GOOS=linux GOARCH=amd64 go build --ldflags "-X main.TPLPATH=/usr/share/go-msi/" --ldflags "-X main.VERSION=${TRAVIS_TAG}" -o build/amd64/go-msi main.go
+  - go-bin-deb generate -a 386 --version ${TRAVIS_TAG} -w pkg-build-386/ -o ${TRAVIS_BUILD_DIR}/go-msi-386.deb
+  - go-bin-deb generate -a amd64 --version ${TRAVIS_TAG} -w pkg-build-amd64/ -o ${TRAVIS_BUILD_DIR}/go-msi-amd64.deb
+deploy:
+  provider: releases
+  api_key:
+    secure: Dmi4to/C++oBkvIX2Q+hYvUkikb3au3T0jbhXDgl3WxCaz//TX28TJNzjYU/kR0etXGuQCwafPd8rUcWnz02X9ZUN2PG0Vx28BmOmQ3n7+1EDEkRTOP5e6vI6ZUSeti/YYsNjPLiw4UpQYcCIVCp07Cw4MlNfS/8IL5gcfnsQWU+YiBxG8zp6v6oz8utBpqa2Ax6JZ5aELoOiO7s11LB2M8VwbE3/drwz0ztEpAkocIGIq5zgG2SuG3yPKqA80Pimu/k96qxxlLy/ZBE+EYWz2JFaN88V9RO01l7ccYesENeYABK+iU0bI88UTFfY+QAU71zPB75u1dQpEP5K2u3OseaUhq59YObKBHKl6Z6mPb61SbdTeEokf2XEPBN3RTHPPKIYezxYKCavjGXkAXTQAR5FBZdvGZk04Kxw5jT13X+UzTxeo9gSkQGng4JgSIO4M1wJT+gPezbxYF7huIFFMGKUaCDy60PU0gN7HuDjkdcFwjdYfk5BQkeoaI8sUTp4fhHtjXjiVU8opk+LPIYd7muAV3tNtQz14P+0zQlceRimP2hAklVRF/8XdSq+X5f1bKnRnolSlSYj6x8laGOpE2cQ1CPfVQIkxMD9r9ZZmER4VHvhsgXHmuvhnjGIp36u5aT7uBhdtPocyZsW56KhuwMLpuePmy7ykQr+PI11z4=
+  file:
+    - go-msi-386.deb
+    - go-msi-amd64.deb
+  skip_cleanup: true
+  on:
+    tags: true
