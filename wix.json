@@ -1,7 +1,6 @@
 {
   "product": "go-msi",
   "company": "mh-cbon",
-  "version": "0.0.1",
   "license": "LICENSE",
   "upgrade-code": "8615055C-D8E0-404C-93BE-441C503BA6F0",
   "files": {
