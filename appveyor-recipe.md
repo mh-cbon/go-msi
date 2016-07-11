@@ -39,7 +39,7 @@ environment:
 
 install:
   # wix setup
-  - curl -fsSvL -o C:\wix310-binaries.zip http://static.wixtoolset.org/releases/v3.10.3.3007/wix310-binaries.zip
+  - curl -fsSL -o C:\wix310-binaries.zip http://static.wixtoolset.org/releases/v3.10.3.3007/wix310-binaries.zip
   - 7z x C:\wix310-binaries.zip -y -r -oC:\wix310
   - set PATH=C:\wix310;%PATH%
     # go setup
@@ -49,8 +49,9 @@ install:
     # glide setup, if your package uses it
   - go get -u github.com/Masterminds/glide
     # go-msi setup
-  - curl -fsSvL -o C:\go-msi.msi https://github.com/mh-cbon/go-msi/releases/download/0.0.22/go-msi-amd64.msi
+  - curl -fsSL -o C:\go-msi.msi https://github.com/mh-cbon/go-msi/releases/download/0.0.22/go-msi-amd64.msi
   - msiexec.exe /i C:\go-msi.msi /quiet
+  - set PATH=C:\Program Files\go-msi\;%PATH% # for some reason, go-msi path needs to be added manually :(...
 
 build_script:
   # your project setup
