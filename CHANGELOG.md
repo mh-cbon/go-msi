@@ -1,13 +1,19 @@
-# Changelog - <no value>
+# Changelog - changelog
 
-### UNRELEASED
+### 0.0.23
 
 __Changes__
 
+- pkg: add deb package support
+- env: set env as system wide
+- main: add option for non windows built
+- appveyor: fix cur options to follow location redirects
+- release: add changelog support to release script
+- changelog: add new changelog
 - manifest: omit json fields when empty
 - wix.json: remove useless version field
 - README: add install from source section
-- improve recipes commands and typos
+- recipes: improve commands and typos
 
 __Contributors__
 
@@ -315,3 +321,5 @@ __Contributors__
 
 Released by mh-cbon, Sat 25 Jun 2016
 ______________
+
+
