@@ -1,13 +1,19 @@
-UNRELEASED
+0.0.23
 
+  * pkg: add deb package support
+  * env: set env as system wide
+  * main: add option for non windows built
+  * appveyor: fix cur options to follow location redirects
+  * release: add changelog support to release script
+  * changelog: add new changelog
   * manifest: omit json fields when empty
   * wix.json: remove useless version field
   * README: add install from source section
-  * improve recipes commands and typos
+  * recipes: improve commands and typos
 
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
--- mh-cbon <mh-cbon@users.noreply.github.com>; Mon, 11 Jul 2016 23:22:52 +0200
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Mon, 11 Jul 2016 23:57:07 +0200
 
 
 0.0.22
@@ -220,3 +226,5 @@ UNRELEASED
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 19:55:56 +0200
+
+
