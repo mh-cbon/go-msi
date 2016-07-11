@@ -13,13 +13,13 @@ type WixManifest struct {
 	Product     string       `json:"product"`
 	Company     string       `json:"company"`
 	Version     string       `json:"version"`
-	License     string       `json:"license"`
+	License     string       `json:"license,omitempty"`
 	UpgradeCode string       `json:"upgrade-code"`
-	Files       WixFiles     `json:"files"`
-	Directories []string     `json:"directories"`
+	Files       WixFiles     `json:"files,omitempty"`
+	Directories []string     `json:"directories,omitempty"`
 	RelDirs     []string     `json:"-"`
-	Env         WixEnvList   `json:"env"`
-	Shortcuts   WixShortcuts `json:"shortcuts"`
+	Env         WixEnvList   `json:"env,omitempty"`
+	Shortcuts   WixShortcuts `json:"shortcuts,omitempty"`
 }
 
 type WixFiles struct {
