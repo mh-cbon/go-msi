@@ -1,5 +1,21 @@
 # Changelog - changelog
 
+### 0.0.24
+
+__Changes__
+
+- travis: ensure changelog is installed
+- recipe: fix curl options and register go-msi PATH
+- appveyor: remove useless DIR command
+- appveyor: remove -v option to curl
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Tue 12 Jul 2016
+______________
+
 ### 0.0.23
 
 __Changes__
