@@ -1,0 +1,222 @@
+UNRELEASED
+
+  * manifest: omit json fields when empty
+  * wix.json: remove useless version field
+  * README: add install from source section
+  * improve recipes commands and typos
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Mon, 11 Jul 2016 23:22:52 +0200
+
+
+0.0.22
+
+  * align arch arguments with GO standards
+  * improve recipes commands and typos
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sun, 26 Jun 2016 12:14:49 +0200
+
+
+0.0.21
+
+  * go fmt
+  * improve recipes commands and typos
+  * align arch arguments with GO standards
+  * update recipes
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sun, 26 Jun 2016 12:08:59 +0200
+
+
+0.0.20
+
+  * update appveyor recipe
+  * tryfix for ldflags
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sun, 26 Jun 2016 11:26:55 +0200
+
+
+0.0.19
+
+  * go fmt
+  * fix path lookpath in guuid make for windows
+  * Set version to the build
+  * README
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sun, 26 Jun 2016 10:31:12 +0200
+
+
+0.0.18
+
+  * go fmt
+  * avoid variable shadowing
+  * update recipes
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sun, 26 Jun 2016 00:13:53 +0200
+
+
+0.0.17
+
+  * go fmt
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 23:41:59 +0200
+
+
+0.0.16
+
+  * go fmt
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 23:40:56 +0200
+
+
+0.0.15
+
+  * go fmt
+  * fix HOWTOs
+  * fix bin path detection
+  * updates
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 23:28:40 +0200
+
+
+0.0.14
+
+  * appveyor
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 22:05:11 +0200
+
+
+0.0.13
+
+  * appveyor
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 22:00:52 +0200
+
+
+0.0.12
+
+  * appveyor
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 21:59:01 +0200
+
+
+0.0.11
+
+  * appveyor
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 21:52:11 +0200
+
+
+0.0.10
+
+  * appveyor
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 21:44:23 +0200
+
+
+0.0.9
+
+  * appveyor
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 21:17:43 +0200
+
+
+0.0.8
+
+  * appveyor
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 21:09:35 +0200
+
+
+0.0.7
+
+  * appveyor
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 21:04:38 +0200
+
+
+0.0.6
+
+  * appveyor
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 20:56:26 +0200
+
+
+0.0.5
+
+  * appveyor
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 20:51:23 +0200
+
+
+0.0.4
+
+  * appveyor
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 20:43:13 +0200
+
+
+0.0.3
+
+  * appveyor
+  * appveyor
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 20:21:46 +0200
+
+
+0.0.2
+
+  * appveyor
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 20:12:08 +0200
+
+
+0.0.1
+
+  * Initial release
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 19:55:56 +0200
