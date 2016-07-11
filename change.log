@@ -1,3 +1,15 @@
+0.0.24
+
+  * travis: ensure changelog is installed
+  * recipe: fix curl options and register go-msi PATH
+  * appveyor: remove useless DIR command
+  * appveyor: remove -v option to curl
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Tue, 12 Jul 2016 00:20:14 +0200
+
+
 0.0.23
 
   * pkg: add deb package support
