@@ -16,13 +16,17 @@ import (
 )
 
 var VERSION = "0.0.0"
+var TPLPATH = "" // non-windows build, use ldflags to tell about that.
 
 func main() {
 
-	b, err := util.GetBinPath()
-	if err != nil {
-		panic(err)
-	}
+  if TPLPATH=="" { // built for windows
+  	b, err := util.GetBinPath()
+  	if err != nil {
+  		panic(err)
+  	}
+    TPLPATH = b
+  }
 	tmpBuildDir, err := ioutil.TempDir("", "go-msi")
 	if err != nil {
 		panic(err)
@@ -70,7 +74,7 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "src, s",
-					Value: filepath.Join(b, "templates"),
+					Value: filepath.Join(TPLPATH, "templates"),
 					Usage: "Directory path to the wix templates files",
 				},
 				cli.StringFlag{
@@ -140,7 +144,7 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "src, s",
-					Value: filepath.Join(b, "templates"),
+					Value: filepath.Join(TPLPATH, "templates"),
 					Usage: "Directory path to the wix templates files",
 				},
 				cli.StringFlag{
@@ -184,7 +188,7 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "src, s",
-					Value: filepath.Join(b, "templates"),
+					Value: filepath.Join(TPLPATH, "templates"),
 					Usage: "Directory path to the wix templates files",
 				},
 				cli.StringFlag{
