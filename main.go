@@ -20,13 +20,13 @@ var TPLPATH = "" // non-windows build, use ldflags to tell about that.
 
 func main() {
 
-  if TPLPATH=="" { // built for windows
-  	b, err := util.GetBinPath()
-  	if err != nil {
-  		panic(err)
-  	}
-    TPLPATH = b
-  }
+	if TPLPATH == "" { // built for windows
+		b, err := util.GetBinPath()
+		if err != nil {
+			panic(err)
+		}
+		TPLPATH = b
+	}
 	tmpBuildDir, err := ioutil.TempDir("", "go-msi")
 	if err != nil {
 		panic(err)
