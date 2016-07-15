@@ -21,6 +21,9 @@ before_deploy:
   - GOOS=linux GOARCH=amd64 go build --ldflags "-X main.TPLPATH=/usr/share/go-msi/" --ldflags "-X main.VERSION=${TRAVIS_TAG}" -o build/amd64/go-msi main.go
   - go-bin-deb generate -a 386 --version ${TRAVIS_TAG} -w pkg-build-386/ -o ${TRAVIS_BUILD_DIR}/go-msi-386.deb
   - go-bin-deb generate -a amd64 --version ${TRAVIS_TAG} -w pkg-build-amd64/ -o ${TRAVIS_BUILD_DIR}/go-msi-amd64.deb
+  - docker run -v $PWD:/docker fedora /bin/sh -c "cd /docker && sh ./docker.sh ${TRAVIS_TAG} go-msi"
+  - sudo chown travis:travis go-msi-{386,amd64}.rpm
+
 deploy:
   provider: releases
   api_key:
