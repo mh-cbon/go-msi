@@ -2,7 +2,7 @@
   "name": "go-msi",
   "maintainer": "mh-cbon <mh-cbon@users.noreply.github.com>",
   "description": "Generate msi packages",
-  "changelog-cmd": "changelog debian --vars='{\"name\":\"!name!\", \"urgency\":\"\"}'",
+  "changelog-cmd": "changelog debian --vars='{\"name\":\"!name!\"}'",
   "homepage": "http://github.com/mh-cbon/!name!",
   "files": [
     {
