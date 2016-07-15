@@ -1,6 +1,12 @@
+sudo: required
+
+services:
+- docker
+
 language: go
 go:
 - tip
+
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install build-essential lintian -y
@@ -9,12 +15,15 @@ before_install:
   - curl https://glide.sh/get | sh
   - curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh | GH=mh-cbon/changelog sh -xe
   - curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh | GH=mh-cbon/go-bin-deb sh -xe
+
 install:
   - cd $GOPATH/src/github.com/mh-cbon/go-msi
   - glide install
   - go install
+
 script:
   - echo "pass, ok."
+
 before_deploy:
   - mkdir -p build/{386,amd64}
   - GOOS=linux GOARCH=386 go build --ldflags "-X main.TPLPATH=/usr/share/go-msi/" --ldflags "-X main.VERSION=${TRAVIS_TAG}" -o build/386/go-msi main.go
@@ -31,6 +40,8 @@ deploy:
   file:
     - go-msi-386.deb
     - go-msi-amd64.deb
+    - go-msi-386.rpm
+    - go-msi-amd64.rpm
   skip_cleanup: true
   on:
     tags: true
