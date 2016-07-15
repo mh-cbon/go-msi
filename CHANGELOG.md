@@ -1,5 +1,18 @@
 # Changelog - changelog
 
+### 0.0.29
+
+__Changes__
+
+- travis: fix missing changelog setup into docker image
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Fri 15 Jul 2016
+______________
+
 ### 0.0.28
 
 __Changes__
