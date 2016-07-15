@@ -1,0 +1,40 @@
+{
+  "product": "hello",
+  "company": "mh-cbon",
+  "license": "LICENSE",
+  "upgrade-code": "416FE321-9D9E-433F-A1F4-F9EF15EC9C61",
+  "files": {
+    "guid": "768193DA-5EA9-4CCB-9355-F7C281873A22",
+    "items": [
+      "build/amd64/hello.exe"
+    ]
+  },
+  "directories": [
+    "assets"
+  ],
+  "env": {
+    "guid": "1AE39590-3D97-4375-89DC-1A61C94F8193",
+    "vars": [
+      {
+        "name": "some",
+        "value": "value",
+        "permanent": "no",
+        "system": "no",
+        "action": "set",
+        "part": "last"
+      }
+    ]
+  },
+  "shortcuts": {
+    "guid": "918F3F9A-476B-4F02-8C43-077FDC649354",
+    "items": [
+      {
+        "name": "hello",
+        "description": "hello web server",
+        "target": "[INSTALLDIR]\\hello.exe",
+        "wdir": "INSTALLDIR",
+        "icon":"ico.ico"
+      }
+    ]
+  }
+}

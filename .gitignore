@@ -1,6 +1,8 @@
 /.vagrant/
-/demo/
-/wix_demo/
 /vendor/
 /notes.md
 /builder/
+/demo/templates/
+/demo/build/
+/demo/pkg-build/
+/demo/.vagrant/
