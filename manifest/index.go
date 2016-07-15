@@ -168,14 +168,16 @@ func (wixFile *WixManifest) RewriteFilePaths(out string) error {
 		wixFile.RelDirs = append(wixFile.RelDirs, r)
 	}
 	for i, s := range wixFile.Shortcuts.Items {
-		file, err := filepath.Abs(s.Icon)
-		if err != nil {
-			return err
-		}
-		wixFile.Shortcuts.Items[i].Icon, err = filepath.Rel(out, file)
-		if err != nil {
-			return err
-		}
+    if s.Icon!= "" {
+  		file, err := filepath.Abs(s.Icon)
+  		if err != nil {
+  			return err
+  		}
+  		wixFile.Shortcuts.Items[i].Icon, err = filepath.Rel(out, file)
+  		if err != nil {
+  			return err
+  		}
+    }
 	}
 	return nil
 }
