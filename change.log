@@ -1,4 +1,14 @@
 
+0.0.29
+
+  * travis: fix missing changelog setup into docker image
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Fri, 15 Jul 2016 20:55:39 +0200
+
+
+
 0.0.28
 
   * rpm: add missing docker support
