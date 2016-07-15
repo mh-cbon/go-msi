@@ -73,7 +73,11 @@
                         {{if gt ($e.Arguments | len) 0}}
                         Arguments="{{$e.Arguments}}"
                         {{end}}
-                        />
+                        >
+                        {{if gt ($e.Icon | len) 0}}
+                        <Icon Id="Icon{{$i}}" SourceFile="{{$e.Icon}}" />
+                        {{end}}
+                  </Shortcut>
                   <RegistryValue Root="HKCU"
                     Key="Software\{{$.Company}}\{{$.Product}}"
                     Name="installed{{$i}}"
