@@ -49,7 +49,7 @@ type WixShortcut struct {
 	Target      string `json:"target"`
 	WDir        string `json:"wdir"`
 	Arguments   string `json:"arguments"`
-	Icon        string `json:"icon"`         // a path to the ico file, no space in it.
+	Icon        string `json:"icon"` // a path to the ico file, no space in it.
 }
 
 // Writes the manifest to the given file,
@@ -168,16 +168,16 @@ func (wixFile *WixManifest) RewriteFilePaths(out string) error {
 		wixFile.RelDirs = append(wixFile.RelDirs, r)
 	}
 	for i, s := range wixFile.Shortcuts.Items {
-    if s.Icon!= "" {
-  		file, err := filepath.Abs(s.Icon)
-  		if err != nil {
-  			return err
-  		}
-  		wixFile.Shortcuts.Items[i].Icon, err = filepath.Rel(out, file)
-  		if err != nil {
-  			return err
-  		}
-    }
+		if s.Icon != "" {
+			file, err := filepath.Abs(s.Icon)
+			if err != nil {
+				return err
+			}
+			wixFile.Shortcuts.Items[i].Icon, err = filepath.Rel(out, file)
+			if err != nil {
+				return err
+			}
+		}
 	}
 	return nil
 }

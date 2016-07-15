@@ -35,7 +35,6 @@ func WriteAsWindows1252(src string, dst string) error {
 	return ioutil.WriteFile(dst, []byte(dS), 0644)
 }
 
-
 // Reads given src file, encodes to windows1252,
 // formats the content to an RTF file
 // and writes the result to dst

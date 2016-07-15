@@ -1,9 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"log"
-	"fmt"
 	"net/http"
 )
 
@@ -13,7 +13,7 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-  fmt.Println("Starting....")
+	fmt.Println("Starting....")
 
 	// public views
 	http.HandleFunc("/", HandleIndex)
