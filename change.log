@@ -1,4 +1,14 @@
 
+0.0.30
+
+  * travis: template inclusion
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Fri, 15 Jul 2016 21:06:08 +0200
+
+
+
 0.0.29
 
   * travis: fix missing changelog setup into docker image
