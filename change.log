@@ -1,4 +1,15 @@
 
+0.0.27
+
+  * rpm: add rpm support
+  * debian: remove useless urgency var
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Fri, 15 Jul 2016 20:40:44 +0200
+
+
+
 0.0.26
 
   * travis: update deb installers
