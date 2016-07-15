@@ -1,5 +1,18 @@
 # Changelog - changelog
 
+### 0.0.30
+
+__Changes__
+
+- travis: template inclusion
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Fri 15 Jul 2016
+______________
+
 ### 0.0.29
 
 __Changes__
