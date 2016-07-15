@@ -1,5 +1,19 @@
 # Changelog - changelog
 
+### 0.0.27
+
+__Changes__
+
+- rpm: add rpm support
+- debian: remove useless urgency var
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Fri 15 Jul 2016
+______________
+
 ### 0.0.26
 
 __Changes__
