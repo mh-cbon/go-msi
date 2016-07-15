@@ -1,5 +1,23 @@
 # Changelog - changelog
 
+### 0.0.25
+
+__Changes__
+
+- Demo: add a demo with recipe commands
+- add comments
+- Wix: Add Shortcuts icon support
+- Manifest: add icon support for shotcuts, add comments
+- wix.json: env var does not need to be set system wide
+- changelog: 0.0.24
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Fri 15 Jul 2016
+______________
+
 ### 0.0.24
 
 __Changes__
