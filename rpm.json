@@ -13,7 +13,7 @@
       "type": ""
     },
     {
-      "from": "templates",
+      "from": "templates/*",
       "to": "%{_datarootdir}/!name!/"
     }
   ]
