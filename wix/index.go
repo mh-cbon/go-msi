@@ -8,6 +8,7 @@ import (
 	"github.com/mh-cbon/go-msi/manifest"
 )
 
+// Generate required command lines to produce an msi package,
 func GenerateCmd(wixFile *manifest.WixManifest, templates []string, msiOutFile string, arch string) string {
 
 	cmd := ""

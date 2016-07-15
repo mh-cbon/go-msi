@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 )
 
+// Find path of the current binary file on the file system
 func GetBinPath() (string, error) {
 	var err error
 	wd := ""

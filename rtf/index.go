@@ -10,6 +10,8 @@ import (
 	"golang.org/x/text/transform"
 )
 
+// Reads given src file, encodes to windows1252
+// and writes the result to dst
 func WriteAsWindows1252(src string, dst string) error {
 	bSrc, err := ioutil.ReadFile(src)
 	if err != nil {
@@ -33,6 +35,10 @@ func WriteAsWindows1252(src string, dst string) error {
 	return ioutil.WriteFile(dst, []byte(dS), 0644)
 }
 
+
+// Reads given src file, encodes to windows1252,
+// formats the content to an RTF file
+// and writes the result to dst
 func WriteAsRtf(src string, dst string, reencode bool) error {
 
 	bSrc, err := ioutil.ReadFile(src)
@@ -70,6 +76,7 @@ func WriteAsRtf(src string, dst string, reencode bool) error {
 	return ioutil.WriteFile(dst, []byte(sDat), 0644)
 }
 
+// Tries to tell if given file is RTF like
 func IsRtf(src string) bool {
 	dat, err := ioutil.ReadFile(src)
 	if err != nil {
