@@ -1,12 +1,21 @@
 
+0.0.26
+
+  * travis: update deb installers
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Fri, 15 Jul 2016 19:36:46 +0200
+
+
+
 0.0.25
 
   * Demo: add a demo with recipe commands
-  * add comments
+  * Code: add comments
   * Wix: Add Shortcuts icon support
   * Manifest: add icon support for shotcuts, add comments
   * wix.json: env var does not need to be set system wide
-  * changelog: 0.0.24
 
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
