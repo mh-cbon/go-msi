@@ -7,8 +7,8 @@ before_install:
   - mkdir -p ${GOPATH}/bin
   - cd ~
   - curl https://glide.sh/get | sh
-  - wget -q -O - --no-check-certificate https://raw.githubusercontent.com/mh-cbon/go-bin-deb/master/install.sh | sh
-  - wget -q -O - --no-check-certificate https://raw.githubusercontent.com/mh-cbon/changelog/master/install.sh | sh
+  - curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh | GH=mh-cbon/changelog sh -xe
+  - curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh | GH=mh-cbon/go-bin-deb sh -xe
 install:
   - cd $GOPATH/src/github.com/mh-cbon/go-msi
   - glide install
