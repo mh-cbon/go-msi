@@ -1,5 +1,18 @@
 # Changelog - changelog
 
+### 0.0.28
+
+__Changes__
+
+- rpm: add missing docker support
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Fri 15 Jul 2016
+______________
+
 ### 0.0.27
 
 __Changes__
