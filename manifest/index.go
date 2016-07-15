@@ -49,8 +49,11 @@ type WixShortcut struct {
 	Target      string `json:"target"`
 	WDir        string `json:"wdir"`
 	Arguments   string `json:"arguments"`
+	Icon        string `json:"icon"`         // a path to the ico file, no space in it.
 }
 
+// Writes the manifest to the given file,
+// if file is empty, writes to wix.json
 func (wixFile *WixManifest) Write(p string) error {
 	if p == "" {
 		p = "wix.json"
@@ -66,6 +69,8 @@ func (wixFile *WixManifest) Write(p string) error {
 	return nil
 }
 
+// Load the manifest from given file path,
+// if the file path is empty, reads from wix.json
 func (wixFile *WixManifest) Load(p string) error {
 	if p == "" {
 		p = "wix.json"
@@ -84,6 +89,7 @@ func (wixFile *WixManifest) Load(p string) error {
 	return nil
 }
 
+//SetGuids generates and apply guid values appropriately
 func (wixFile *WixManifest) SetGuids() (bool, error) {
 	var err error
 	updated := false
@@ -118,6 +124,7 @@ func (wixFile *WixManifest) SetGuids() (bool, error) {
 	return updated, nil
 }
 
+// Indicates if the manifest needs GUIDs to be set
 func (wixFile *WixManifest) NeedGuid() bool {
 	need := false
 	if wixFile.UpgradeCode == "" {
@@ -135,14 +142,16 @@ func (wixFile *WixManifest) NeedGuid() bool {
 	return need
 }
 
-func (wixFile *WixManifest) RewriteFilePaths(o string) error {
+// Reads Files and Directories turn their values
+// into a relative path to out(path to the wix templates files)
+func (wixFile *WixManifest) RewriteFilePaths(out string) error {
 	var err error
 	for i, file := range wixFile.Files.Items {
 		file, err = filepath.Abs(file)
 		if err != nil {
 			return err
 		}
-		wixFile.Files.Items[i], err = filepath.Rel(o, file)
+		wixFile.Files.Items[i], err = filepath.Rel(out, file)
 		if err != nil {
 			return err
 		}
@@ -152,11 +161,21 @@ func (wixFile *WixManifest) RewriteFilePaths(o string) error {
 		if err != nil {
 			return err
 		}
-		r, err := filepath.Rel(o, d)
+		r, err := filepath.Rel(out, d)
 		if err != nil {
 			return err
 		}
 		wixFile.RelDirs = append(wixFile.RelDirs, r)
+	}
+	for i, s := range wixFile.Shortcuts.Items {
+		file, err := filepath.Abs(s.Icon)
+		if err != nil {
+			return err
+		}
+		wixFile.Shortcuts.Items[i].Icon, err = filepath.Rel(out, file)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
