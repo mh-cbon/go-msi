@@ -8,7 +8,7 @@ Pick an msi package [here](https://github.com/mh-cbon/go-msi/releases) !
 
 __deb/rpm__
 
-``sh
+```sh
 curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh \
 | GH=mh-cbon/go-msi sh -xe
 # or
