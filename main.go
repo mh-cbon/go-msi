@@ -296,17 +296,22 @@ func generateTemplates(c *cli.Context) error {
 		return cli.NewExitError("Cannot proceed, manifest file is incomplete", 1)
 	}
 
-	err = wixFile.RewriteFilePaths(out)
-	if err != nil {
-		return cli.NewExitError(err.Error(), 1)
-	}
-
 	if c.IsSet("version") {
 		wixFile.Version = version
 	}
 
 	if c.IsSet("license") {
 		wixFile.License = license
+	}
+
+	err = wixFile.Normalize()
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+
+	err = wixFile.RewriteFilePaths(out)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
 	}
 
 	templates, err := tpls.Find(src)
@@ -418,6 +423,11 @@ func generateWixCommands(c *cli.Context) error {
 		return cli.NewExitError("Cannot proceed, manifest file is incomplete", 1)
 	}
 
+	err = wixFile.Normalize()
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+
 	err = wixFile.RewriteFilePaths(out)
 	if err != nil {
 		return cli.NewExitError(err.Error(), 1)
@@ -495,17 +505,22 @@ func quickMake(c *cli.Context) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	err = wixFile.RewriteFilePaths(out)
-	if err != nil {
-		return cli.NewExitError(err.Error(), 1)
-	}
-
 	if c.IsSet("version") {
 		wixFile.Version = version
 	}
 
 	if c.IsSet("license") {
 		wixFile.License = license
+	}
+
+	err = wixFile.Normalize()
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+
+	err = wixFile.RewriteFilePaths(out)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
 	}
 
 	if wixFile.License != "" {

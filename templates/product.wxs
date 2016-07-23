@@ -12,7 +12,7 @@
 
    <Product Id="*" UpgradeCode="{{.UpgradeCode}}"
             Name="{{.Product}}"
-            Version="{{.Version}}"
+            Version="{{.VersionOk}}"
             Manufacturer="{{.Company}}"
             Language="1033">
 
