@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
-	"strconv"
 	"path/filepath"
+	"strconv"
 
+	"github.com/Masterminds/semver"
 	"github.com/mh-cbon/go-msi/guid"
-  "github.com/Masterminds/semver"
 )
 
 type WixManifest struct {
@@ -187,13 +187,13 @@ func (wixFile *WixManifest) RewriteFilePaths(out string) error {
 
 // Appropriately fix some values for wix/msi rules
 func (wixFile *WixManifest) Normalize() error {
-  // Wix version Field of Product element
-  // does not support semver strings
-  // it supports only something like x.x.x.x
-  // So, if the version has metadata/prerelease values,
-  // lets get ride of those and save the workable version
-  // into VersionOk field
-  wixFile.VersionOk = wixFile.Version
+	// Wix version Field of Product element
+	// does not support semver strings
+	// it supports only something like x.x.x.x
+	// So, if the version has metadata/prerelease values,
+	// lets get ride of those and save the workable version
+	// into VersionOk field
+	wixFile.VersionOk = wixFile.Version
 	v, err := semver.NewVersion(wixFile.Version)
 	if err != nil {
 		return err
@@ -201,7 +201,7 @@ func (wixFile *WixManifest) Normalize() error {
 	okVersion := ""
 	okVersion += strconv.FormatInt(v.Major(), 10)
 	okVersion += "." + strconv.FormatInt(v.Minor(), 10)
-  okVersion += "." + strconv.FormatInt(v.Patch(), 10)
-  wixFile.VersionOk = okVersion
+	okVersion += "." + strconv.FormatInt(v.Patch(), 10)
+	wixFile.VersionOk = okVersion
 	return nil
 }
