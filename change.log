@@ -1,4 +1,14 @@
 
+0.0.32
+
+  * wix: fix minimum/maximum version value of UpgradeVersion field in the product template
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 23 Jul 2016 15:41:56 +0200
+
+
+
 0.0.31
 
   * wix: fix version format for Product element field.
