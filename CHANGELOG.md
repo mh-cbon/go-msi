@@ -1,5 +1,25 @@
 # Changelog - changelog
 
+### 0.0.31
+
+__Changes__
+
+- wix: fix version format for Product element field.
+When version value contains prerelease/metadata, it is not acceptable
+for wix. A new field is added to the manifest VersionOk containing the version
+string without prerelease/metadata value.
+product.wxs template now uses this new VersionOk field
+instead of the original Version field.
+- glide: add semver dependency
+- README: install section
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Sat 23 Jul 2016
+______________
+
 ### 0.0.30
 
 __Changes__
