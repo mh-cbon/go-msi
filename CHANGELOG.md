@@ -1,5 +1,18 @@
 # Changelog - changelog
 
+### 0.0.32
+
+__Changes__
+
+- wix: fix minimum/maximum version value of UpgradeVersion field in the product template
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Sat 23 Jul 2016
+______________
+
 ### 0.0.31
 
 __Changes__
