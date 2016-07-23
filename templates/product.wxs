@@ -21,8 +21,8 @@
       <Media Id="1" Cabinet="product.cab" EmbedCab="yes"/>
 
       <Upgrade Id="{{.UpgradeCode}}">
-         <UpgradeVersion Minimum="{{.Version}}" OnlyDetect="yes" Property="NEWERVERSIONDETECTED"/>
-         <UpgradeVersion Minimum="0.0.0" Maximum="{{.Version}}" IncludeMinimum="yes" IncludeMaximum="no"
+         <UpgradeVersion Minimum="{{.VersionOk}}" OnlyDetect="yes" Property="NEWERVERSIONDETECTED"/>
+         <UpgradeVersion Minimum="0.0.0" Maximum="{{.VersionOk}}" IncludeMinimum="yes" IncludeMaximum="no"
                          Property="OLDERVERSIONBEINGUPGRADED"/>
       </Upgrade>
       <Condition Message="A newer version of this software is already installed.">NOT NEWERVERSIONDETECTED</Condition>
