@@ -37,5 +37,11 @@
         "arguments": ""
       }
     ]
+  },
+  "choco": {
+    "description": "Easy way to generate msi package for a Go project",
+    "project-url": "https://github.com/mh-cbon/go-msi",
+    "tags": "generate go msi nuget chocolatey",
+    "license-url": "https://github.com/mh-cbon/go-msi/blob/master/LICENSE"
   }
 }
