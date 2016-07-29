@@ -1,4 +1,14 @@
 
+0.0.37
+
+  * Fix chocolatey package generation: Tags should not contain 'chocolatey' as a tag.
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Fri, 29 Jul 2016 19:09:04 +0200
+
+
+
 0.0.36
 
   * travis: fix gh secure token
