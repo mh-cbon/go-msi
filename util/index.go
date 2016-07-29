@@ -1,8 +1,8 @@
 package util
 
 import (
-	"os"
 	"io"
+	"os"
 	"os/exec"
 	"path/filepath"
 )

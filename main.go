@@ -628,7 +628,7 @@ func quickMake(c *cli.Context) error {
 			return cli.NewExitError(err.Error(), 1)
 		}
 	} else {
-    fmt.Println("Build files are available in %s", out)
+		fmt.Println("Build files are available in %s", out)
 	}
 
 	fmt.Println("All Done!!")
@@ -677,12 +677,12 @@ func chocoMake(c *cli.Context) error {
 	if err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
-  wixFile.Choco.BuildDir = out
-  wixFile.Choco.MsiFile = filepath.Base(input)
+	wixFile.Choco.BuildDir = out
+	wixFile.Choco.MsiFile = filepath.Base(input)
 
-  if err = util.CopyFile(filepath.Join(wixFile.Choco.BuildDir, wixFile.Choco.MsiFile), input); err!=nil {
+	if err = util.CopyFile(filepath.Join(wixFile.Choco.BuildDir, wixFile.Choco.MsiFile), input); err != nil {
 		return cli.NewExitError(err.Error(), 1)
-  }
+	}
 
 	for _, tpl := range templates {
 		dst := filepath.Join(out, filepath.Base(tpl))
@@ -705,12 +705,12 @@ func chocoMake(c *cli.Context) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-  SrcNupkg := fmt.Sprintf("%s\\%s.%s.nupkg", out, wixFile.Choco.Id, wixFile.VersionOk)
-  DstNupkg := filepath.Base(SrcNupkg)
+	SrcNupkg := fmt.Sprintf("%s\\%s.%s.nupkg", out, wixFile.Choco.Id, wixFile.VersionOk)
+	DstNupkg := filepath.Base(SrcNupkg)
 
-  if err = util.CopyFile(DstNupkg, SrcNupkg); err!=nil {
+	if err = util.CopyFile(DstNupkg, SrcNupkg); err != nil {
 		return cli.NewExitError(err.Error(), 1)
-  }
+	}
 
 	if keep == false {
 		err = os.RemoveAll(out)
@@ -718,8 +718,8 @@ func chocoMake(c *cli.Context) error {
 			return cli.NewExitError(err.Error(), 1)
 		}
 	} else {
-    fmt.Println("Build files are available in %s", out)
-  }
+		fmt.Println("Build files are available in %s", out)
+	}
 
 	fmt.Println("All Done!!")
 

@@ -37,8 +37,8 @@ type ChocoSpec struct {
 	LicenseUrl     string `json:"license-url,omitempty"`
 	IconUrl        string `json:"icon-url,omitempty"`
 	RequireLicense bool   `json:"require-license,omitempty"`
-	MsiFile     string       `json:"-"`
-	BuildDir     string       `json:"-"`
+	MsiFile        string `json:"-"`
+	BuildDir       string `json:"-"`
 }
 
 type WixFiles struct {
@@ -222,22 +222,22 @@ func (wixFile *WixManifest) Normalize() error {
 	okVersion += "." + strconv.FormatInt(v.Patch(), 10)
 	wixFile.VersionOk = okVersion
 
-  // choco fix
-  if wixFile.Choco.Id=="" {
-    wixFile.Choco.Id=wixFile.Product
-  }
-  if wixFile.Choco.Title=="" {
-    wixFile.Choco.Title=wixFile.Product
-  }
-  if wixFile.Choco.Authors=="" {
-    wixFile.Choco.Authors=wixFile.Company
-  }
-  if wixFile.Choco.Owners=="" {
-    wixFile.Choco.Owners=wixFile.Company
-  }
-  if wixFile.Choco.Description=="" {
-    wixFile.Choco.Description=wixFile.Product
-  }
+	// choco fix
+	if wixFile.Choco.Id == "" {
+		wixFile.Choco.Id = wixFile.Product
+	}
+	if wixFile.Choco.Title == "" {
+		wixFile.Choco.Title = wixFile.Product
+	}
+	if wixFile.Choco.Authors == "" {
+		wixFile.Choco.Authors = wixFile.Company
+	}
+	if wixFile.Choco.Owners == "" {
+		wixFile.Choco.Owners = wixFile.Company
+	}
+	if wixFile.Choco.Description == "" {
+		wixFile.Choco.Description = wixFile.Product
+	}
 
 	return nil
 }
