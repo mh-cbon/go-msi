@@ -1,9 +1,8 @@
 
-UNRELEASED
+0.0.34
 
   * build: fix the msi file generation
   * appveyor: artifacts must be created in build_script section
-  * changelog: 0.0.33
 
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
@@ -379,3 +378,5 @@ UNRELEASED
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 19:55:56 +0200
+
+
