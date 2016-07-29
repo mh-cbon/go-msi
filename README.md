@@ -228,12 +228,13 @@ USAGE:
    go-msi choco [command options] [arguments...]
 
 OPTIONS:
-   --path value, -p value   Path to the wix manifest file (default: "wix.json")
-   --src value, -s value    Directory path to the wix templates files (default: "go-msi/templates")
-   --version value          The version of your program
-   --out value, -o value    Directory path to the generated chocolatey build file (default: "builder")
-   --input value, -i value  Path to the msi file to package into the chocolatey package
-   --keep, -k               Keep output directory containing build files (useful for debug)
+   --path value, -p value     Path to the wix manifest file (default: "wix.json")
+   --src value, -s value      Directory path to the wix templates files (default: "go-msi/templates")
+   --version value            The version of your program
+   --out value, -o value      Directory path to the generated chocolatey build file (default: "builder")
+   --input value, -i value    Path to the msi file to package into the chocolatey package
+   --keep, -k                 Keep output directory containing build files (useful for debug)
+   --changelog-cmd, -c value  A command to generate the content of the changelog.
 ```
 
 # Credits
