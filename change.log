@@ -1,5 +1,5 @@
 
-UNRELEASED
+0.0.38
 
   * choco: ensure tags always contains admin value to pass chocolatey validation
 
@@ -418,3 +418,5 @@ UNRELEASED
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 19:55:56 +0200
+
+
