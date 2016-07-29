@@ -16,10 +16,10 @@ __deb/ubuntu/rpm source repositories__
 
 ```sh
 wget -O - https://raw.githubusercontent.com/mh-cbon/latest/master/source.sh \
-| GH=mh-cbon/gh-msi sh -xe
+| GH=mh-cbon/go-msi sh -xe
 # or
 curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/source.sh \
-| GH=mh-cbon/gh-msi sh -xe
+| GH=mh-cbon/go-msi sh -xe
 ```
 
 __deb/ubuntu/rpm__
