@@ -1,5 +1,20 @@
 # Changelog - go-msi
 
+### 0.0.35
+
+__Changes__
+
+- rpm: fix templates path inlusion
+- README: update install section
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Fri 29 Jul 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.34...0.0.35#diff)
+______________
+
 ### 0.0.34
 
 __Changes__
@@ -22,7 +37,6 @@ __Changes__
 - cli: add choco command to generate chocolatey packages.
 - Demo: add choco commands
 - build: update build scripts
-- changelog: 0.0.32
 
 __Contributors__
 
