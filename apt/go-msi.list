@@ -1,0 +1,1 @@
+deb [trusted=yes] https://mh-cbon.github.io/go-msi/apt/public/ all contrib
