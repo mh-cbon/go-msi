@@ -36,35 +36,54 @@ skip_non_tags: true
 environment:
   GOPATH: c:\gopath
   GO15VENDOREXPERIMENT: 1
+  CHOCOKEY:
+    # Change this to your encrypted token value
+    secure: xxxxx
 
 install:
   # wix setup
   - curl -fsSL -o C:\wix310-binaries.zip http://static.wixtoolset.org/releases/v3.10.3.3007/wix310-binaries.zip
   - 7z x C:\wix310-binaries.zip -y -r -oC:\wix310
   - set PATH=C:\wix310;%PATH%
-    # go setup
+  # go setup
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
   - go version
   - go env
-    # glide setup, if your package uses it
+  # glide setup, if your package uses it
   - go get -u github.com/Masterminds/glide
-    # go-msi setup
-  - curl -fsSL -o C:\go-msi.msi https://github.com/mh-cbon/go-msi/releases/download/0.0.22/go-msi-amd64.msi
-  - msiexec.exe /i C:\go-msi.msi /quiet
-  - set PATH=C:\Program Files\go-msi\;%PATH% # for some reason, go-msi path needs to be added manually :(...
+  # go-msi setup, choose one
+  # method 1: static link
+  # - curl -fsSL -o C:\go-msi.msi https://github.com/mh-cbon/go-msi/releases/download/0.0.22/go-msi-amd64.msi
+  # - msiexec.exe /i C:\go-msi.msi /quiet
+  # - set PATH=C:\Program Files\go-msi\;%PATH% # for some reason, go-msi path needs to be added manually :(...
+  # method 2: via gh-api-cli
+  # - curl -fsSL -o C:\latest.bat https://raw.githubusercontent.com/mh-cbon/latest/master/latest.bat
+  # - cmd /C C:\latest.bat mh-cbon go-msi amd64
+  # - set PATH=C:\Program Files\go-msi\;%PATH%
+  # method 3: via chocolatey (tbd available soon)
+  - choco install go-msi -y
+
 
 build_script:
   # your project setup
   - glide install
-  # your project build for both x86/x64 archs
+
+before_deploy:
+  # Change this
+  - set MYAPP=go-msi
   - set GOARCH=386
-  - go build -o go-msi.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go             # Change this
-  # take care to put the results into %APPVEYOR_BUILD_FOLDER%
-  - go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\go-msi-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME% --arch %GOARCH%        # Change this
+  - go build -o %MYAPP%.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
+  - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\%MYAPP%-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME% --arch %GOARCH%
   - set GOARCH=amd64
-  - go build -o go-msi.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go             # Change this
-  # take care to put the results into %APPVEYOR_BUILD_FOLDER%
-  - go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\go-msi-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME% --arch %GOARCH%         # Change this
+  - go build -o %MYAPP%.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
+  - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\%MYAPP%-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME% --arch %GOARCH%
+
+after_deploy:
+  # Change this
+  - set MYAPP=go-msi
+  - .\go-msi.exe choco --input %APPVEYOR_BUILD_FOLDER%\%MYAPP%-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME%
+  - choco push -k="'%CHOCOKEY%'" %MYAPP%.%APPVEYOR_REPO_TAG_NAME%.nupkg
+
 
 # to disable automatic tests
 test: off
@@ -87,7 +106,8 @@ deploy:
     prerelease: false
     description: "Release {APPVEYOR_REPO_TAG_NAME}"
     auth_token:
-      secure: xxxxx                                         # Change this to your encrypted token value
+      # Change this to your encrypted token value
+      secure: xxxxx
     on:
       branch:
         - master
@@ -98,9 +118,19 @@ deploy:
 
 ### Workflow
 
-With this `appveyor.yml` config, you can now create tags and push to get the `msi` files generated and uploaded to your release.
+With this `appveyor.yml` config,
+every time you create a tag and push it on the remote,
+`msi` files are generated and uploaded to your github release.
 
-For an easy way to release, you can use [gump](https://github.com/mh-cbon/gump), with scripts like this,
+`choco` package is generated from the amd64 build,
+and uploaded to your choco account.
+
+[go here](https://ci.appveyor.com/tools/encrypt)
+to generate the secure variable containing your `choco` api key.
+
+For an easy way to release,
+you can use [gump](https://github.com/mh-cbon/gump),
+with a script like this,
 
 ```yml
 scripts:

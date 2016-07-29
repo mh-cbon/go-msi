@@ -100,7 +100,51 @@ If you only `halt` the machine, you can jump to the next section.
 To generate the package, you can run
 
 ```sh
-vagrant winrm -c "cd C:\\vagrant; go-msi make -m go-msi.msi --version 0.0.1"
+vagrant winrm -c "cd C:\\vagrant; go-msi make -m go-msi.msi --version 0.0.1 --arch amd64"
+```
+
+To test install your packages,
+
+```sh
+vagrant winrm -c "msiexec.exe /i C:\\vagrant\\go-msi-amd64.msi /quiet"
+```
+
+To uninstall your package,
+
+```sh
+vagrant winrm -c "msiexec.exe /uninstall C:\\vagrant\\go-msi-amd64.msi /quiet"
+```
+
+### Generate a chocolatey package
+
+Install chocolatey,
+
+```sh
+vagrant winrm -c 'iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex'
+```
+
+Generate the choco package,
+
+```sh
+vagrant winrm -c 'cmd.exe /c "cd C:\\vagrant\\ && go-msi.exe choco --input go-msi-amd64.msi --version 0.0.1"'
+```
+
+Test install the choco package,
+
+```sh
+vagrant winrm -c 'cmd.exe /c "cd C:\\vagrant\\ && choco install go-msi.0.0.1.nupkg -y'
+```
+
+Test uninstall the choco package,
+
+```sh
+vagrant winrm -c 'cmd.exe /c "cd C:\\vagrant\\ && choco uninstall go-msi -y'
+```
+
+Push the choco package,
+
+```sh
+vagrant winrm -c "cmd.exe /c \"cd C:\\vagrant\\ && choco push -k=\"'xxx'\" go-msi.0.0.1.nupkg\""
 ```
 
 Then `halt` the machine.
