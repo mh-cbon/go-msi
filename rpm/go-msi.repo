@@ -1,0 +1,6 @@
+[go-msi]
+name=Generate msi packages
+baseurl=https://mh-cbon.github.io/go-msi/rpm/$basearch/
+enabled=1
+skip_if_unavailable=1
+gpgcheck=0
