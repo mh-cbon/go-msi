@@ -26,15 +26,13 @@ install:
 # to run your custom scripts instead of automatic MSBuild
 build_script:
   - glide install
-
-before_deploy:
-- set MYAPP=go-msi
-- set GOARCH=386
-- go build -o %MYAPP%.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
-- .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\%MYAPP%-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME% --arch %GOARCH%
-- set GOARCH=amd64
-- go build -o %MYAPP%.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
-- .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\%MYAPP%-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME% --arch %GOARCH%
+  - set MYAPP=go-msi
+  - set GOARCH=386
+  - go build -o %MYAPP%.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
+  - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\%MYAPP%-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME% --arch %GOARCH%
+  - set GOARCH=amd64
+  - go build -o %MYAPP%.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
+  - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\%MYAPP%-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME% --arch %GOARCH%
 
 after_deploy:
   - .\go-msi.exe choco --input %APPVEYOR_BUILD_FOLDER%\%MYAPP%-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME%

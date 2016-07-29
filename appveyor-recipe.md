@@ -67,8 +67,6 @@ install:
 build_script:
   # your project setup
   - glide install
-
-before_deploy:
   # Change this
   - set MYAPP=go-msi
   - set GOARCH=386
