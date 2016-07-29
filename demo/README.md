@@ -30,10 +30,6 @@ rm -fr wix310
 rm -fr wix310*zip
 
 # setup the repo
-vagrant winrm -c "mkdir C:\\gow"
-vagrant winrm -c "mkdir C:\\gow\\src"
-vagrant winrm -c "mkdir C:\\gow\\src\\mh-cbon"
-vagrant winrm -c "mkdir C:\\gow\\src\\mh-cbon\\github.com"
 vagrant winrm -c "mkdir C:\\gow\\src\\mh-cbon\\github.com\\demo"
 vagrant winrm -c 'Copy-Item C:\\vagrant\\* -destination C:\\gow\\src\\mh-cbon\\github.com\\demo\\ -recurse -Force'
 vagrant winrm -c 'Dir C:\\gow\\src\\mh-cbon\\github.com\\demo\\'
@@ -51,4 +47,19 @@ vagrant winrm -c 'Dir C:\\Program Files\\hello'
 vagrant winrm -c 'Dir C:\\Program Files\\hello\\assets'
 # uninstall software
 vagrant winrm -c "msiexec.exe /uninstall C:\\gow\\src\\mh-cbon\\github.com\\demo\\hello.msi /quiet"
+```
+
+
+# setup chocolatey
+```sh
+vagrant winrm -c 'iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex'
+```
+
+# generate chocolatey package
+```sh
+vagrant winrm -c 'cmd.exe /c "cd C:\\gow\\src\\mh-cbon\\github.com\\demo\\ && C:\\go-msi\\go-msi.exe choco --input hello.msi --version 0.0.1"'
+vagrant winrm -c 'COPY C:\\gow\\src\\mh-cbon\\github.com\\demo\\hello.0.0.1.nupkg C:\\vagrant\\'
+vagrant winrm -c 'cmd.exe /c "cd C:\\gow\\src\\mh-cbon\\github.com\\demo\\ && choco install hello.0.0.1.nupkg -y"'
+vagrant winrm -c 'cmd.exe /c "cd C:\\gow\\src\\mh-cbon\\github.com\\demo\\ && choco uninstall hello -y"'
+vagrant winrm -c "cmd.exe /c \"cd C:\\gow\\src\\mh-cbon\\github.com\\demo\\ && choco push -k=\"'xxx'\" hello.0.0.1.nupkg\""
 ```
