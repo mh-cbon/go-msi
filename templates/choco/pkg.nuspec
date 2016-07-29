@@ -19,6 +19,9 @@
     {{if gt (.Choco.IconUrl | len) 0}}
     <iconUrl>{{.Choco.IconUrl}}</iconUrl>
     {{end}}
+    {{if gt (.Choco.ChangeLog | len) 0}}
+    <releaseNotes>{{.Choco.ChangeLog}}</releaseNotes>
+    {{end}}
     {{if .Choco.RequireLicense}}
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     {{else}}

@@ -39,6 +39,7 @@ type ChocoSpec struct {
 	RequireLicense bool   `json:"require-license,omitempty"`
 	MsiFile        string `json:"-"`
 	BuildDir       string `json:"-"`
+	ChangeLog      string `json:"-"`
 }
 
 type WixFiles struct {

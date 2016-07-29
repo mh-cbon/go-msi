@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 	"os/exec"
 	"path/filepath"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/mh-cbon/go-msi/util"
 	"github.com/mh-cbon/go-msi/wix"
 	"github.com/urfave/cli"
+  "github.com/mh-cbon/stringexec"
 )
 
 var VERSION = "0.0.0"
@@ -251,6 +253,11 @@ func main() {
 					Name:  "input, i",
 					Value: "",
 					Usage: "Path to the msi file to package into the chocolatey package",
+				},
+				cli.StringFlag{
+					Name:  "changelog-cmd, c",
+					Value: "",
+					Usage: "A command to generate the content of the changlog in the package",
 				},
 				cli.BoolFlag{
 					Name:  "keep, k",
@@ -628,7 +635,7 @@ func quickMake(c *cli.Context) error {
 			return cli.NewExitError(err.Error(), 1)
 		}
 	} else {
-		fmt.Println("Build files are available in %s", out)
+		fmt.Printf("Build files are available in %s\n", out)
 	}
 
 	fmt.Println("All Done!!")
@@ -642,6 +649,7 @@ func chocoMake(c *cli.Context) error {
 	out := c.String("out")
 	input := c.String("input")
 	version := c.String("version")
+	changelogCmd := c.String("changelog-cmd")
 	keep := c.Bool("keep")
 
 	wixFile := manifest.WixManifest{}
@@ -680,6 +688,26 @@ func chocoMake(c *cli.Context) error {
 	wixFile.Choco.BuildDir = out
 	wixFile.Choco.MsiFile = filepath.Base(input)
 
+  if changelogCmd!= "" {
+    windows, err := stringexec.Command(changelogCmd)
+  	if err != nil {
+  		return cli.NewExitError(err.Error(), 1)
+  	}
+  	windows.Stderr = os.Stderr
+    out, err := windows.Output()
+  	if err != nil {
+  		return cli.NewExitError(err.Error(), 1)
+  	}
+    sout := string(out)
+    souts := strings.Split(sout, "\n")
+    if len(souts)>2 {
+      souts = souts[2:]
+    }
+    sout = strings.Join(souts, "\n")
+
+  	wixFile.Choco.ChangeLog = sout
+  }
+
 	if err = util.CopyFile(filepath.Join(wixFile.Choco.BuildDir, wixFile.Choco.MsiFile), input); err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
@@ -706,7 +734,7 @@ func chocoMake(c *cli.Context) error {
 	}
 
 	SrcNupkg := fmt.Sprintf("%s\\%s.%s.nupkg", out, wixFile.Choco.Id, wixFile.VersionOk)
-	DstNupkg := filepath.Base(SrcNupkg)
+	DstNupkg := fmt.Sprintf("%s.%s.nupkg", wixFile.Choco.Id, wixFile.Version)
 
 	if err = util.CopyFile(DstNupkg, SrcNupkg); err != nil {
 		return cli.NewExitError(err.Error(), 1)
@@ -718,9 +746,10 @@ func chocoMake(c *cli.Context) error {
 			return cli.NewExitError(err.Error(), 1)
 		}
 	} else {
-		fmt.Println("Build files are available in %s", out)
+		fmt.Printf("Build files are available in %s\n", out)
 	}
 
+  fmt.Printf("Package copied to %s\n", DstNupkg)
 	fmt.Println("All Done!!")
 
 	return nil
