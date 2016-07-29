@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"strings"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/mh-cbon/go-msi/manifest"
 	"github.com/mh-cbon/go-msi/rtf"
 	"github.com/mh-cbon/go-msi/tpls"
 	"github.com/mh-cbon/go-msi/util"
 	"github.com/mh-cbon/go-msi/wix"
+	"github.com/mh-cbon/stringexec"
 	"github.com/urfave/cli"
-  "github.com/mh-cbon/stringexec"
 )
 
 var VERSION = "0.0.0"
@@ -688,25 +688,25 @@ func chocoMake(c *cli.Context) error {
 	wixFile.Choco.BuildDir = out
 	wixFile.Choco.MsiFile = filepath.Base(input)
 
-  if changelogCmd!= "" {
-    windows, err := stringexec.Command(changelogCmd)
-  	if err != nil {
-  		return cli.NewExitError(err.Error(), 1)
-  	}
-  	windows.Stderr = os.Stderr
-    out, err := windows.Output()
-  	if err != nil {
-  		return cli.NewExitError(err.Error(), 1)
-  	}
-    sout := string(out)
-    souts := strings.Split(sout, "\n")
-    if len(souts)>2 {
-      souts = souts[2:]
-    }
-    sout = strings.Join(souts, "\n")
+	if changelogCmd != "" {
+		windows, err := stringexec.Command(changelogCmd)
+		if err != nil {
+			return cli.NewExitError(err.Error(), 1)
+		}
+		windows.Stderr = os.Stderr
+		out, err := windows.Output()
+		if err != nil {
+			return cli.NewExitError(err.Error(), 1)
+		}
+		sout := string(out)
+		souts := strings.Split(sout, "\n")
+		if len(souts) > 2 {
+			souts = souts[2:]
+		}
+		sout = strings.Join(souts, "\n")
 
-  	wixFile.Choco.ChangeLog = sout
-  }
+		wixFile.Choco.ChangeLog = sout
+	}
 
 	if err = util.CopyFile(filepath.Join(wixFile.Choco.BuildDir, wixFile.Choco.MsiFile), input); err != nil {
 		return cli.NewExitError(err.Error(), 1)
@@ -749,7 +749,7 @@ func chocoMake(c *cli.Context) error {
 		fmt.Printf("Build files are available in %s\n", out)
 	}
 
-  fmt.Printf("Package copied to %s\n", DstNupkg)
+	fmt.Printf("Package copied to %s\n", DstNupkg)
 	fmt.Println("All Done!!")
 
 	return nil
