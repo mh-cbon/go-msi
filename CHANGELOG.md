@@ -1,5 +1,19 @@
 # Changelog - go-msi
 
+### 0.0.36
+
+__Changes__
+
+- travis: fix gh secure token
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Fri 29 Jul 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.35...0.0.36#diff)
+______________
+
 ### 0.0.35
 
 __Changes__
