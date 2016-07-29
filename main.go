@@ -222,6 +222,42 @@ func main() {
 				},
 			},
 		},
+		{
+			Name:   "choco",
+			Usage:  "Generate a chocolatey package of your msi files",
+			Action: chocoMake,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "path, p",
+					Value: "wix.json",
+					Usage: "Path to the wix manifest file",
+				},
+				cli.StringFlag{
+					Name:  "src, s",
+					Value: filepath.Join(TPLPATH, "templates", "choco"),
+					Usage: "Directory path to the wix templates files",
+				},
+				cli.StringFlag{
+					Name:  "version",
+					Value: "",
+					Usage: "The version of your program",
+				},
+				cli.StringFlag{
+					Name:  "out, o",
+					Value: tmpBuildDir,
+					Usage: "Directory path to the generated chocolatey build file",
+				},
+				cli.StringFlag{
+					Name:  "input, i",
+					Value: "",
+					Usage: "Path to the msi file to package into the chocolatey package",
+				},
+				cli.BoolFlag{
+					Name:  "keep, k",
+					Usage: "Keep output directory containing build files (useful for debug)",
+				},
+			},
+		},
 	}
 
 	app.Run(os.Args)
@@ -314,7 +350,7 @@ func generateTemplates(c *cli.Context) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	templates, err := tpls.Find(src)
+	templates, err := tpls.Find(src, "*.wxs")
 	if err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
@@ -397,7 +433,7 @@ func generateWixCommands(c *cli.Context) error {
 	msi := c.String("msi")
 	arch := c.String("arch")
 
-	templates, err := tpls.Find(src)
+	templates, err := tpls.Find(src, "*.wxs")
 	if err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
@@ -537,7 +573,7 @@ func quickMake(c *cli.Context) error {
 		}
 	}
 
-	templates, err := tpls.Find(src)
+	templates, err := tpls.Find(src, "*.wxs")
 	if err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
@@ -591,7 +627,99 @@ func quickMake(c *cli.Context) error {
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
+	} else {
+    fmt.Println("Build files are available in %s", out)
 	}
+
+	fmt.Println("All Done!!")
+
+	return nil
+}
+
+func chocoMake(c *cli.Context) error {
+	path := c.String("path")
+	src := c.String("src")
+	out := c.String("out")
+	input := c.String("input")
+	version := c.String("version")
+	keep := c.Bool("keep")
+
+	wixFile := manifest.WixManifest{}
+	err := wixFile.Load(path)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+
+	if err = os.RemoveAll(out); err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+	if err = os.MkdirAll(out, 0744); err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+
+	if c.IsSet("version") {
+		wixFile.Version = version
+	}
+
+	if err = wixFile.Normalize(); err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+
+	templates, err := tpls.Find(src, "*")
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+	if len(templates) == 0 {
+		return cli.NewExitError("No templates found in this directory", 1)
+	}
+
+	out, err = filepath.Abs(out)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+  wixFile.Choco.BuildDir = out
+  wixFile.Choco.MsiFile = filepath.Base(input)
+
+  if err = util.CopyFile(filepath.Join(wixFile.Choco.BuildDir, wixFile.Choco.MsiFile), input); err!=nil {
+		return cli.NewExitError(err.Error(), 1)
+  }
+
+	for _, tpl := range templates {
+		dst := filepath.Join(out, filepath.Base(tpl))
+		err = tpls.GenerateTemplate(&wixFile, tpl, dst)
+		if err != nil {
+			return cli.NewExitError(err.Error(), 1)
+		}
+	}
+
+	bin, err := exec.LookPath("cpack")
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+	oCmd := exec.Command(bin)
+	oCmd.Dir = out
+	oCmd.Stdout = os.Stdout
+	oCmd.Stderr = os.Stderr
+	err = oCmd.Run()
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+
+  SrcNupkg := fmt.Sprintf("%s\\%s.%s.nupkg", out, wixFile.Choco.Id, wixFile.VersionOk)
+  DstNupkg := filepath.Base(SrcNupkg)
+
+  if err = util.CopyFile(DstNupkg, SrcNupkg); err!=nil {
+		return cli.NewExitError(err.Error(), 1)
+  }
+
+	if keep == false {
+		err = os.RemoveAll(out)
+		if err != nil {
+			return cli.NewExitError(err.Error(), 1)
+		}
+	} else {
+    fmt.Println("Build files are available in %s", out)
+  }
 
 	fmt.Println("All Done!!")
 

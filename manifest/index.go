@@ -23,6 +23,22 @@ type WixManifest struct {
 	RelDirs     []string     `json:"-"`
 	Env         WixEnvList   `json:"env,omitempty"`
 	Shortcuts   WixShortcuts `json:"shortcuts,omitempty"`
+	Choco       ChocoSpec    `json:"choco,omitempty"`
+}
+
+type ChocoSpec struct {
+	Id             string `json:"id,omitempty"`
+	Title          string `json:"title,omitempty"`
+	Authors        string `json:"authors,omitempty"`
+	Owners         string `json:"owners,omitempty"`
+	Description    string `json:"description,omitempty"`
+	ProjectUrl     string `json:"project-url,omitempty"`
+	Tags           string `json:"tags,omitempty"`
+	LicenseUrl     string `json:"license-url,omitempty"`
+	IconUrl        string `json:"icon-url,omitempty"`
+	RequireLicense bool   `json:"require-license,omitempty"`
+	MsiFile     string       `json:"-"`
+	BuildDir     string       `json:"-"`
 }
 
 type WixFiles struct {
@@ -186,6 +202,8 @@ func (wixFile *WixManifest) RewriteFilePaths(out string) error {
 }
 
 // Appropriately fix some values for wix/msi rules
+// applies defaults values on the choco property to
+// generate a nuget package
 func (wixFile *WixManifest) Normalize() error {
 	// Wix version Field of Product element
 	// does not support semver strings
@@ -203,5 +221,23 @@ func (wixFile *WixManifest) Normalize() error {
 	okVersion += "." + strconv.FormatInt(v.Minor(), 10)
 	okVersion += "." + strconv.FormatInt(v.Patch(), 10)
 	wixFile.VersionOk = okVersion
+
+  // choco fix
+  if wixFile.Choco.Id=="" {
+    wixFile.Choco.Id=wixFile.Product
+  }
+  if wixFile.Choco.Title=="" {
+    wixFile.Choco.Title=wixFile.Product
+  }
+  if wixFile.Choco.Authors=="" {
+    wixFile.Choco.Authors=wixFile.Company
+  }
+  if wixFile.Choco.Owners=="" {
+    wixFile.Choco.Owners=wixFile.Company
+  }
+  if wixFile.Choco.Description=="" {
+    wixFile.Choco.Description=wixFile.Product
+  }
+
 	return nil
 }

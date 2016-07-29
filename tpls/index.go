@@ -10,8 +10,8 @@ import (
 )
 
 // find all wxs fies in given directory
-func Find(srcDir string) ([]string, error) {
-	glob := filepath.Join(srcDir, "*.wxs")
+func Find(srcDir string, pattern string) ([]string, error) {
+	glob := filepath.Join(srcDir, pattern)
 	return zglob.Glob(glob)
 }
 

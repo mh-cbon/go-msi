@@ -20,7 +20,6 @@
 
             {{if gt (.License | len) 0}}
             <Text SourceFile="{{.License}}" />
-            {{else}}
             {{end}}
 
             </Control>

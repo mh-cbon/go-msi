@@ -101,10 +101,10 @@ GLOBAL OPTIONS:
 
 ```sh
 NAME:
-   main check-json - Check the JSON wix manifest
+   go-msi check-json - Check the JSON wix manifest
 
 USAGE:
-   main check-json [command options] [arguments...]
+   go-msi check-json [command options] [arguments...]
 
 OPTIONS:
    --path value, -p value	Path to the wix manifest file (default: "wix.json")
@@ -114,10 +114,10 @@ OPTIONS:
 
 ```sh
 NAME:
-   main set-guid - Sets appropriate guids in your wix manifest
+   go-msi set-guid - Sets appropriate guids in your wix manifest
 
 USAGE:
-   main set-guid [command options] [arguments...]
+   go-msi set-guid [command options] [arguments...]
 
 OPTIONS:
    --path value, -p value	Path to the wix manifest file (default: "wix.json")
@@ -127,10 +127,10 @@ OPTIONS:
 
 ```sh
 NAME:
-   main generate-templates - Generate wix templates
+   go-msi generate-templates - Generate wix templates
 
 USAGE:
-   main generate-templates [command options] [arguments...]
+   go-msi generate-templates [command options] [arguments...]
 
 OPTIONS:
    --path value, -p value     Path to the wix manifest file (default: "wix.json")
@@ -144,10 +144,10 @@ OPTIONS:
 
 ```sh
 NAME:
-   main to-windows - Write Windows1252 encoded file
+   go-msi to-windows - Write Windows1252 encoded file
 
 USAGE:
-   main to-windows [command options] [arguments...]
+   go-msi to-windows [command options] [arguments...]
 
 OPTIONS:
    --src value, -s value  Path to an UTF-8 encoded file
@@ -158,10 +158,10 @@ OPTIONS:
 
 ```sh
 NAME:
-   main to-rtf - Write RTF formatted file
+   go-msi to-rtf - Write RTF formatted file
 
 USAGE:
-   main to-rtf [command options] [arguments...]
+   go-msi to-rtf [command options] [arguments...]
 
 OPTIONS:
    --src value, -s value   Path to a text file
@@ -173,10 +173,10 @@ OPTIONS:
 
 ```sh
 NAME:
-   main gen-wix-cmd - Generate a batch file of Wix commands to run
+   go-msi gen-wix-cmd - Generate a batch file of Wix commands to run
 
 USAGE:
-   main gen-wix-cmd [command options] [arguments...]
+   go-msi gen-wix-cmd [command options] [arguments...]
 
 OPTIONS:
    --path value, -p value  Path to the wix manifest file (default: "wix.json")
@@ -190,10 +190,10 @@ OPTIONS:
 
 ```sh
 NAME:
-   main run-wix-cmd - Run the batch file of Wix commands
+   go-msi run-wix-cmd - Run the batch file of Wix commands
 
 USAGE:
-   main run-wix-cmd [command options] [arguments...]
+   go-msi run-wix-cmd [command options] [arguments...]
 
 OPTIONS:
    --out value, -o value	Directory path to the generated wix cmd file (default: "builder")
@@ -203,10 +203,10 @@ OPTIONS:
 
 ```sh
 NAME:
-   main make - All-in-one command to make MSI files
+   go-msi make - All-in-one command to make MSI files
 
 USAGE:
-   main make [command options] [arguments...]
+   go-msi make [command options] [arguments...]
 
 OPTIONS:
    --path value, -p value       Path to the wix manifest file (default: "wix.json")
@@ -216,6 +216,24 @@ OPTIONS:
    --msi value, -m value        Path to write resulting msi file to
    --version value              The version of your program
    --license value, -l value    Path to the license file
+```
+
+### choco
+
+```sh
+NAME:
+   go-msi choco - Generate a chocolatey package of your msi files
+
+USAGE:
+   go-msi choco [command options] [arguments...]
+
+OPTIONS:
+   --path value, -p value   Path to the wix manifest file (default: "wix.json")
+   --src value, -s value    Directory path to the wix templates files (default: "go-msi/templates")
+   --version value          The version of your program
+   --out value, -o value    Directory path to the generated chocolatey build file (default: "builder")
+   --input value, -i value  Path to the msi file to package into the chocolatey package
+   --keep, -k               Keep output directory containing build files (useful for debug)
 ```
 
 # Credits
