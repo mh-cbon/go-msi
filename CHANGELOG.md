@@ -1,5 +1,19 @@
 # Changelog - go-msi
 
+### 0.0.37
+
+__Changes__
+
+- Fix chocolatey package generation: Tags should not contain 'chocolatey' as a tag.
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Fri 29 Jul 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.36...0.0.37#diff)
+______________
+
 ### 0.0.36
 
 __Changes__
