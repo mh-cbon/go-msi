@@ -1,4 +1,21 @@
-# Changelog - changelog
+# Changelog - go-msi
+
+### 0.0.33
+
+__Changes__
+
+- cli: add choco command to generate chocolatey packages.
+- Demo: add choco commands
+- build: update build scripts
+- changelog: 0.0.32
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Fri 29 Jul 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.32...0.0.33#diff)
+______________
 
 ### 0.0.32
 
@@ -10,7 +27,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 23 Jul 2016
+Released by mh-cbon, Sat 23 Jul 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.31...0.0.32#diff)
 ______________
 
 ### 0.0.31
@@ -18,11 +36,11 @@ ______________
 __Changes__
 
 - wix: fix version format for Product element field.
-When version value contains prerelease/metadata, it is not acceptable
-for wix. A new field is added to the manifest VersionOk containing the version
-string without prerelease/metadata value.
-product.wxs template now uses this new VersionOk field
-instead of the original Version field.
+  When version value contains prerelease/metadata, it is not acceptable
+  for wix. A new field is added to the manifest VersionOk containing the version
+  string without prerelease/metadata value.
+  product.wxs template now uses this new VersionOk field
+  instead of the original Version field.
 - glide: add semver dependency
 - README: install section
 
@@ -30,7 +48,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 23 Jul 2016
+Released by mh-cbon, Sat 23 Jul 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.30...0.0.31#diff)
 ______________
 
 ### 0.0.30
@@ -43,7 +62,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Fri 15 Jul 2016
+Released by mh-cbon, Fri 15 Jul 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.29...0.0.30#diff)
 ______________
 
 ### 0.0.29
@@ -56,7 +76,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Fri 15 Jul 2016
+Released by mh-cbon, Fri 15 Jul 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.28...0.0.29#diff)
 ______________
 
 ### 0.0.28
@@ -69,7 +90,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Fri 15 Jul 2016
+Released by mh-cbon, Fri 15 Jul 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.27...0.0.28#diff)
 ______________
 
 ### 0.0.27
@@ -83,7 +105,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Fri 15 Jul 2016
+Released by mh-cbon, Fri 15 Jul 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.26...0.0.27#diff)
 ______________
 
 ### 0.0.26
@@ -96,7 +119,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Fri 15 Jul 2016
+Released by mh-cbon, Fri 15 Jul 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.25...0.0.26#diff)
 ______________
 
 ### 0.0.25
@@ -113,7 +137,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Fri 15 Jul 2016
+Released by mh-cbon, Fri 15 Jul 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.24...0.0.25#diff)
 ______________
 
 ### 0.0.24
@@ -129,7 +154,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Tue 12 Jul 2016
+Released by mh-cbon, Tue 12 Jul 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.23...0.0.24#diff)
 ______________
 
 ### 0.0.23
@@ -151,7 +177,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Mon 11 Jul 2016
+Released by mh-cbon, Mon 11 Jul 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.22...0.0.23#diff)
 ______________
 
 ### 0.0.22
@@ -165,7 +192,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sun 26 Jun 2016
+Released by mh-cbon, Sun 26 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.21...0.0.22#diff)
 ______________
 
 ### 0.0.21
@@ -181,7 +209,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sun 26 Jun 2016
+Released by mh-cbon, Sun 26 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.20...0.0.21#diff)
 ______________
 
 ### 0.0.20
@@ -195,7 +224,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sun 26 Jun 2016
+Released by mh-cbon, Sun 26 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.19...0.0.20#diff)
 ______________
 
 ### 0.0.19
@@ -211,7 +241,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sun 26 Jun 2016
+Released by mh-cbon, Sun 26 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.18...0.0.19#diff)
 ______________
 
 ### 0.0.18
@@ -226,7 +257,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sun 26 Jun 2016
+Released by mh-cbon, Sun 26 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.17...0.0.18#diff)
 ______________
 
 ### 0.0.17
@@ -239,7 +271,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 25 Jun 2016
+Released by mh-cbon, Sat 25 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.16...0.0.17#diff)
 ______________
 
 ### 0.0.16
@@ -252,7 +285,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 25 Jun 2016
+Released by mh-cbon, Sat 25 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.15...0.0.16#diff)
 ______________
 
 ### 0.0.15
@@ -268,7 +302,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 25 Jun 2016
+Released by mh-cbon, Sat 25 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.14...0.0.15#diff)
 ______________
 
 ### 0.0.14
@@ -281,7 +316,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 25 Jun 2016
+Released by mh-cbon, Sat 25 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.13...0.0.14#diff)
 ______________
 
 ### 0.0.13
@@ -294,7 +330,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 25 Jun 2016
+Released by mh-cbon, Sat 25 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.12...0.0.13#diff)
 ______________
 
 ### 0.0.12
@@ -307,7 +344,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 25 Jun 2016
+Released by mh-cbon, Sat 25 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.11...0.0.12#diff)
 ______________
 
 ### 0.0.11
@@ -320,7 +358,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 25 Jun 2016
+Released by mh-cbon, Sat 25 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.10...0.0.11#diff)
 ______________
 
 ### 0.0.10
@@ -333,7 +372,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 25 Jun 2016
+Released by mh-cbon, Sat 25 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.9...0.0.10#diff)
 ______________
 
 ### 0.0.9
@@ -346,7 +386,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 25 Jun 2016
+Released by mh-cbon, Sat 25 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.8...0.0.9#diff)
 ______________
 
 ### 0.0.8
@@ -359,7 +400,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 25 Jun 2016
+Released by mh-cbon, Sat 25 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.7...0.0.8#diff)
 ______________
 
 ### 0.0.7
@@ -372,7 +414,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 25 Jun 2016
+Released by mh-cbon, Sat 25 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.6...0.0.7#diff)
 ______________
 
 ### 0.0.6
@@ -385,7 +428,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 25 Jun 2016
+Released by mh-cbon, Sat 25 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.5...0.0.6#diff)
 ______________
 
 ### 0.0.5
@@ -398,7 +442,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 25 Jun 2016
+Released by mh-cbon, Sat 25 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.4...0.0.5#diff)
 ______________
 
 ### 0.0.4
@@ -411,7 +456,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 25 Jun 2016
+Released by mh-cbon, Sat 25 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.3...0.0.4#diff)
 ______________
 
 ### 0.0.3
@@ -425,7 +471,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 25 Jun 2016
+Released by mh-cbon, Sat 25 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.2...0.0.3#diff)
 ______________
 
 ### 0.0.2
@@ -438,7 +485,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 25 Jun 2016
+Released by mh-cbon, Sat 25 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.1...0.0.2#diff)
 ______________
 
 ### 0.0.1
@@ -451,7 +499,8 @@ __Contributors__
 
 - mh-cbon
 
-Released by mh-cbon, Sat 25 Jun 2016
+Released by mh-cbon, Sat 25 Jun 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/f4041400c510163f8e0aa684d68ebbc3e9ad4e44...0.0.1#diff)
 ______________
 
 
