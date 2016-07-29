@@ -6,7 +6,23 @@ Easy way to generate msi package for a Go project.
 
 Pick an msi package [here](https://github.com/mh-cbon/go-msi/releases) !
 
-__deb/rpm__
+__chocolatey__
+
+```sh
+choco install go-msi
+```
+
+__deb/ubuntu/rpm source repositories__
+
+```sh
+wget -O - https://raw.githubusercontent.com/mh-cbon/latest/master/source.sh \
+| GH=mh-cbon/gh-msi sh -xe
+# or
+curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/source.sh \
+| GH=mh-cbon/gh-msi sh -xe
+```
+
+__deb/ubuntu/rpm__
 
 ```sh
 curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh \
