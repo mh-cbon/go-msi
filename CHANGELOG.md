@@ -1,5 +1,19 @@
 # Changelog - go-msi
 
+### 0.0.38
+
+__Changes__
+
+- choco: ensure tags always contains admin value to pass chocolatey validation
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Fri 29 Jul 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.37...0.0.38#diff)
+______________
+
 ### 0.0.37
 
 __Changes__
