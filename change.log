@@ -1,4 +1,15 @@
 
+0.0.35
+
+  * rpm: fix templates path inlusion
+  * README: update install section
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Fri, 29 Jul 2016 18:42:52 +0200
+
+
+
 0.0.34
 
   * build: fix the msi file generation
@@ -15,7 +26,6 @@
   * cli: add choco command to generate chocolatey packages.
   * Demo: add choco commands
   * build: update build scripts
-  * changelog: 0.0.32
 
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
