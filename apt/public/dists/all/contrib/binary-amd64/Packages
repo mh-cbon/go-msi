@@ -13,8 +13,8 @@ SHA1: a1acb7bb561831b7a62067e602154b24c169cf58
 SHA256: 84a5b2843bd33ada95c384a826f54a9c52d4499531a7caa87b776b37061421e6
 SHA512: bf6529ff49bed026a8abc7cefcdf6faa612b6bb96a3c2b953e498f5dd36f6d9b56c3067e05ffc04179c8d301610f7c0053d736018704ebe6b80205ca602bc0d2
 Description: Generate msi packages
-Homepage: http://github.com/mh-cbon/go-msi
 Package-Type: deb
+Homepage: http://github.com/mh-cbon/go-msi
 
 Package: go-msi
 Priority: extra
@@ -31,8 +31,8 @@ SHA1: 149ed0bbd334d6c17d780489600a69c71bd1f720
 SHA256: 95d7d03e59a6104e3282db940e301e2276209a68f7a0d6c20d93099e2a01ce79
 SHA512: b116fdd057c92d0e275562a5fbeb6dce9e3129e01f2a5bc7a4881098dfb346a77e86cb30916181447855e44e5837a7026ae0518ad5e3940db37535ece7cf4a46
 Description: Generate msi packages
-Homepage: http://github.com/mh-cbon/go-msi
 Package-Type: deb
+Homepage: http://github.com/mh-cbon/go-msi
 
 Package: go-msi
 Priority: extra
@@ -49,8 +49,8 @@ SHA1: 2436a23f7736a62db039f3e83ecb610981895abc
 SHA256: dacd5ae948568efb8c6d45d6f5e58bb3b8352147e3f59bba7b675fcc3431979f
 SHA512: cd1543dcd1cff29dad348ef7842d90fa679acb53985eecc3481886ca1816150343035a7f38744440ee656453b8cd3e48c51e6c533bcd546a8bea8b4221c3bc0d
 Description: Generate msi packages
-Package-Type: deb
 Homepage: http://github.com/mh-cbon/go-msi
+Package-Type: deb
 
 Package: go-msi
 Priority: extra
@@ -67,8 +67,8 @@ SHA1: f5daa75bcd140bca3c2ee7386f9e3c4e7e55bbf6
 SHA256: f8a57acee07f50755b7d7df33949fc290cffbeefb0a83342dc4e3531ea3e1a57
 SHA512: 7e1bba12f84666f10dbb38f87dae5aca7d0f36fd2555c4d4dd099bbbb931bbf2166fbdef02ddf60b577477b83c71e6cd88ff02a7b9db06c71597e3c92872e5fa
 Description: Generate msi packages
-Package-Type: deb
 Homepage: http://github.com/mh-cbon/go-msi
+Package-Type: deb
 
 Package: go-msi
 Priority: extra
@@ -103,8 +103,8 @@ SHA1: ee63d74e250c3e91dfeb68521f24dc295ced98cc
 SHA256: 1160b7a4b13761320c2acf1e8cff00a47af3d694f71a5e959154a7e65be1de40
 SHA512: 9695cc79d30cb538153763dbe1c82dec67a39e4c008265e0bd78177fcd404924c4168c4ac20ddedb9af412b8976701ad245bb0ef2cc4ab668a2e2b26943fca6c
 Description: Generate msi packages
-Package-Type: deb
 Homepage: http://github.com/mh-cbon/go-msi
+Package-Type: deb
 
 Package: go-msi
 Priority: extra
