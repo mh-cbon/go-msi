@@ -1,5 +1,20 @@
 # Changelog - go-msi
 
+### 0.0.34
+
+__Changes__
+
+- build: fix the msi file generation
+- appveyor: artifacts must be created in build_script section
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Fri 29 Jul 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.33...0.0.34#diff)
+______________
+
 ### 0.0.33
 
 __Changes__
