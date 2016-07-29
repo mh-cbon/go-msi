@@ -1,4 +1,16 @@
 
+UNRELEASED
+
+  * build: fix the msi file generation
+  * appveyor: artifacts must be created in build_script section
+  * changelog: 0.0.33
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Fri, 29 Jul 2016 18:33:07 +0200
+
+
+
 0.0.33
 
   * cli: add choco command to generate chocolatey packages.
@@ -367,5 +379,3 @@
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 19:55:56 +0200
-
-
