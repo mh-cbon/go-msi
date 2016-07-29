@@ -239,6 +239,7 @@ func (wixFile *WixManifest) Normalize() error {
 	if wixFile.Choco.Description == "" {
 		wixFile.Choco.Description = wixFile.Product
 	}
+  wixFile.Choco.Tags += " admin" // required to pass chocolatey validation..
 
 	return nil
 }
