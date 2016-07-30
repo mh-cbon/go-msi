@@ -54,7 +54,7 @@ deploy:
     prerelease: false
     desription: "Release %APPVEYOR_REPO_TAG_NAME%"
     auth_token:
-      secure: 0bFEmev7o0X8xaNvx9T+h+uziLWt0p5aYRHY0w5mVr78XBvS9vtWMDUqpgMs95FZ
+      secure: WVMaMjrLzXN8YNcnFRfcucTYWtvoDeE/4b2TUGQBZDvv7u+ERBQ///z5Q8qYSt0L
     on:
       branch:
         - master
