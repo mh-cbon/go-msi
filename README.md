@@ -262,3 +262,5 @@ A big big thanks to
 - `Helge Klein`, which i do not know personally, but made this project possible by sharing a real world example at
 https://helgeklein.com/blog/2014/09/real-world-example-wix-msi-application-installer/
 - all SO contributors on `wix` tag.
+
+test
