@@ -5,6 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+  "encoding/hex"
+  "crypto/sha256"
 )
 
 // Find path of the current binary file on the file system
@@ -38,4 +40,17 @@ func CopyFile(dst, src string) error {
 		return err
 	}
 	return d.Close()
+}
+
+func ComputeSha256(filepath string) (string, error) {
+  hasher := sha256.New()
+  f, err := os.Open(filepath)
+  if err != nil {
+      return "", err
+  }
+  defer f.Close()
+  if _, err := io.Copy(hasher, f); err != nil {
+      return "", err
+  }
+  return hex.EncodeToString(hasher.Sum(nil))
 }

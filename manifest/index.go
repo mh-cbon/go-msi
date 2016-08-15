@@ -38,6 +38,7 @@ type ChocoSpec struct {
 	IconUrl        string `json:"icon-url,omitempty"`
 	RequireLicense bool   `json:"require-license,omitempty"`
 	MsiFile        string `json:"-"`
+	MsiSum         string `json:"-"`
 	BuildDir       string `json:"-"`
 	ChangeLog      string `json:"-"`
 }
