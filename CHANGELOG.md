@@ -1,5 +1,21 @@
 # Changelog - go-msi
 
+### 0.0.39
+
+__Changes__
+
+- appveyor: update choco push key
+- choco: add checksum support. Closes #1
+- choco: fix pack command invokation, it was colliding with cmake
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Mon 15 Aug 2016 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.38...0.0.39#diff)
+______________
+
 ### 0.0.38
 
 __Changes__
