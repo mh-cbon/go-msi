@@ -52,5 +52,5 @@ func ComputeSha256(filepath string) (string, error) {
   if _, err := io.Copy(hasher, f); err != nil {
       return "", err
   }
-  return hex.EncodeToString(hasher.Sum(nil))
+  return hex.EncodeToString(hasher.Sum(nil)), nil
 }

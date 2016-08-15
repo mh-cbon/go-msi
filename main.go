@@ -687,7 +687,10 @@ func chocoMake(c *cli.Context) error {
 	}
 	wixFile.Choco.BuildDir = out
 	wixFile.Choco.MsiFile = filepath.Base(input)
-	wixFile.Choco.MsiSum = util.ComputeSha256(input)
+	wixFile.Choco.MsiSum, err = util.ComputeSha256(input)
+  if err != nil {
+    return cli.NewExitError(err.Error(), 1)
+  }
 
 	if changelogCmd != "" {
 		windows, err := stringexec.Command(changelogCmd)
