@@ -720,11 +720,11 @@ func chocoMake(c *cli.Context) error {
 		}
 	}
 
-	bin, err := exec.LookPath("cpack")
+	bin, err := exec.LookPath("choco")
 	if err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
-	oCmd := exec.Command(bin)
+	oCmd := exec.Command(bin, "pack")
 	oCmd.Dir = out
 	oCmd.Stdout = os.Stdout
 	oCmd.Stderr = os.Stderr
