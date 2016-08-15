@@ -1,5 +1,5 @@
 
-UNRELEASED
+0.0.39
 
   * appveyor: update choco push key
   * choco: add checksum support. Closes #1
@@ -430,3 +430,5 @@ UNRELEASED
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 25 Jun 2016 19:55:56 +0200
+
+
