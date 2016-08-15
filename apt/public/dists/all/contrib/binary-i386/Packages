@@ -5,6 +5,24 @@ Installed-Size: 3.9 kB
 Maintainer: mh-cbon <mh-cbon@users.noreply.github.com>
 Architecture: i386
 Source: go-msi
+Version: 0.0.39
+Filename: pool/contrib/g/go-msi/go-msi-0.0.39_386.deb
+Size: 1042826
+MD5sum: 8a325c37edcdd62f108addce4f4c547a
+SHA1: a38a6ca692dc819aeae63fe5ea3ebe1931b2ef76
+SHA256: 7f0133c7d0bd96d547e1bb5837206c3f7d009cef0ae1fe4fa5f536c495ed60cc
+SHA512: ba07e246d405199cf004e0d29a99427a8e8e32e752a3686a6c9573ddea03919c6faf3c844d15f924b44a061140c45194ba41906984f88486e264612cc7a309d4
+Description: Generate msi packages
+Package-Type: deb
+Homepage: http://github.com/mh-cbon/go-msi
+
+Package: go-msi
+Priority: extra
+Section: unknown
+Installed-Size: 3.9 kB
+Maintainer: mh-cbon <mh-cbon@users.noreply.github.com>
+Architecture: i386
+Source: go-msi
 Version: 0.0.38
 Filename: pool/contrib/g/go-msi/go-msi-0.0.38_386.deb
 Size: 1034864
@@ -13,8 +31,8 @@ SHA1: 34d313b73302d63f8aa79a706c8acb9e2af185b8
 SHA256: 3e965db92aa6a83b1d3cd796629e7044283def3fd1cf14dd9e9d92a9c67f1a61
 SHA512: 19e579549b0449379df1b341b047a08807310d51c4846585aaaa593e55267b8b0cb8817b560d171b0d3113bd5d10c5aa7fad18f536d4fd5eedeaad70909ff310
 Description: Generate msi packages
-Package-Type: deb
 Homepage: http://github.com/mh-cbon/go-msi
+Package-Type: deb
 
 Package: go-msi
 Priority: extra
@@ -67,8 +85,8 @@ SHA1: 026c0f8b669d0142499f62657a42e3f3786ff271
 SHA256: 576c501c72b316da1ce484187bec297800dabd36c565b1b564ec2c6efc7a82fe
 SHA512: cc5519f96952d68565eb73d6c04ec8bb26ffd1d64e490dfb18893afcefbe7447d6b03fe0a91f6153fe1b6af99ca381becd644ed0592edabb5e2a7a6486b48d85
 Description: Generate msi packages
-Package-Type: deb
 Homepage: http://github.com/mh-cbon/go-msi
+Package-Type: deb
 
 Package: go-msi
 Priority: extra
@@ -157,6 +175,6 @@ SHA1: f969733bb3b6b038a1c19730e8e7238d796cfd2f
 SHA256: 92fd1e0c848ea35142d7d866dda20f0333af166d92241c40f01898a094616367
 SHA512: 0b8fc5d003c7c2c3ede16e55e9b2f9bbaaffe1f0a3b4e8ef3fe6f9269d9797c04f8bb2c7db6a85a4067963328a2f724e52b7083f59f04b5dd1dfd0a06f4c6def
 Description: Generate msi packages
-Homepage: http://github.com/mh-cbon/go-msi
 Package-Type: deb
+Homepage: http://github.com/mh-cbon/go-msi
 
