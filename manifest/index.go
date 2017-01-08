@@ -11,6 +11,7 @@ import (
 	"github.com/mh-cbon/go-msi/guid"
 )
 
+// WixManifest is the struct to decode a wix.json file.
 type WixManifest struct {
 	Product     string       `json:"product"`
 	Company     string       `json:"company"`
@@ -26,16 +27,17 @@ type WixManifest struct {
 	Choco       ChocoSpec    `json:"choco,omitempty"`
 }
 
+// ChocoSpec is the struct to decode the choco key of a wix.json file.
 type ChocoSpec struct {
-	Id             string `json:"id,omitempty"`
+	ID             string `json:"id,omitempty"`
 	Title          string `json:"title,omitempty"`
 	Authors        string `json:"authors,omitempty"`
 	Owners         string `json:"owners,omitempty"`
 	Description    string `json:"description,omitempty"`
-	ProjectUrl     string `json:"project-url,omitempty"`
+	ProjectURL     string `json:"project-url,omitempty"`
 	Tags           string `json:"tags,omitempty"`
-	LicenseUrl     string `json:"license-url,omitempty"`
-	IconUrl        string `json:"icon-url,omitempty"`
+	LicenseURL     string `json:"license-url,omitempty"`
+	IconURL        string `json:"icon-url,omitempty"`
 	RequireLicense bool   `json:"require-license,omitempty"`
 	MsiFile        string `json:"-"`
 	MsiSum         string `json:"-"`
@@ -43,15 +45,19 @@ type ChocoSpec struct {
 	ChangeLog      string `json:"-"`
 }
 
+// WixFiles is the struct to decode files key of the wix.json file.
 type WixFiles struct {
-	Guid  string   `json:"guid"`
+	GUID  string   `json:"guid"`
 	Items []string `json:"items"`
 }
 
+// WixEnvList is the struct to decode env key of the wix.json file.
 type WixEnvList struct {
-	Guid string   `json:"guid"`
+	GUID string   `json:"guid"`
 	Vars []WixEnv `json:"vars"`
 }
+
+// WixEnv is the struct to decode env value of the wix.json file.
 type WixEnv struct {
 	Name      string `json:"name"`
 	Value     string `json:"value"`
@@ -60,10 +66,14 @@ type WixEnv struct {
 	Action    string `json:"action"`
 	Part      string `json:"part"`
 }
+
+// WixShortcuts is the struct to decode shortcuts key of the wix.json file.
 type WixShortcuts struct {
-	Guid  string        `json:"guid,omitempty"`
+	GUID  string        `json:"guid,omitempty"`
 	Items []WixShortcut `json:"items,omitempty"`
 }
+
+// WixShortcut is the struct to decode shortcut value of the wix.json file.
 type WixShortcut struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
@@ -73,7 +83,7 @@ type WixShortcut struct {
 	Icon        string `json:"icon"` // a path to the ico file, no space in it.
 }
 
-// Writes the manifest to the given file,
+// Write the manifest to the given file,
 // if file is empty, writes to wix.json
 func (wixFile *WixManifest) Write(p string) error {
 	if p == "" {
@@ -121,22 +131,22 @@ func (wixFile *WixManifest) SetGuids() (bool, error) {
 		}
 		updated = true
 	}
-	if wixFile.Files.Guid == "" {
-		wixFile.Files.Guid, err = guid.Make()
+	if wixFile.Files.GUID == "" {
+		wixFile.Files.GUID, err = guid.Make()
 		if err != nil {
 			return false, err
 		}
 		updated = true
 	}
-	if wixFile.Env.Guid == "" && len(wixFile.Env.Vars) > 0 {
-		wixFile.Env.Guid, err = guid.Make()
+	if wixFile.Env.GUID == "" && len(wixFile.Env.Vars) > 0 {
+		wixFile.Env.GUID, err = guid.Make()
 		if err != nil {
 			return false, err
 		}
 		updated = true
 	}
-	if wixFile.Shortcuts.Guid == "" && len(wixFile.Shortcuts.Items) > 0 {
-		wixFile.Shortcuts.Guid, err = guid.Make()
+	if wixFile.Shortcuts.GUID == "" && len(wixFile.Shortcuts.Items) > 0 {
+		wixFile.Shortcuts.GUID, err = guid.Make()
 		if err != nil {
 			return false, err
 		}
@@ -145,26 +155,27 @@ func (wixFile *WixManifest) SetGuids() (bool, error) {
 	return updated, nil
 }
 
-// Indicates if the manifest needs GUIDs to be set
-func (wixFile *WixManifest) NeedGuid() bool {
+// NeedGUID tells if the manifest json file is missing guid values.
+func (wixFile *WixManifest) NeedGUID() bool {
 	need := false
 	if wixFile.UpgradeCode == "" {
 		need = true
 	}
-	if wixFile.Files.Guid == "" {
+	if wixFile.Files.GUID == "" {
 		need = true
 	}
-	if wixFile.Env.Guid == "" && len(wixFile.Env.Vars) > 0 {
+	if wixFile.Env.GUID == "" && len(wixFile.Env.Vars) > 0 {
 		need = true
 	}
-	if wixFile.Shortcuts.Guid == "" && len(wixFile.Shortcuts.Items) > 0 {
+	if wixFile.Shortcuts.GUID == "" && len(wixFile.Shortcuts.Items) > 0 {
 		need = true
 	}
 	return need
 }
 
-// Reads Files and Directories turn their values
-// into a relative path to out(path to the wix templates files)
+// RewriteFilePaths Reads Files and Directories of the wix.json file
+// and turn their values into a relative path to out
+// where out is the path to the wix templates files.
 func (wixFile *WixManifest) RewriteFilePaths(out string) error {
 	var err error
 	for i, file := range wixFile.Files.Items {
@@ -203,8 +214,10 @@ func (wixFile *WixManifest) RewriteFilePaths(out string) error {
 	return nil
 }
 
-// Appropriately fix some values for wix/msi rules
-// applies defaults values on the choco property to
+// Normalize Appropriately fixes some values within the decoded json
+// It applies defaults values on the wix/msi property to
+// to generate the msi package.
+// It applies defaults values on the choco property to
 // generate a nuget package
 func (wixFile *WixManifest) Normalize() error {
 	// Wix version Field of Product element
@@ -225,8 +238,8 @@ func (wixFile *WixManifest) Normalize() error {
 	wixFile.VersionOk = okVersion
 
 	// choco fix
-	if wixFile.Choco.Id == "" {
-		wixFile.Choco.Id = wixFile.Product
+	if wixFile.Choco.ID == "" {
+		wixFile.Choco.ID = wixFile.Product
 	}
 	if wixFile.Choco.Title == "" {
 		wixFile.Choco.Title = wixFile.Product
