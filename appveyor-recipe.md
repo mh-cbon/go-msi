@@ -60,7 +60,7 @@ install:
   # - curl -fsSL -o C:\latest.bat https://raw.githubusercontent.com/mh-cbon/latest/master/latest.bat
   # - cmd /C C:\latest.bat mh-cbon go-msi amd64
   # - set PATH=C:\Program Files\go-msi\;%PATH%
-  # method 3: via chocolatey (tbd available soon)
+  # method 3: via chocolatey
   - choco install go-msi -y
 
 
