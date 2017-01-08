@@ -1,5 +1,32 @@
 # Changelog - go-msi
 
+### 1.0.0
+
+__Changes__
+
+- winters udpate, udpated documentation and lint
+- templates(minor): renamed Id and Guid properties,
+  remove try-catch in chocoinstall,
+  set CRLF instead OF LF eol
+- lint(break): renamed fields
+  ChocoSpec.Id to ChocoSpec.ID
+  Chocopec.ProjectUrl to Chocopec.ProjectURL
+  ChocoSpec.LicenseUrl to ChocoSpec.LicenseURL
+  ChocoSpec.IconUrl to ChocoSpec.IconURL
+  WixFiles.Guid to WixFiles.GUID
+  WixEnvList.Guid to WixEnvList.GUID
+  WixShortcuts.Guid to WixShortcuts.GUID
+  This change does not impact json file format.
+- choco(minor): on chocolatey reviewer request, geet ride of the try catch
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Sun 08 Jan 2017 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/0.0.39...1.0.0#diff)
+______________
+
 ### 0.0.39
 
 __Changes__
