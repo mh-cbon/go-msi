@@ -9,22 +9,22 @@ import (
 	"path/filepath"
 )
 
-// Find path of the current binary file on the file system
+// GetBinPath Find path of the current binary file on the file system
 func GetBinPath() (string, error) {
 	var err error
 	wd := ""
 	if filepath.Base(os.Args[0]) == "main" { // go run ...
 		wd, err = os.Getwd()
 	} else {
-		bin := ""
-		bin, err = exec.LookPath(os.Args[0])
-		if err == nil {
+		bin, err2 := exec.LookPath(os.Args[0])
+		if err2 == nil {
 			wd = filepath.Dir(bin)
 		}
 	}
 	return wd, err
 }
 
+//CopyFile copy file src to dst.
 func CopyFile(dst, src string) error {
 	s, err := os.Open(src)
 	if err != nil {
@@ -42,6 +42,7 @@ func CopyFile(dst, src string) error {
 	return d.Close()
 }
 
+//ComputeSha256 computes the sha256 value of a file content.
 func ComputeSha256(filepath string) (string, error) {
 	hasher := sha256.New()
 	f, err := os.Open(filepath)
