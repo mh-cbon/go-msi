@@ -17,7 +17,11 @@ import (
 	"github.com/urfave/cli"
 )
 
+// VERSION holds the program version.
 var VERSION = "0.0.0"
+
+// TPLPATH points to the template directory on the target system.
+// Should be used only for non windows systems to indicate template locations.
 var TPLPATH = "" // non-windows build, use ldflags to tell about that.
 
 func main() {
@@ -43,7 +47,7 @@ func main() {
 		{
 			Name:   "check-json",
 			Usage:  "Check the JSON wix manifest",
-			Action: checkJson,
+			Action: checkJSON,
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "path, p",
@@ -55,7 +59,7 @@ func main() {
 		{
 			Name:   "set-guid",
 			Usage:  "Sets appropriate guids in your wix manifest",
-			Action: setGuid,
+			Action: setGUID,
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "path, p",
@@ -270,7 +274,7 @@ func main() {
 	app.Run(os.Args)
 }
 
-func checkJson(c *cli.Context) error {
+func checkJSON(c *cli.Context) error {
 	path := c.String("path")
 
 	wixFile := manifest.WixManifest{}
@@ -281,7 +285,7 @@ func checkJson(c *cli.Context) error {
 
 	fmt.Println("The manifest is syntaxically correct !")
 
-	if wixFile.NeedGuid() {
+	if wixFile.NeedGUID() {
 		fmt.Println("The manifest needs Guid")
 		fmt.Println("To update your file automatically run:")
 		fmt.Println("     go-msi set-guid")
@@ -290,7 +294,7 @@ func checkJson(c *cli.Context) error {
 	return nil
 }
 
-func setGuid(c *cli.Context) error {
+func setGUID(c *cli.Context) error {
 	path := c.String("path")
 
 	wixFile := manifest.WixManifest{}
@@ -332,7 +336,7 @@ func generateTemplates(c *cli.Context) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if wixFile.NeedGuid() {
+	if wixFile.NeedGUID() {
 		fmt.Println("The manifest needs Guid")
 		fmt.Println("To update your file automatically run:")
 		fmt.Println("     go-msi set-guid")
@@ -459,7 +463,7 @@ func generateWixCommands(c *cli.Context) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if wixFile.NeedGuid() {
+	if wixFile.NeedGUID() {
 		fmt.Println("The manifest needs Guid")
 		fmt.Println("To update your file automatically run:")
 		fmt.Println("     go-msi set-guid")
@@ -527,24 +531,20 @@ func quickMake(c *cli.Context) error {
 	keep := c.Bool("keep")
 
 	wixFile := manifest.WixManifest{}
-	err := wixFile.Load(path)
-	if err != nil {
+	if err := wixFile.Load(path); err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if wixFile.NeedGuid() {
-		_, err := wixFile.SetGuids()
-		if err != nil {
+	if wixFile.NeedGUID() {
+		if _, err := wixFile.SetGuids(); err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
 	}
 
-	err = os.RemoveAll(out)
-	if err != nil {
+	if err := os.RemoveAll(out); err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
-	err = os.MkdirAll(out, 0744)
-	if err != nil {
+	if err := os.MkdirAll(out, 0744); err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
@@ -556,13 +556,11 @@ func quickMake(c *cli.Context) error {
 		wixFile.License = license
 	}
 
-	err = wixFile.Normalize()
-	if err != nil {
+	if err := wixFile.Normalize(); err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	err = wixFile.RewriteFilePaths(out)
-	if err != nil {
+	if err := wixFile.RewriteFilePaths(out); err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
@@ -653,15 +651,14 @@ func chocoMake(c *cli.Context) error {
 	keep := c.Bool("keep")
 
 	wixFile := manifest.WixManifest{}
-	err := wixFile.Load(path)
-	if err != nil {
+	if err := wixFile.Load(path); err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if err = os.RemoveAll(out); err != nil {
+	if err := os.RemoveAll(out); err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
-	if err = os.MkdirAll(out, 0744); err != nil {
+	if err := os.MkdirAll(out, 0744); err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
@@ -669,7 +666,7 @@ func chocoMake(c *cli.Context) error {
 		wixFile.Version = version
 	}
 
-	if err = wixFile.Normalize(); err != nil {
+	if err := wixFile.Normalize(); err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
@@ -693,13 +690,13 @@ func chocoMake(c *cli.Context) error {
 	}
 
 	if changelogCmd != "" {
-		windows, err := stringexec.Command(changelogCmd)
-		if err != nil {
+		windows, err2 := stringexec.Command(changelogCmd)
+		if err2 != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
 		windows.Stderr = os.Stderr
-		out, err := windows.Output()
-		if err != nil {
+		out, err3 := windows.Output()
+		if err3 != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
 		sout := string(out)
@@ -737,8 +734,8 @@ func chocoMake(c *cli.Context) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	SrcNupkg := fmt.Sprintf("%s\\%s.%s.nupkg", out, wixFile.Choco.Id, wixFile.VersionOk)
-	DstNupkg := fmt.Sprintf("%s.%s.nupkg", wixFile.Choco.Id, wixFile.Version)
+	SrcNupkg := fmt.Sprintf("%s\\%s.%s.nupkg", out, wixFile.Choco.ID, wixFile.VersionOk)
+	DstNupkg := fmt.Sprintf("%s.%s.nupkg", wixFile.Choco.ID, wixFile.Version)
 
 	if err = util.CopyFile(DstNupkg, SrcNupkg); err != nil {
 		return cli.NewExitError(err.Error(), 1)
