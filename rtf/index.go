@@ -10,7 +10,7 @@ import (
 	"golang.org/x/text/transform"
 )
 
-// Reads given src file, encodes to windows1252
+// WriteAsWindows1252 Reads given src file, encodes to windows1252
 // and writes the result to dst
 func WriteAsWindows1252(src string, dst string) error {
 	bSrc, err := ioutil.ReadFile(src)
@@ -19,13 +19,13 @@ func WriteAsWindows1252(src string, dst string) error {
 	}
 
 	bDst := make([]byte, len(bSrc)*2)
-	replaceNonAscii := runes.Map(func(r rune) rune {
+	replaceNonASCII := runes.Map(func(r rune) rune {
 		if r > unicode.MaxASCII {
 			return rune('?')
 		}
 		return r
 	})
-	transformer := transform.Chain(replaceNonAscii, charmap.Windows1252.NewEncoder())
+	transformer := transform.Chain(replaceNonASCII, charmap.Windows1252.NewEncoder())
 	_, _, err = transformer.Transform(bDst, bSrc, true)
 	if err != nil {
 		return err
@@ -35,9 +35,9 @@ func WriteAsWindows1252(src string, dst string) error {
 	return ioutil.WriteFile(dst, []byte(dS), 0644)
 }
 
-// Reads given src file, encodes to windows1252,
+// WriteAsRtf Reads given src file and encodes it to windows1252,
 // formats the content to an RTF file
-// and writes the result to dst
+// and writes the result to dst.
 func WriteAsRtf(src string, dst string, reencode bool) error {
 
 	bSrc, err := ioutil.ReadFile(src)
@@ -49,13 +49,13 @@ func WriteAsRtf(src string, dst string, reencode bool) error {
 
 	if reencode {
 		bDst = make([]byte, len(bSrc))
-		replaceNonAscii := runes.Map(func(r rune) rune {
+		replaceNonASCII := runes.Map(func(r rune) rune {
 			if r > unicode.MaxASCII {
 				return rune('?')
 			}
 			return r
 		})
-		transformer := transform.Chain(replaceNonAscii, charmap.Windows1252.NewEncoder())
+		transformer := transform.Chain(replaceNonASCII, charmap.Windows1252.NewEncoder())
 		_, _, err := transformer.Transform(bDst, bSrc, true)
 		if err != nil {
 			return err
@@ -75,7 +75,7 @@ func WriteAsRtf(src string, dst string, reencode bool) error {
 	return ioutil.WriteFile(dst, []byte(sDat), 0644)
 }
 
-// Tries to tell if given file is RTF like
+// IsRtf Detects if the given src file is formatted with RTF format.
 func IsRtf(src string) bool {
 	dat, err := ioutil.ReadFile(src)
 	if err != nil {
