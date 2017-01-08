@@ -1,7 +1,9 @@
 # demo - go-msi
 
 ```sh
-vagrant up
+vagrant plugin install winrm
+vagrant plugin install winrm-fs
+vagrant up --provider=virtualbox
 
 # setup go
 wget https://storage.googleapis.com/golang/go1.7.4.windows-amd64.msi
@@ -12,7 +14,7 @@ vagrant winrm -c "ls env:GOPATH"
 rm go1.7.4.windows-amd64.msi
 
 # setup changelog
-wget https://github.com/mh-cbon/changelog/releases/download/0.0.21/changelog-amd64.msi
+wget https://github.com/mh-cbon/changelog/releases/download/0.0.25/changelog-amd64.msi
 vagrant winrm -c "COPY C:\\vagrant\\changelog-amd64.msi C:\\changelog-amd64.msi"
 vagrant winrm -c 'cmd.exe /c "msiexec.exe /i C:\\changelog-amd64.msi /quiet"'
 rm changelog-amd64.msi
@@ -47,9 +49,11 @@ vagrant winrm -c 'cmd.exe /c "cd C:\\gow\\src\\mh-cbon\\github.com\\demo\\ && C:
 # install software
 vagrant winrm -c "msiexec.exe /i C:\\gow\\src\\mh-cbon\\github.com\\demo\\hello.msi /quiet"
 vagrant winrm -c "ls env:some"
-vagrant winrm -c 'Dir C:\\Program Files\\'
-vagrant winrm -c 'Dir C:\\Program Files\\hello'
-vagrant winrm -c 'Dir C:\\Program Files\\hello\\assets'
+vagrant winrm -c 'Dir "C:\Program Files"'
+vagrant winrm -c 'Dir "C:\Program Files\hello"'
+vagrant winrm -c 'Dir "C:\Program Files\hello\assets"'
+# start the server, then use ie to browse http://localhost:8080/
+vagrant winrm -c '. "C:\Program Files\hello\hello.exe"'
 # uninstall software
 vagrant winrm -c "msiexec.exe /uninstall C:\\gow\\src\\mh-cbon\\github.com\\demo\\hello.msi /quiet"
 ```
