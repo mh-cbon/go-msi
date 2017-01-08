@@ -25,29 +25,27 @@ cp -r ../templates .
 vagrant winrm -c "mkdir C:\\go-msi\\templates"
 vagrant winrm -c 'Copy-Item C:\\vagrant\\templates\\* -destination C:\\go-msi\\templates\\ -recurse -Force'
 vagrant winrm -c 'COPY C:\\vagrant\\go-msi.exe C:\\go-msi\\'
-rm -fr templates
-rm -fr go-msi.exe
+rm -fr templates go-msi.exe
 
 # setup wix
 wget -O wix310-binaries.zip http://wixtoolset.org/downloads/v3.10.3.3007/wix310-binaries.zip
 unzip wix310-binaries.zip -d wix310
 vagrant winrm -c "xcopy /E /I C:\vagrant\wix310 C:\wix310"
 vagrant winrm -c "setx PATH \"%PATH%;C:\\wix310\""
-rm -fr wix310
-rm -fr wix310*zip
+rm -fr wix310 wix310*zip
 
 # setup the repo
-vagrant winrm -c "mkdir C:\\gow\\src\\mh-cbon\\github.com\\demo"
-vagrant winrm -c 'Copy-Item C:\\vagrant\\* -destination C:\\gow\\src\\mh-cbon\\github.com\\demo\\ -recurse -Force'
-vagrant winrm -c 'Dir C:\\gow\\src\\mh-cbon\\github.com\\demo\\'
+vagrant winrm -c "mkdir C:\\gow\\src\\github.com\\mh-cbon\\demo"
+vagrant winrm -c 'Copy-Item C:\\vagrant\\* -destination C:\\gow\\src\\github.com\\mh-cbon\\demo\\ -recurse -Force'
+vagrant winrm -c 'Dir C:\\gow\\src\\github.com\\mh-cbon\\demo\\'
 
 # generate the build
-vagrant winrm -c "mkdir C:\\gow\\src\\mh-cbon\\github.com\\demo\\build\\amd64"
-vagrant winrm -c 'cmd.exe /c "cd C:\\gow\\src\\mh-cbon\\github.com\\demo\\ && go build -o build\\amd64\\hello.exe hello.go"'
+vagrant winrm -c "mkdir C:\\gow\\src\\github.com\\mh-cbon\\demo\\build\\amd64"
+vagrant winrm -c 'cmd.exe /c "cd C:\\gow\\src\\github.com\\mh-cbon\\demo\\ && go build -o build\\amd64\\hello.exe hello.go"'
 # generate the package
-vagrant winrm -c 'cmd.exe /c "cd C:\\gow\\src\\mh-cbon\\github.com\\demo\\ && C:\\go-msi\\go-msi.exe make --msi hello.msi --version 0.0.1 --arch amd64"'
+vagrant winrm -c 'cmd.exe /c "cd C:\\gow\\src\\github.com\\mh-cbon\\demo\\ && C:\\go-msi\\go-msi.exe make --msi hello.msi --version 0.0.1 --arch amd64"'
 # install software
-vagrant winrm -c "msiexec.exe /i C:\\gow\\src\\mh-cbon\\github.com\\demo\\hello.msi /quiet"
+vagrant winrm -c "msiexec.exe /i C:\\gow\\src\\github.com\\mh-cbon\\demo\\hello.msi /quiet"
 vagrant winrm -c "ls env:some"
 vagrant winrm -c 'Dir "C:\Program Files"'
 vagrant winrm -c 'Dir "C:\Program Files\hello"'
@@ -55,10 +53,10 @@ vagrant winrm -c 'Dir "C:\Program Files\hello\assets"'
 # start the server, then use ie to browse http://localhost:8080/
 vagrant winrm -c '. "C:\Program Files\hello\hello.exe"'
 # uninstall software
-vagrant winrm -c "msiexec.exe /uninstall C:\\gow\\src\\mh-cbon\\github.com\\demo\\hello.msi /quiet"
+vagrant winrm -c "msiexec.exe /uninstall C:\\gow\\src\\github.com\\mh-cbon\\demo\\hello.msi /quiet"
 ```
 
-
+"C:\Windows\System32\msiexec.exe" /i "C:\ProgramData\chocolatey\lib\hello\tools\hello.msi" /quiet
 # setup chocolatey
 ```sh
 vagrant winrm -c 'iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex'
@@ -66,9 +64,9 @@ vagrant winrm -c 'iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex'
 
 # generate chocolatey package
 ```sh
-vagrant winrm -c "cmd.exe /c 'cd C:\\gow\\src\\mh-cbon\\github.com\\demo\\ && C:\\go-msi\\go-msi.exe choco --input hello.msi --version 0.0.1 -c \"changelog ghrelease --version 0.0.1\"'"
-vagrant winrm -c 'COPY C:\\gow\\src\\mh-cbon\\github.com\\demo\\hello.0.0.1.nupkg C:\\vagrant\\'
-vagrant winrm -c 'cmd.exe /c "cd C:\\gow\\src\\mh-cbon\\github.com\\demo\\ && choco install hello.0.0.1.nupkg -y"'
-vagrant winrm -c 'cmd.exe /c "cd C:\\gow\\src\\mh-cbon\\github.com\\demo\\ && choco uninstall hello -y"'
-vagrant winrm -c "cmd.exe /c \"cd C:\\gow\\src\\mh-cbon\\github.com\\demo\\ && choco push -k=\"'xxx'\" hello.0.0.1.nupkg\""
+vagrant winrm -c "cmd.exe /c 'cd C:\\gow\\src\\github.com\\mh-cbon\\demo\\ && C:\\go-msi\\go-msi.exe choco --input hello.msi --version 0.0.1 -c \"changelog ghrelease --version 0.0.1\"'"
+vagrant winrm -c 'COPY C:\\gow\\src\\github.com\\mh-cbon\\demo\\hello.0.0.1.nupkg C:\\vagrant\\'
+vagrant winrm -c 'cmd.exe /c "cd C:\\gow\\src\\github.com\\mh-cbon\\demo\\ && choco install hello.0.0.1.nupkg -y"'
+vagrant winrm -c 'cmd.exe /c "cd C:\\gow\\src\\github.com\\mh-cbon\\demo\\ && choco uninstall hello -y"'
+vagrant winrm -c "cmd.exe /c \"cd C:\\gow\\src\\github.com\\mh-cbon\\demo\\ && choco push -k=\"'xxx'\" hello.0.0.1.nupkg\""
 ```
