@@ -32,7 +32,7 @@
          <Directory Id="$(var.Program_Files)">
             <Directory Id="INSTALLDIR" Name="{{.Product}}">
                {{if gt (.Files.Items | len) 0}}
-               <Component Id="ApplicationFiles" Guid="{{.Files.Guid}}">
+               <Component Id="ApplicationFiles" Guid="{{.Files.GUID}}">
                   {{range $i, $e := .Files.Items}}
                     <File Id="ApplicationFile{{$i}}" Source="{{$e}}"/>
                   {{end}}
@@ -47,7 +47,7 @@
          </Directory>
 
          {{if gt (.Env.Vars | len) 0}}
-         <Component Id="ENVS" Guid="{{.Env.Guid}}">
+         <Component Id="ENVS" Guid="{{.Env.GUID}}">
           {{range $i, $e := .Env.Vars}}
           <Environment Id="ENV{{$i}}"
             Name="{{$e.Name}}"
@@ -63,7 +63,7 @@
          {{if gt (.Shortcuts.Items | len) 0}}
          <Directory Id="ProgramMenuFolder">
             <Directory Id="ProgramMenuSubfolder" Name="{{.Product}}">
-               <Component Id="ApplicationShortcuts" Guid="{{.Shortcuts.Guid}}">
+               <Component Id="ApplicationShortcuts" Guid="{{.Shortcuts.GUID}}">
                {{range $i, $e := .Shortcuts.Items}}
                   <Shortcut Id="ApplicationShortcut{{$i}}"
                         Name="{{$e.Name}}"

@@ -1,9 +1,9 @@
-$packageName = "{{.Choco.Id}}";
+$packageName = "{{.Choco.ID}}";
 $fileType = 'msi';
-$silentArgs = '/qr /norestart'
-$validExitCodes = @(0)
-$scriptPath =  $(Split-Path $MyInvocation.MyCommand.Path)
-$fileFullPath = Join-Path $scriptPath '{{.Choco.MsiFile}}'
+$silentArgs = '/qr /norestart';
+$validExitCodes = @(0);
+$scriptPath =  $(Split-Path $MyInvocation.MyCommand.Path);
+$fileFullPath = Join-Path $scriptPath '{{.Choco.MsiFile}}';
 
 try {
 	$msiArgs = "/x $fileFullPath $silentArgs";

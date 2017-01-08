@@ -1,23 +1,23 @@
 <?xml version="1.0"?>
 <package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <metadata>
-    <id>{{.Choco.Id}}</id>
+    <id>{{.Choco.ID}}</id>
     <title>{{.Choco.Title}}</title>
     <version>{{.VersionOk}}</version>
     <authors>{{.Choco.Authors}}</authors>
     <owners>{{.Choco.Owners}}</owners>
     <description>{{.Choco.Description}}</description>
-    {{if gt (.Choco.ProjectUrl | len) 0}}
-    <projectUrl>{{.Choco.ProjectUrl}}</projectUrl>
+    {{if gt (.Choco.ProjectURL | len) 0}}
+    <projectUrl>{{.Choco.ProjectURL}}</projectUrl>
     {{end}}
     {{if gt (.Choco.Tags | len) 0}}
     <tags>{{.Choco.Tags}}</tags>
     {{end}}
-    {{if gt (.Choco.LicenseUrl | len) 0}}
-    <licenseUrl>{{.Choco.LicenseUrl}}</licenseUrl>
+    {{if gt (.Choco.LicenseURL | len) 0}}
+    <licenseUrl>{{.Choco.LicenseURL}}</licenseUrl>
     {{end}}
-    {{if gt (.Choco.IconUrl | len) 0}}
-    <iconUrl>{{.Choco.IconUrl}}</iconUrl>
+    {{if gt (.Choco.IconURL | len) 0}}
+    <iconUrl>{{.Choco.IconURL}}</iconUrl>
     {{end}}
     {{if gt (.Choco.ChangeLog | len) 0}}
     <releaseNotes>{{.Choco.ChangeLog}}</releaseNotes>
