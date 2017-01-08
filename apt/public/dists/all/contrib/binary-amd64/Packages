@@ -1,6 +1,24 @@
 Package: go-msi
 Priority: extra
 Section: unknown
+Installed-Size: 4.2 kB
+Maintainer: mh-cbon <mh-cbon@users.noreply.github.com>
+Architecture: amd64
+Source: go-msi
+Version: 1.0.0
+Filename: pool/contrib/g/go-msi/go-msi-1.0.0_amd64.deb
+Size: 1106672
+MD5sum: cec16814b4b5f1016c96deccc8377f15
+SHA1: 52ef551d2291902123534bd010cc59d0aa42b446
+SHA256: f74fe6d5ae73e3198f53693d3e7c74683ad959a837d4fc9204f46221fccabf4f
+SHA512: 758ae41ecb0c5d4d6699dd588b5a1b24a3f7eabe1f75674f0456b96ebff2dae84a603c01f04b0dcb83ea826efe6c7c23c30634be67c700d2bfee956476f09ea5
+Description: Generate msi packages
+Homepage: http://github.com/mh-cbon/go-msi
+Package-Type: deb
+
+Package: go-msi
+Priority: extra
+Section: unknown
 Installed-Size: 4.5 kB
 Maintainer: mh-cbon <mh-cbon@users.noreply.github.com>
 Architecture: amd64
@@ -31,8 +49,8 @@ SHA1: a1acb7bb561831b7a62067e602154b24c169cf58
 SHA256: 84a5b2843bd33ada95c384a826f54a9c52d4499531a7caa87b776b37061421e6
 SHA512: bf6529ff49bed026a8abc7cefcdf6faa612b6bb96a3c2b953e498f5dd36f6d9b56c3067e05ffc04179c8d301610f7c0053d736018704ebe6b80205ca602bc0d2
 Description: Generate msi packages
-Package-Type: deb
 Homepage: http://github.com/mh-cbon/go-msi
+Package-Type: deb
 
 Package: go-msi
 Priority: extra
@@ -157,8 +175,8 @@ SHA1: 578d8b31218cbd07201001a2f791090dae2d8475
 SHA256: 0427ede2b3742fd2a3a92d1e207eb3691e961361fad79d44d97de9ce77092ced
 SHA512: b4c70503f4408085f126c2b97e19f0f80ee921b44cf24fd0142cf835a2c9014fcadb2d7b60fb95dc3aec1bde68d7a81cfe6d95fb36188c93f5c76bdf60f4a929
 Description: Generate msi packages
-Homepage: http://github.com/mh-cbon/go-msi
 Package-Type: deb
+Homepage: http://github.com/mh-cbon/go-msi
 
 Package: go-msi
 Priority: extra
