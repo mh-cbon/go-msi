@@ -1,6 +1,7 @@
 package guid
 
 import (
+	"fmt"
 	"os/exec"
 	"path/filepath"
 	"runtime"
@@ -22,7 +23,7 @@ func Make() (string, error) {
 		args := []string{filepath.Join(filepath.Base(b), "utils", "myuuid.vbs")}
 		out, err := exec.Command(cmd, args...).CombinedOutput()
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("%s: %v: \n%s", cmd, err, out)
 		}
 		sout := string(out)
 		sout = strings.TrimSpace(sout)
@@ -31,10 +32,13 @@ func Make() (string, error) {
 	}
 
 	cmd := "uuidgen"
-	args := []string{"-r"}
+	args := []string{}
+	if runtime.GOOS == "linux" {
+		args = append(args, "-r")
+	}
 	out, err := exec.Command(cmd, args...).CombinedOutput()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("%s: %v: \n%s", cmd, err, out)
 	}
 	sout := string(out)
 	sout = strings.TrimSpace(sout)
