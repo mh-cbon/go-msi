@@ -2,6 +2,7 @@ package manifest
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -229,7 +230,7 @@ func (wixFile *WixManifest) Normalize() error {
 	wixFile.VersionOk = wixFile.Version
 	v, err := semver.NewVersion(wixFile.Version)
 	if err != nil {
-		return err
+		return fmt.Errorf("Failed to parse version '%v': %v", wixFile.Version, err)
 	}
 	okVersion := ""
 	okVersion += strconv.FormatInt(v.Major(), 10)
