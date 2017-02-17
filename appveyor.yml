@@ -38,8 +38,9 @@ after_deploy:
   - .\go-msi.exe choco --input %APPVEYOR_BUILD_FOLDER%\%MYAPP%-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME%
   - choco push -k="'%CHOCOKEY%'" %MYAPP%.%APPVEYOR_REPO_TAG_NAME%.nupkg
 
-# to disable automatic tests
-test: off
+before_test:
+  - echo script1
+  - testing/run-test.bat
 
 artifacts:
   - path: '*-386.msi'
