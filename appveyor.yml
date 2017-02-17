@@ -18,9 +18,9 @@ environment:
 # scripts that run after cloning repository
 install:
   - ps: >-
-    if($env:APPVEYOR_REPO_TAG_NAME -eq ""){
-      set APPVEYOR_REPO_TAG_NAME=0.0.0
-    }
+      if($env:APPVEYOR_REPO_TAG_NAME -eq ""){
+        set APPVEYOR_REPO_TAG_NAME=0.0.0
+      }
   - curl -fsSL -o C:\wix310-binaries.zip http://static.wixtoolset.org/releases/v3.10.3.3007/wix310-binaries.zip
   - 7z x C:\wix310-binaries.zip -y -r -oC:\wix310
   - set PATH=C:\wix310;%PATH%
