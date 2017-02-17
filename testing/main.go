@@ -31,8 +31,11 @@ func main() {
 	readDir("C:\\Program Files\\hello\\assets")
 	hello := execBgCmd("C:\\Program Files\\hello\\hello.exe")
 	b := fecthURL("http://localhost:8080/")
-	fmt.Println(b)
 	hello.Process.Kill()
+	expected := "hello, world\n"
+	if b != expected {
+		panic(fmt.Errorf("Invalid http response %q, expected %q", b, expected))
+	}
 	execCmd("c:\\windows\\system32\\msiexec.exe", "/x", "hello.msi", "/quiet")
 
 	execCmd("C:\\go-msi\\go-msi.exe", "choco", "--input", "hello.msi", "--version", "0.0.1", "-c", "\"C:\\Program Files\\changelog\\changelog.exe\" ghrelease --version 0.0.1")
@@ -40,8 +43,10 @@ func main() {
 	execCmd("PowerShell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", "$env:path")
 	hello2 := execBgCmd("C:\\Program Files\\hello\\hello.exe")
 	b2 := fecthURL("http://localhost:8080/")
-	fmt.Println(b2)
 	hello2.Process.Kill()
+	if b2 != expected {
+		panic(fmt.Errorf("Invalid http response %q, expected %q", b2, expected))
+	}
 
 	execCmd("choco", "uninstall", "hello", "-y")
 }
