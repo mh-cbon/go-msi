@@ -17,10 +17,10 @@ environment:
 
 # scripts that run after cloning repository
 install:
-  - ps: >-
-      if($env:APPVEYOR_REPO_TAG_NAME -eq ""){
-        set APPVEYOR_REPO_TAG_NAME=0.0.0
-      }
+  - ps: Write-Host "APPVEYOR_BUILD_VERSION=$env:APPVEYOR_BUILD_VERSION";
+  - ps: Write-Host "APPVEYOR_REPO_TAG_NAME=$env:APPVEYOR_REPO_TAG_NAME";
+  - ps: if (-not (Test-Path env:APPVEYOR_REPO_TAG_NAME)) { $env:APPVEYOR_REPO_TAG_NAME = '0.0.2' }
+  - ps: ls env:APPVEYOR_REPO_TAG_NAME
   - curl -fsSL -o C:\wix310-binaries.zip http://static.wixtoolset.org/releases/v3.10.3.3007/wix310-binaries.zip
   - 7z x C:\wix310-binaries.zip -y -r -oC:\wix310
   - set PATH=C:\wix310;%PATH%
@@ -43,8 +43,14 @@ after_deploy:
   - choco push -k="'%CHOCOKEY%'" %MYAPP%.%APPVEYOR_REPO_TAG_NAME%.nupkg
 
 before_test:
-  - echo script1
-  - testing/run-test.bat
+  - ps: Start-FileDownload 'https://github.com/mh-cbon/changelog/releases/download/0.0.25/changelog-amd64.msi'
+  - msiexec.exe /i changelog-amd64.msi /quiet
+  - DEL /F changelog-amd64.msi
+  - mkdir C:\go-msi\
+  - set GOARCH=amd64
+  - go build -o C:\go-msi\go-msi.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
+  - XCOPY /I /E templates C:\go-msi\templates
+  - go run testing\\main.go
 
 artifacts:
   - path: '*-386.msi'

@@ -1,17 +1,17 @@
 
+
 cd c:\gopath\src\github.com\mh-cbon\go-msi\testing\hello
 
-REM # generate the hello program
-mkdir c:\gopath\src\github.com\mh-cbon\go-msi\testing\hello\build\amd64
 go build -o build\amd64\hello.exe hello.go
 
+REM # generate the hello program
+mkdir build\amd64
 
 REM # generate the package
 C:\go-msi\go-msi.exe make --msi hello.msi --version 0.0.1 --arch amd64
 
-
 REM # install software
-msiexec.exe /i c:\gopath\src\github.com\mh-cbon\go-msi\testing\hello\hello.msi /quiet
+msiexec.exe /install hello.msi /quiet
 
 PowerShell -NoProfile -ExecutionPolicy Bypass -Command "$env:path"
 PowerShell -NoProfile -ExecutionPolicy Bypass -Command "ls env:some"
@@ -27,13 +27,15 @@ start /b cmd /c "C:\Program Files\hello\hello.exe"
 REM #  fetch webserver
 DEL /F out.html
 PowerShell -NoProfile -ExecutionPolicy Bypass -Command "wget http://localhost:8080/ -OutFile out.html"
+ping 127.0.0.1 -n 4 > nul
 type out.html
 
 REM #  kill software
 taskkill /f /im hello.exe
 
 REM #  uninstall software
-msiexec.exe /uninstall c:\gopath\src\github.com\mh-cbon\go-msi\testing\hello\hello.msi /quiet
+DIR hello.msi
+msiexec.exe /uninstall hello.msi /quiet
 
 
 REM # generate the package
@@ -51,6 +53,7 @@ start /b cmd /c "C:\Program Files\hello\hello.exe"
 REM #  fetch webserver
 DEL /F out.html
 PowerShell -NoProfile -ExecutionPolicy Bypass -Command "wget http://localhost:8080/ -OutFile out.html"
+ping 127.0.0.1 -n 4 > nul
 type out.html
 
 REM #  kill software

@@ -697,7 +697,7 @@ func chocoMake(c *cli.Context) error {
 		windows.Stderr = os.Stderr
 		out, err3 := windows.Output()
 		if err3 != nil {
-			return cli.NewExitError(err.Error(), 1)
+			return cli.NewExitError(fmt.Sprintf("Failed to execute command:%q\n%v", changelogCmd, err.Error()), 1)
 		}
 		sout := string(out)
 		souts := strings.Split(sout, "\n")
