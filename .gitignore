@@ -2,8 +2,8 @@
 /vendor/
 /notes.md
 /builder/
-/demo/templates/
-/demo/build/
-/demo/pkg-build/
-/demo/.vagrant/
+/testing/demo/templates/
+/testing/demo/build/
+/testing/demo/pkg-build/
+/testing/demo/.vagrant/
 /.glide/
