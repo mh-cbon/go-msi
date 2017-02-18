@@ -5,16 +5,13 @@ manual end-to-end testing, fedora box,
 ```sh
 sh vagrant-setup.sh
 
-sh vagrant-test.sh
+cp -r ../templates . && \
+vagrant winrm -c 'Copy-Item C:\\vagrant\\templates\\* -destination C:\\go-msi\\templates\\ -recurse -Force' && \
+rm -fr templates
 
-# with https://github.com/paoloantinori/hhighlighter
-sh vagrant-test.sh 2>&1 | h 'ERROR|Error' \
-'Starting..|>taskkill|SUCCESS:' \
-'Chocolatey|>choco|uninstalled 1/1 packages|installed 1/1 packages' \
-'msiexec.exe*|go-msi.exe*|heat*|candle*|light*|All Done!!' \
-'env:path|env:some' 'vagrant winrm -c' \
-'REM #*|>Dir *' \
-'ok,'
+GOOS=windows go build -o test.exe main.go \
+&& echo "----" \
+&& vagrant winrm -c "C:\\vagrant\\test.exe"
 
 sh vagrant-off.sh
 ```
