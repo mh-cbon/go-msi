@@ -1,21 +1,25 @@
-hash: 803c7aeb25f2171576a8fbb6f6d5fda044a232fb921cd194eff7a173f66f61ab
-updated: 2016-07-29T17:34:18.240378304+02:00
+hash: ebc371608c61721e2c6b4a1728fcbe972ba7b103a4405104a78ea5c13c04a347
+updated: 2017-02-18T16:39:56.234882986+01:00
 imports:
 - name: github.com/Masterminds/semver
-  version: 8d0431362b544d1a3536cca26684828866a7de09
+  version: 59c29afe1a994eacb71c833025ca7acf874bb1da
 - name: github.com/mattn/go-zglob
-  version: 2dbd7f37a45e993d5180a251b4bdd314d6333b70
+  version: 95345c4e1c0ebc9d16a3284177f09360f4d20fab
+  subpackages:
+  - fastwalk
 - name: github.com/mh-cbon/stringexec
   version: bc348d279f975052c5169eedf4efb1bc0469453f
+- name: github.com/satori/go.uuid
+  version: 879c5887cd475cd7864858769793b2ceb0d44feb
 - name: github.com/urfave/cli
-  version: 1efa31f08b9333f1bd4882d61f9d668a70cd902e
+  version: 0bdeddeeb0f650497d603c4ad7b20cfe685682f6
 - name: golang.org/x/text
-  version: 2910a502d2bf9e43193af9d68ca516529614eed3
+  version: 85c29909967d7f171f821e7a42e7b7af76fb9598
   subpackages:
-  - encoding/charmap
-  - runes
-  - transform
   - encoding
+  - encoding/charmap
   - encoding/internal
   - encoding/internal/identifier
+  - runes
+  - transform
 testImports: []

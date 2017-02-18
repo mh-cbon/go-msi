@@ -20,10 +20,13 @@ func main() {
 
 	mustEnvEq("$env:some", "")
 
+	mustMkdirAll("build/amd64")
 	helloBuild := makeCmd("go", "build", "-o", _p("build/amd64/hello.exe"), "hello.go")
 	mustExec(helloBuild, "hello build failed %v")
 
-	mustMkdirAll("build/amd64")
+	helloPkgSetup := makeCmd("C:/go-msi/go-msi.exe", "set-guid")
+	mustExec(helloPkgSetup, "hello packaging setup failed %v")
+
 	helloPkg := makeCmd("C:/go-msi/go-msi.exe", "make", "--msi", "hello.msi", "--version", "0.0.1", "--arch", "amd64")
 	mustExec(helloPkg, "hello packaging failed %v")
 

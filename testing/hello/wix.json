@@ -2,9 +2,9 @@
   "product": "hello",
   "company": "mh-cbon",
   "license": "LICENSE",
-  "upgrade-code": "416FE321-9D9E-433F-A1F4-F9EF15EC9C61",
+  "upgrade-code": "",
   "files": {
-    "guid": "768193DA-5EA9-4CCB-9355-F7C281873A22",
+    "guid": "",
     "items": [
       "build/amd64/hello.exe"
     ]
@@ -13,7 +13,7 @@
     "assets"
   ],
   "env": {
-    "guid": "1AE39590-3D97-4375-89DC-1A61C94F8193",
+    "guid": "",
     "vars": [
       {
         "name": "some",
@@ -26,7 +26,7 @@
     ]
   },
   "shortcuts": {
-    "guid": "918F3F9A-476B-4F02-8C43-077FDC649354",
+    "guid": "",
     "items": [
       {
         "name": "hello",
