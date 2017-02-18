@@ -117,6 +117,9 @@
 
       <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
 
+      <!-- this should help to propagate env var changes -->
+      <CustomActionRef Id="WixBroadcastEnvironmentChange" />
+
    </Product>
 
 </Wix>
