@@ -91,8 +91,16 @@
 
       </Directory>
 
+      {{range $i, $e := .Hooks}}
+      <CustomAction Id="SetArgsCustomExec{{$i}}" Property="WixQuietExecCmdLine" Value="{{$e.CookedCommand}}"/>
+      <CustomAction Id="CustomExec{{$i}}" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="immediate" Return="check"/>
+      {{end}}
       <InstallExecuteSequence>
          <RemoveExistingProducts After="InstallValidate"/>
+         {{range $i, $e := .Hooks}}
+         <Custom Action="SetArgsCustomExec{{$i}}" After="{{if eq $i 0}}InstallFinalize{{else}}CustomExec{{dec $i}}{{end}}">{{if eq $e.When "install"}}NOT Installed AND NOT REMOVE{{else}}REMOVE ~= "ALL"{{end}}</Custom>
+         <Custom Action="CustomExec{{$i}}" After="SetArgsCustomExec{{$i}}">{{if eq $e.When "install"}}NOT Installed AND NOT REMOVE{{else}}REMOVE ~= "ALL"{{end}}</Custom>
+         {{end}}
       </InstallExecuteSequence>
 
       <Feature Id="DefaultFeature" Level="1">

@@ -283,6 +283,12 @@ func checkJSON(c *cli.Context) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
+	for _, hook := range wixFile.Hooks {
+		if _, ok := manifest.PossibleWhenValues[hook.When]; !ok {
+			return cli.NewExitError(`Invalid "when" value in hook: `+hook.When, 1)
+		}
+	}
+
 	fmt.Println("The manifest is syntaxically correct !")
 
 	if wixFile.NeedGUID() {

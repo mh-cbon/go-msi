@@ -1,12 +1,15 @@
 package manifest
 
 import (
+	"bytes"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/Masterminds/semver"
 	"github.com/satori/go.uuid"
@@ -26,6 +29,7 @@ type WixManifest struct {
 	Env         WixEnvList   `json:"env,omitempty"`
 	Shortcuts   WixShortcuts `json:"shortcuts,omitempty"`
 	Choco       ChocoSpec    `json:"choco,omitempty"`
+	Hooks       []Hook       `json:"hooks,omitempty"`
 }
 
 // ChocoSpec is the struct to decode the choco key of a wix.json file.
@@ -44,6 +48,17 @@ type ChocoSpec struct {
 	MsiSum         string `json:"-"`
 	BuildDir       string `json:"-"`
 	ChangeLog      string `json:"-"`
+}
+
+var PossibleWhenValues = map[string]struct{}{
+	"install": struct{}{},
+	"uninstall": struct{}{},
+}
+
+type Hook struct {
+	Command       string `json:"command,omitempty`
+	CookedCommand string `json:"-""`
+	When          string `json:"when,omitempty"`
 }
 
 // WixFiles is the struct to decode files key of the wix.json file.
@@ -242,6 +257,20 @@ func (wixFile *WixManifest) Normalize() error {
 		wixFile.Choco.Description = wixFile.Product
 	}
 	wixFile.Choco.Tags += " admin" // required to pass chocolatey validation..
+
+	// Escape hook commands and ensure the command name is enclosed in quotes (needed by wix)
+	for i, hook := range wixFile.Hooks {
+		cmd := strings.Trim(hook.Command, " ")
+		if len(cmd) > 0 && cmd[0] != '"' {
+			words := strings.Split(cmd, " ")
+			cmd = `"` + words[0] + `"` + cmd[len(words[0]):]
+		}
+		buf := &bytes.Buffer{}
+		if err := xml.EscapeText(buf, []byte(cmd)); err != nil {
+			return err
+		}
+		wixFile.Hooks[i].CookedCommand = buf.String()
+	}
 
 	return nil
 }
