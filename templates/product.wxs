@@ -16,7 +16,7 @@
             Manufacturer="{{.Company}}"
             Language="1033">
 
-      <Package InstallerVersion="200" Compressed="yes" Comments="Windows Installer Package"/>
+      <Package InstallerVersion="200" Compressed="yes" Comments="Windows Installer Package" InstallScope="perMachine"/>
 
       <Media Id="1" Cabinet="product.cab" EmbedCab="yes"/>
 
@@ -92,14 +92,13 @@
       </Directory>
 
       {{range $i, $e := .Hooks}}
-      <CustomAction Id="SetArgsCustomExec{{$i}}" Property="WixQuietExecCmdLine" Value="{{$e.CookedCommand}}"/>
-      <CustomAction Id="CustomExec{{$i}}" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="immediate" Return="check"/>
+      <SetProperty Id="CustomExec{{$i}}" Value="{{$e.CookedCommand}}" Before="CustomExec{{$i}}" Sequence="execute"/>
+      <CustomAction Id="CustomExec{{$i}}" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="deferred" Return="check" Impersonate="no"/>
       {{end}}
       <InstallExecuteSequence>
          <RemoveExistingProducts After="InstallValidate"/>
          {{range $i, $e := .Hooks}}
-         <Custom Action="SetArgsCustomExec{{$i}}" After="{{if eq $i 0}}InstallFinalize{{else}}CustomExec{{dec $i}}{{end}}">{{if eq $e.When "install"}}NOT Installed AND NOT REMOVE{{else}}REMOVE ~= "ALL"{{end}}</Custom>
-         <Custom Action="CustomExec{{$i}}" After="SetArgsCustomExec{{$i}}">{{if eq $e.When "install"}}NOT Installed AND NOT REMOVE{{else}}REMOVE ~= "ALL"{{end}}</Custom>
+         <Custom Action="CustomExec{{$i}}" After="{{if eq $i 0}}InstallFiles{{else}}CustomExec{{dec $i}}{{end}}">{{if eq $e.When "install"}}NOT Installed AND NOT REMOVE{{else}}REMOVE ~= "ALL"{{end}}</Custom>
          {{end}}
       </InstallExecuteSequence>
 
