@@ -17,19 +17,21 @@ import (
 
 // WixManifest is the struct to decode a wix.json file.
 type WixManifest struct {
-	Product     string       `json:"product"`
-	Company     string       `json:"company"`
-	Version     string       `json:"version,omitempty"`
-	VersionOk   string       `json:"-"`
-	License     string       `json:"license,omitempty"`
-	UpgradeCode string       `json:"upgrade-code"`
-	Files       WixFiles     `json:"files,omitempty"`
-	Directories []string     `json:"directories,omitempty"`
-	RelDirs     []string     `json:"-"`
-	Env         WixEnvList   `json:"env,omitempty"`
-	Shortcuts   WixShortcuts `json:"shortcuts,omitempty"`
-	Choco       ChocoSpec    `json:"choco,omitempty"`
-	Hooks       []Hook       `json:"hooks,omitempty"`
+	Product        string       `json:"product"`
+	Company        string       `json:"company"`
+	Version        string       `json:"version,omitempty"`
+	VersionOk      string       `json:"-"`
+	License        string       `json:"license,omitempty"`
+	UpgradeCode    string       `json:"upgrade-code"`
+	Files          WixFiles     `json:"files,omitempty"`
+	Directories    []string     `json:"directories,omitempty"`
+	RelDirs        []string     `json:"-"`
+	Env            WixEnvList   `json:"env,omitempty"`
+	Shortcuts      WixShortcuts `json:"shortcuts,omitempty"`
+	Choco          ChocoSpec    `json:"choco,omitempty"`
+	Hooks          []Hook       `json:"hooks,omitempty"`
+	InstallHooks   []Hook       `json:"-"`
+	UninstallHooks []Hook       `json:"-"`
 }
 
 // ChocoSpec is the struct to decode the choco key of a wix.json file.
@@ -50,9 +52,14 @@ type ChocoSpec struct {
 	ChangeLog      string `json:"-"`
 }
 
+const (
+	whenInstall = "install"
+	whenUninstall = "uninstall"
+)
+
 var PossibleWhenValues = map[string]struct{}{
-	"install": struct{}{},
-	"uninstall": struct{}{},
+	whenInstall:   struct{}{},
+	whenUninstall: struct{}{},
 }
 
 type Hook struct {
@@ -270,6 +277,16 @@ func (wixFile *WixManifest) Normalize() error {
 			return err
 		}
 		wixFile.Hooks[i].CookedCommand = buf.String()
+	}
+
+	// Separate install and uninstall hooks to simplify templating
+	for _, hook := range wixFile.Hooks {
+		switch hook.When {
+		case whenInstall:
+			wixFile.InstallHooks = append(wixFile.InstallHooks, hook)
+		case whenUninstall:
+			wixFile.UninstallHooks = append(wixFile.UninstallHooks, hook)
+		}
 	}
 
 	return nil
