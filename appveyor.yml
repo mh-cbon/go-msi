@@ -52,8 +52,8 @@ before_test:
   - XCOPY /I /E templates C:\go-msi\templates
   - cd testing
   - glide install
-  - go run testing\\main.go
   - cd ..
+  - go run testing\\main.go
 
 artifacts:
   - path: '*-386.msi'
