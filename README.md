@@ -1,6 +1,11 @@
 # go-msi
 
-Easy way to generate msi package for a Go project.
+[![travis Status](https://travis-ci.org/mh-cbon/go-msi.svg?branch=master)](https://travis-ci.org/mh-cbon/go-msi)[![appveyor Status](https://ci.appveyor.com/api/projects/status/github/mh-cbon/go-msi?branch=master&svg=true)](https://ci.appveyor.com/project/mh-cbon/go-msi)
+[![GoDoc](https://godoc.org/github.com/mh-cbon/go-msi?status.svg)](http://godoc.org/github.com/mh-cbon/go-msi)
+
+
+Package go-msi helps to generate msi package for a Go project.
+
 
 This tool is part of the [go-github-release workflow](https://github.com/mh-cbon/go-github-release)
 
@@ -8,16 +13,21 @@ Find a demo program [here](https://github.com/mh-cbon/go-msi/tree/master/testing
 
 # Install
 
-Pick an msi package [here](https://github.com/mh-cbon/go-msi/releases) !
+Check the [release page](https://github.com/mh-cbon/go-msi/releases)!
 
-__chocolatey__
+#### Go
 
+```sh
+go get github.com/mh-cbon/go-msi
+```
+
+
+#### Chocolatey
 ```sh
 choco install go-msi
 ```
 
-__deb/ubuntu/rpm source repositories__
-
+#### linux rpm/deb repository
 ```sh
 wget -O - https://raw.githubusercontent.com/mh-cbon/latest/master/source.sh \
 | GH=mh-cbon/go-msi sh -xe
@@ -26,8 +36,7 @@ curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/source.sh \
 | GH=mh-cbon/go-msi sh -xe
 ```
 
-__deb/ubuntu/rpm__
-
+#### linux rpm/deb standalone package
 ```sh
 curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh \
 | GH=mh-cbon/go-msi sh -xe
@@ -35,16 +44,6 @@ curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh \
 wget -q -O - --no-check-certificate \
 https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh \
 | GH=mh-cbon/go-msi sh -xe
-```
-
-__go__
-```sh
-mkdir -p $GOPATH/src/github.com/mh-cbon
-cd $GOPATH/src/github.com/mh-cbon
-git clone https://github.com/mh-cbon/go-msi.git
-cd go-msi
-glide install
-go install
 ```
 
 # Requirements
@@ -65,9 +64,12 @@ For simple cases,
 
 `wix.json` file describe the desired packaging rules between your sources and the resulting msi file.
 
+[Check the demo json file](https://github.com/mh-cbon/go-msi/blob/master/testing/hello/wix.json)
+
 Post an issue if it is not self-explanatory.
 
-Always double check the documentation and SO when you face a difficulty with `heat`, `candle`, `light`
+Always double check the documentation and [SO](https://stackoverflow.com)
+when you face a difficulty with `heat`, `candle`, `light`
 
 - http://wixtoolset.org/documentation/
 - http://stackoverflow.com/questions/tagged/wix
@@ -92,33 +94,37 @@ I have provided some tools to help with that matter.
 
 # Usage
 
+
+###### $ go-msi -h
 ```sh
 NAME:
    go-msi - Easy msi pakage for Go
 
 USAGE:
    go-msi <cmd> <options>
-
+   
 VERSION:
-   0.0.1
-
+   0.0.0
+   
 COMMANDS:
-     check-json           Check the JSON wix manifest
-     set-guid             Sets appropriate guids in your wix manifest
-     generate-templates   Generate wix templates
-     to-windows           Write Windows1252 encoded file
-     to-rtf               Write RTF formatted file
-     gen-wix-cmd          Generate a batch file of Wix commands to run
-     run-wix-cmd          Run the batch file of Wix commands
-     make                 All-in-one command to make MSI files
+     check-json          Check the JSON wix manifest
+     set-guid            Sets appropriate guids in your wix manifest
+     generate-templates  Generate wix templates
+     to-windows          Write Windows1252 encoded file
+     to-rtf              Write RTF formatted file
+     gen-wix-cmd         Generate a batch file of Wix commands to run
+     run-wix-cmd         Run the batch file of Wix commands
+     make                All-in-one command to make MSI files
+     choco               Generate a chocolatey package of your msi files
+     help, h             Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --help, -h		show help
-   --version, -v	print the version
+   --help, -h     show help
+   --version, -v  print the version
 ```
 
-### check-json
 
+###### $ go-msi check-json -h
 ```sh
 NAME:
    go-msi check-json - Check the JSON wix manifest
@@ -127,11 +133,11 @@ USAGE:
    go-msi check-json [command options] [arguments...]
 
 OPTIONS:
-   --path value, -p value	Path to the wix manifest file (default: "wix.json")
+   --path value, -p value  Path to the wix manifest file (default: "wix.json")
 ```
 
-### set-guid
 
+###### $ go-msi set-guid -h
 ```sh
 NAME:
    go-msi set-guid - Sets appropriate guids in your wix manifest
@@ -140,11 +146,50 @@ USAGE:
    go-msi set-guid [command options] [arguments...]
 
 OPTIONS:
-   --path value, -p value	Path to the wix manifest file (default: "wix.json")
+   --path value, -p value  Path to the wix manifest file (default: "wix.json")
 ```
 
-### generate-templates
 
+###### $ go-msi make -h
+```sh
+NAME:
+   go-msi make - All-in-one command to make MSI files
+
+USAGE:
+   go-msi make [command options] [arguments...]
+
+OPTIONS:
+   --path value, -p value     Path to the wix manifest file (default: "wix.json")
+   --src value, -s value      Directory path to the wix templates files (default: "/home/mh-cbon/gow/bin/templates")
+   --out value, -o value      Directory path to the generated wix cmd file (default: "/tmp/go-msi459899827")
+   --arch value, -a value     A target architecture, amd64 or 386 (ia64 is not handled)
+   --msi value, -m value      Path to write resulting msi file to
+   --version value            The version of your program
+   --license value, -l value  Path to the license file
+   --keep, -k                 Keep output directory containing build files (useful for debug)
+```
+
+
+###### $ go-msi choco -h
+```sh
+NAME:
+   go-msi choco - Generate a chocolatey package of your msi files
+
+USAGE:
+   go-msi choco [command options] [arguments...]
+
+OPTIONS:
+   --path value, -p value           Path to the wix manifest file (default: "wix.json")
+   --src value, -s value            Directory path to the wix templates files (default: "/home/mh-cbon/gow/bin/templates/choco")
+   --version value                  The version of your program
+   --out value, -o value            Directory path to the generated chocolatey build file (default: "/tmp/go-msi722401109")
+   --input value, -i value          Path to the msi file to package into the chocolatey package
+   --changelog-cmd value, -c value  A command to generate the content of the changlog in the package
+   --keep, -k                       Keep output directory containing build files (useful for debug)
+```
+
+
+###### $ go-msi generate-templates -h
 ```sh
 NAME:
    go-msi generate-templates - Generate wix templates
@@ -154,14 +199,14 @@ USAGE:
 
 OPTIONS:
    --path value, -p value     Path to the wix manifest file (default: "wix.json")
-   --src value, -s value      Directory path to the wix templates files (default: "go-msi/templates")
-   --out value, -o value      Directory path to the generated wix templates files (default: "builder")
+   --src value, -s value      Directory path to the wix templates files (default: "/home/mh-cbon/gow/bin/templates")
+   --out value, -o value      Directory path to the generated wix templates files (default: "/tmp/go-msi253500856")
    --version value            The version of your program
    --license value, -l value  Path to the license file
 ```
 
-### to-windows
 
+###### $ go-msi to-windows -h
 ```sh
 NAME:
    go-msi to-windows - Write Windows1252 encoded file
@@ -174,8 +219,8 @@ OPTIONS:
    --out value, -o value  Path to the ANSI generated file
 ```
 
-### to-rtf
 
+###### $ go-msi to-rtf -h
 ```sh
 NAME:
    go-msi to-rtf - Write RTF formatted file
@@ -184,13 +229,13 @@ USAGE:
    go-msi to-rtf [command options] [arguments...]
 
 OPTIONS:
-   --src value, -s value   Path to a text file
-   --out value, -o value   Path to the RTF generated file
-   --reencode, -e          Also re encode UTF-8 to Windows1252 charset
+   --src value, -s value  Path to a text file
+   --out value, -o value  Path to the RTF generated file
+   --reencode, -e         Also re encode UTF-8 to Windows1252 charset
 ```
 
-### gen-wix-cmd
 
+###### $ go-msi gen-wix-cmd -h
 ```sh
 NAME:
    go-msi gen-wix-cmd - Generate a batch file of Wix commands to run
@@ -200,14 +245,14 @@ USAGE:
 
 OPTIONS:
    --path value, -p value  Path to the wix manifest file (default: "wix.json")
-   --src value, -s value   Directory path to the wix templates files (default: "go-msi/templates")
-   --out value, -o value   Directory path to the generated wix cmd file (default: "builder")
-   --arch value, -a value  A target architecture , amd64 or 386 (ia64 is not handled)
+   --src value, -s value   Directory path to the wix templates files (default: "/home/mh-cbon/gow/bin/templates")
+   --out value, -o value   Directory path to the generated wix cmd file (default: "/tmp/go-msi811339320")
+   --arch value, -a value  A target architecture, amd64 or 386 (ia64 is not handled)
    --msi value, -m value   Path to write resulting msi file to
 ```
 
-### run-wix-cmd
 
+###### $ go-msi run-wix-cmd -h
 ```sh
 NAME:
    go-msi run-wix-cmd - Run the batch file of Wix commands
@@ -216,45 +261,7 @@ USAGE:
    go-msi run-wix-cmd [command options] [arguments...]
 
 OPTIONS:
-   --out value, -o value	Directory path to the generated wix cmd file (default: "builder")
-```
-
-### make
-
-```sh
-NAME:
-   go-msi make - All-in-one command to make MSI files
-
-USAGE:
-   go-msi make [command options] [arguments...]
-
-OPTIONS:
-   --path value, -p value       Path to the wix manifest file (default: "wix.json")
-   --src value, -s value        Directory path to the wix templates files (default: "go-msi/templates")
-   --out value, -o value        Directory path to the generated wix cmd file (default: "builder")
-   --arch value, -a value	      A target architecture , amd64 or 386 (ia64 is not handled)
-   --msi value, -m value        Path to write resulting msi file to
-   --version value              The version of your program
-   --license value, -l value    Path to the license file
-```
-
-### choco
-
-```sh
-NAME:
-   go-msi choco - Generate a chocolatey package of your msi files
-
-USAGE:
-   go-msi choco [command options] [arguments...]
-
-OPTIONS:
-   --path value, -p value     Path to the wix manifest file (default: "wix.json")
-   --src value, -s value      Directory path to the wix templates files (default: "go-msi/templates")
-   --version value            The version of your program
-   --out value, -o value      Directory path to the generated chocolatey build file (default: "builder")
-   --input value, -i value    Path to the msi file to package into the chocolatey package
-   --keep, -k                 Keep output directory containing build files (useful for debug)
-   --changelog-cmd, -c value  A command to generate the content of the changelog.
+   --out value, -o value  Directory path to the generated wix cmd file (default: "/tmp/go-msi094237596")
 ```
 
 # Credits
