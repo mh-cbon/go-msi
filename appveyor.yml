@@ -50,7 +50,10 @@ before_test:
   - set GOARCH=amd64
   - go build -o C:\go-msi\go-msi.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
   - XCOPY /I /E templates C:\go-msi\templates
+  - cd testing
+  - glide install
   - go run testing\\main.go
+  - cd ..
 
 artifacts:
   - path: '*-386.msi'
