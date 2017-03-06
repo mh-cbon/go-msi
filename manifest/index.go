@@ -53,18 +53,20 @@ type ChocoSpec struct {
 }
 
 const (
-	whenInstall = "install"
+	whenInstall   = "install"
 	whenUninstall = "uninstall"
 )
 
-var PossibleWhenValues = map[string]struct{}{
-	whenInstall:   struct{}{},
-	whenUninstall: struct{}{},
+// HookPhases describes known hook phases.
+var HookPhases = map[string]bool{
+	whenInstall:   true,
+	whenUninstall: true,
 }
 
+// Hook describes a command to run on install / uninstall.
 type Hook struct {
-	Command       string `json:"command,omitempty`
-	CookedCommand string `json:"-""`
+	Command       string `json:"command,omitempty"`
+	CookedCommand string `json:"-"`
 	When          string `json:"when,omitempty"`
 }
 
@@ -134,11 +136,11 @@ func (wixFile *WixManifest) Load(p string) error {
 	}
 	dat, err := ioutil.ReadFile(p)
 	if err != nil {
-		return err
+		return fmt.Errorf("JSON ReadFile failed with %v", err)
 	}
 	err = json.Unmarshal(dat, &wixFile)
 	if err != nil {
-		return err
+		return fmt.Errorf("JSON Unmarshal failed with %v", err)
 	}
 	return nil
 }
@@ -188,6 +190,10 @@ func (wixFile *WixManifest) NeedGUID() bool {
 // where out is the path to the wix templates files.
 func (wixFile *WixManifest) RewriteFilePaths(out string) error {
 	var err error
+	out, err = filepath.Abs(out)
+	if err != nil {
+		return err
+	}
 	for i, file := range wixFile.Files.Items {
 		file, err = filepath.Abs(file)
 		if err != nil {
