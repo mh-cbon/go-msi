@@ -1,0 +1,5 @@
+package: github.com/mh-cbon/go-msi/testing
+import:
+- package: golang.org/x/sys
+  subpackages:
+  - windows/svc

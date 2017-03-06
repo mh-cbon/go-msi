@@ -1,3 +1,5 @@
+// +build windows
+
 package main
 
 import (
@@ -10,9 +12,14 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"golang.org/x/sys/windows/svc"
+	"golang.org/x/sys/windows/svc/mgr"
 )
 
 func main() {
+
+	// svcName := "HelloSvc"
 
 	wd := makeDir("c:/gopath/src/github.com/mh-cbon/go-msi/testing/hello")
 	mustContains(wd, "hello.go")
@@ -33,6 +40,8 @@ func main() {
 	resultPackage := makeFile("hello.msi")
 	mustExists(resultPackage, "Package file is missing %v")
 
+	// mustNotHaveWindowsService("HelloSvc")
+
 	helloPackageInstall := makeCmd("msiexec", "/i", "hello.msi", "/q")
 	mustExec(helloPackageInstall, "hello package install failed %v")
 
@@ -41,12 +50,20 @@ func main() {
 
 	readDir("C:/Program Files/hello/assets")
 
-	helloExecPath := "C:/Program Files/hello/hello.exe"
+	// helloSvc := mustHaveWindowsService(svcName)
+	// mustHaveStartedWindowsService(svcName, helloSvc)
+
 	helloEpURL := "http://localhost:8080/"
+	helloExecPath := "C:/Program Files/hello/hello.exe"
 	mustExecHello(helloExecPath, helloEpURL)
+	// mustQueryHello(helloEpURL)
+	// mustStopWindowsService(svcName, helloSvc)
+	// mustSucceed(helloSvc.Close(), "Failed to close the service %v")
 
 	helloPackageUninstall := makeCmd("msiexec", "/x", "hello.msi", "/q")
 	mustExec(helloPackageUninstall, "hello package uninstall failed %v")
+
+	// mustNotHaveWindowsService("HelloSvc")
 
 	// mustShowEnv("$env:path")
 	// mustEnvEq("$env:some", "")
@@ -59,33 +76,90 @@ func main() {
 	helloNuPkg := makeFile("hello.0.0.1.nupkg")
 	mustExists(helloNuPkg, "Chocolatey nupkg file is missing %v")
 
+	// mustNotHaveWindowsService("HelloSvc")
+
 	helloChocoInstall := makeCmd("choco", "install", "hello.0.0.1.nupkg", "-y")
 	mustExec(helloChocoInstall, "hello choco package install failed %v")
 
 	readDir("C:/Program Files/hello/assets")
 
+	// helloSvc = mustHaveWindowsService(svcName)
+	// mustHaveStartedWindowsService(svcName, helloSvc)
+
 	// mustShowEnv("$env:path")
 	// mustEnvEq("$env:some", "value")
 
 	mustExecHello(helloExecPath, helloEpURL)
+	// mustQueryHello(helloEpURL)
+	// mustStopWindowsService(svcName, helloSvc)
 
 	helloChocoUninstall := makeCmd("choco", "uninstall", "hello", "-y")
 	mustExec(helloChocoUninstall, "hello choco package uninstall failed %v")
+
+	// mustNotHaveWindowsService("HelloSvc")
 
 	// mustShowEnv("$env:path")
 	// mustEnvEq("$env:some", "")
 
 }
 
-func mustExecHello(p string, u string) {
+func mustHaveWindowsService(n string) *mgr.Service {
+	mgr, err := mgr.Connect()
+	mustSucceed(err, "Failed to connect to the service manager %v")
+	s, err := mgr.OpenService(n)
+	mustSucceed(err, "Failed to open the service %v")
+	if s == nil {
+		mustSucceed(err, "Failed to find the service %v")
+	}
+	return s
+}
 
-	helloPackageExec := makeCmd(p)
-	mustStart(helloPackageExec, "hello command failed %v")
+func mustNotHaveWindowsService(n string) *mgr.Service {
+	mgr, err := mgr.Connect()
+	mustSucceed(err, "Failed to connect to the service manager %v")
+	s, err := mgr.OpenService(n)
+	mustNotSucceed(err, "Must fail to open the service %v")
+	if s == nil {
+		mustNotSucceed(err, "Must fail to find the service %v")
+	}
+	return s
+}
 
+func mustNotSucceed(err error, format ...string) {
+	if err == nil {
+		if len(format) > 0 {
+			err = fmt.Errorf(format[0], err)
+		}
+		log.Fatal(err)
+	}
+}
+
+func mustHaveStartedWindowsService(n string, s *mgr.Service) {
+	status, err := s.Query()
+	mustSucceed(err, "Failed to query the service status %v")
+	if status.State != svc.Running {
+		mustSucceed(fmt.Errorf("Service not started %v", n))
+	}
+}
+
+func mustStopWindowsService(n string, s *mgr.Service) {
+	status, err := s.Control(svc.Stop)
+	mustSucceed(err, "Failed to control the service status %v")
+	if status.State != svc.Stopped {
+		mustSucceed(fmt.Errorf("Service not stopped %v", n))
+	}
+}
+
+func mustQueryHello(u string) {
 	res := getURL(u)
 	mustExec(res, "HTTP request failed %v")
 	mustEqStdout(res, "hello, world\n", "Invalid HTTP response got=%q, want=%q")
+}
 
+func mustExecHello(p string, u string) {
+	helloPackageExec := makeCmd(p)
+	mustStart(helloPackageExec, "hello command failed %v")
+	mustQueryHello(u)
 	mustKill(helloPackageExec, "hello was not killed properly %v")
 }
 

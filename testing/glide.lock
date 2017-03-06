@@ -1,0 +1,8 @@
+hash: 7c8e01308dcc94b234a32bc906eb4471d88cac5e33b35ad5017f8ca7514f7197
+updated: 2017-03-06T20:54:03.564228552+01:00
+imports:
+- name: golang.org/x/sys
+  version: e48874b42435b4347fc52bdee0424a52abc974d7
+  subpackages:
+  - windows/svc
+testImports: []

@@ -36,5 +36,11 @@
         "icon":"ico.ico"
       }
     ]
-  }
+  },
+  "hooks": [
+    {"when": "install", "command": "sc.exe create HelloSvc binPath=\"[INSTALLDIR]hello.exe\" type=share start=auto DisplayName=\"Hello!\""},
+    {"when": "install", "command": "sc.exe start HelloSvc"},
+    {"when": "uninstall", "command": "sc.exe stop HelloSvc"},
+    {"when": "uninstall", "command": "sc.exe delete HelloSvc"}
+  ]
 }
