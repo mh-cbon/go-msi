@@ -1,12 +1,15 @@
 package manifest
 
 import (
+	"bytes"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/Masterminds/semver"
 	"github.com/satori/go.uuid"
@@ -14,18 +17,21 @@ import (
 
 // WixManifest is the struct to decode a wix.json file.
 type WixManifest struct {
-	Product     string       `json:"product"`
-	Company     string       `json:"company"`
-	Version     string       `json:"version,omitempty"`
-	VersionOk   string       `json:"-"`
-	License     string       `json:"license,omitempty"`
-	UpgradeCode string       `json:"upgrade-code"`
-	Files       WixFiles     `json:"files,omitempty"`
-	Directories []string     `json:"directories,omitempty"`
-	RelDirs     []string     `json:"-"`
-	Env         WixEnvList   `json:"env,omitempty"`
-	Shortcuts   WixShortcuts `json:"shortcuts,omitempty"`
-	Choco       ChocoSpec    `json:"choco,omitempty"`
+	Product        string       `json:"product"`
+	Company        string       `json:"company"`
+	Version        string       `json:"version,omitempty"`
+	VersionOk      string       `json:"-"`
+	License        string       `json:"license,omitempty"`
+	UpgradeCode    string       `json:"upgrade-code"`
+	Files          WixFiles     `json:"files,omitempty"`
+	Directories    []string     `json:"directories,omitempty"`
+	RelDirs        []string     `json:"-"`
+	Env            WixEnvList   `json:"env,omitempty"`
+	Shortcuts      WixShortcuts `json:"shortcuts,omitempty"`
+	Choco          ChocoSpec    `json:"choco,omitempty"`
+	Hooks          []Hook       `json:"hooks,omitempty"`
+	InstallHooks   []Hook       `json:"-"`
+	UninstallHooks []Hook       `json:"-"`
 }
 
 // ChocoSpec is the struct to decode the choco key of a wix.json file.
@@ -44,6 +50,22 @@ type ChocoSpec struct {
 	MsiSum         string `json:"-"`
 	BuildDir       string `json:"-"`
 	ChangeLog      string `json:"-"`
+}
+
+const (
+	whenInstall = "install"
+	whenUninstall = "uninstall"
+)
+
+var PossibleWhenValues = map[string]struct{}{
+	whenInstall:   struct{}{},
+	whenUninstall: struct{}{},
+}
+
+type Hook struct {
+	Command       string `json:"command,omitempty`
+	CookedCommand string `json:"-""`
+	When          string `json:"when,omitempty"`
 }
 
 // WixFiles is the struct to decode files key of the wix.json file.
@@ -242,6 +264,30 @@ func (wixFile *WixManifest) Normalize() error {
 		wixFile.Choco.Description = wixFile.Product
 	}
 	wixFile.Choco.Tags += " admin" // required to pass chocolatey validation..
+
+	// Escape hook commands and ensure the command name is enclosed in quotes (needed by wix)
+	for i, hook := range wixFile.Hooks {
+		cmd := strings.Trim(hook.Command, " ")
+		if len(cmd) > 0 && cmd[0] != '"' {
+			words := strings.Split(cmd, " ")
+			cmd = `"` + words[0] + `"` + cmd[len(words[0]):]
+		}
+		buf := &bytes.Buffer{}
+		if err := xml.EscapeText(buf, []byte(cmd)); err != nil {
+			return err
+		}
+		wixFile.Hooks[i].CookedCommand = buf.String()
+	}
+
+	// Separate install and uninstall hooks to simplify templating
+	for _, hook := range wixFile.Hooks {
+		switch hook.When {
+		case whenInstall:
+			wixFile.InstallHooks = append(wixFile.InstallHooks, hook)
+		case whenUninstall:
+			wixFile.UninstallHooks = append(wixFile.UninstallHooks, hook)
+		}
+	}
 
 	return nil
 }
