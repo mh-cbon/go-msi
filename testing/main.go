@@ -54,6 +54,7 @@ func main() {
 	// mustShowEnv("$env:path")
 	// mustEnvEq("$env:some", "value")
 
+	readDir("C:/Program Files/hello")
 	readDir("C:/Program Files/hello/assets")
 
 	mgr, helloSvc := mustHaveWindowsService(svcName)
@@ -90,6 +91,7 @@ func main() {
 	helloChocoInstall := makeCmd("choco", "install", "hello.0.0.1.nupkg", "-y")
 	mustExec(helloChocoInstall, "hello choco package install failed %v")
 
+	readDir("C:/Program Files/hello")
 	readDir("C:/Program Files/hello/assets")
 
 	mgr, helloSvc = mustHaveWindowsService(svcName)
