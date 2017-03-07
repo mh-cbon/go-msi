@@ -106,6 +106,9 @@ func main() {
 	mustQueryHello(helloEpURL)
 	// mustStopWindowsService(svcName, helloSvc)
 
+	chocoFeature := makeCmd("choco", "feature", "disable", "-n", "autoUninstaller")
+	mustExec(chocoFeature, "choco deature disabled failed %v")
+
 	helloChocoUninstall := makeCmd("choco", "uninstall", "hello", "-v", "-d", "-y", "--force")
 	mustExec(helloChocoUninstall, "hello choco package uninstall failed %v")
 
