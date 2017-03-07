@@ -3,4 +3,4 @@ $fileType = 'msi';
 $scriptPath =  $(Split-Path $MyInvocation.MyCommand.Path);
 $fileFullPath = Join-Path $scriptPath '{{.Choco.MsiFile}}';
 
-Uninstall-ChocolateyPackage $packageName $fileType "$fileFullPath /qr"
+Uninstall-ChocolateyPackage $packageName $fileType "$fileFullPath /q"
