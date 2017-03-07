@@ -1,4 +1,26 @@
 
+1.0.1
+
+  * closes #2 Add support for (un)install hooks (run with elevated  privileges)
+  * workaround #9 Add support for services setup
+  * closes #10 Add support for e2e tests with CI support
+  * demo: add support for service
+  * chocolatey: uninstall script, changed msiexec /qr argument to /q
+  * testing: improve e2e tests to support services
+  * testing: update vagrant scripts to run tests
+  * package: make use of emd
+  * package: change bump script to sh version
+  * uuid(minor): close #7 remove useless code to generate an uuid
+  * wix(minor): close #8 update product template to propagate environment variable changes
+  * choco(minor): close #5 updated uninstaller script
+
+  - Alfonso Acosta <alfonso.acosta@gmail.com>
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Tue, 07 Mar 2017 17:21:16 +0100
+
+
+
 1.0.0
 
   * winters udpate, udpated documentation and lint
