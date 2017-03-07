@@ -1,5 +1,31 @@
 # Changelog - go-msi
 
+### 1.0.1
+
+__Changes__
+
+- closes #2 Add support for (un)install hooks (run with elevated  privileges)
+- workaround #9 Add support for services setup
+- closes #10 Add support for e2e tests with CI support
+- demo: add support for service
+- chocolatey: uninstall script, changed msiexec /qr argument to /q
+- testing: improve e2e tests to support services
+- testing: update vagrant scripts to run tests
+- package: make use of emd
+- package: change bump script to sh version
+- uuid(minor): close #7 remove useless code to generate an uuid
+- wix(minor): close #8 update product template to propagate environment variable changes
+- choco(minor): close #5 updated uninstaller script
+
+__Contributors__
+
+- Alfonso Acosta
+- mh-cbon
+
+Released by mh-cbon, Tue 07 Mar 2017 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/1.0.0...1.0.1#diff)
+______________
+
 ### 1.0.0
 
 __Changes__
