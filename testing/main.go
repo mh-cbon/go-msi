@@ -542,10 +542,12 @@ func (e *cmdExec) ExitOk() bool {
 func makeCmd(w string, a ...string) *cmdExec {
 	log.Printf("makeCmd: %v %v\n", w, a)
 	cmd := exec.Command(mustLookPath(w), a...)
-	var stdout bytes.Buffer
-	var stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
+	// var stdout bytes.Buffer
+	// var stderr bytes.Buffer
+	// cmd.Stdout = &stdout
+	// cmd.Stderr = &stderr
+	cmd.Stdout = os.Stderr
+	cmd.Stderr = os.Stderr
 	return &cmdExec{Cmd: cmd, stdout: &stdout, stderr: &stderr}
 }
 
