@@ -2,17 +2,21 @@ set -x
 set -e
 
 
-# setup the repo
-vagrant winrm -c ". cmd.exe /c \"rmdir /s /q c:\gopath\src\github.com\mh-cbon\go-msi\testing\hello\"" || echo "ok, no such directory."
-vagrant winrm -c "mkdir c:\gopath\src\github.com\mh-cbon\go-msi\testing\hello"
-vagrant winrm -c 'Copy-Item C:\\vagrant\\hello\\* -destination c:\gopath\src\github.com\mh-cbon\go-msi\testing\hello\ -recurse -Force'
-vagrant winrm -c 'Dir c:\gopath\src\github.com\mh-cbon\go-msi\testing\hello\'
+vagrant winrm -c "mkdir c:\\gopath\\src\\github.com\\mh-cbon\\go-msi\\testing\\hello"
+vagrant winrm -c 'Copy-Item C:\\vagrant\\hello\\* -destination c:\\gopath\\src\\github.com\\mh-cbon\\go-msi\\testing\\hello\\ -recurse -Force'
 
-vagrant winrm -c ". cmd.exe /c \"C:\\vagrant\\run-test.bat\""
+cp -r ../templates . && \
+vagrant winrm -c 'Copy-Item C:\\vagrant\\templates\\* -destination C:\\go-msi\\templates\\ -recurse -Force' && \
+rm -fr templates
 
-vagrant winrm -c "ls env:some" || echo "ok, expected not found"
+GOOS=windows go build -o test.exe main.go \
+&& echo "----" \
+&& vagrant winrm -c "C:\\vagrant\\test.exe"
 
-vagrant winrm -c "\$env:path"
+
+# vagrant winrm -c "ls env:some" || echo "ok, expected not found"
+
+# vagrant winrm -c "\$env:path"
 
 # vagrant winrm -c "Get-Content -Path \"C:\\ProgramData\\chocolatey\\logs\\chocolatey.log\" -Tail 100"
 
