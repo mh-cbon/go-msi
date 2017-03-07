@@ -1,0 +1,16 @@
+hash: fbbc7e2b50d047de95fa2ac0f70ad85818fbb845822855ef2f6f401d1aff4f59
+updated: 2017-03-07T14:20:06.739944837+01:00
+imports:
+- name: github.com/kardianos/osext
+  version: 9b883c5eb462dd5cb1b0a7a104fe86bc6b9bd391
+- name: github.com/kardianos/service
+  version: ef06f2f890aa4f20d1ff55da91b29392ba6af3af
+- name: golang.org/x/sys
+  version: e48874b42435b4347fc52bdee0424a52abc974d7
+  subpackages:
+  - windows
+  - windows/registry
+  - windows/svc
+  - windows/svc/eventlog
+  - windows/svc/mgr
+testImports: []

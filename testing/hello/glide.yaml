@@ -1,0 +1,6 @@
+package: github.com/mh-cbon/go-msi/testing/hello
+import:
+- package: github.com/kardianos/service
+- package: golang.org/x/sys
+  subpackages:
+  - windows/svc/mgr
