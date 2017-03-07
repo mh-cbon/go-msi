@@ -6,8 +6,7 @@
   "files": {
     "guid": "",
     "items": [
-      "build/amd64/hello.exe",
-      "script.bat"
+      "build/amd64/hello.exe"
     ]
   },
   "directories": [
