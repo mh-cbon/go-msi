@@ -107,9 +107,9 @@ func main() {
 	// mustStopWindowsService(svcName, helloSvc)
 
 	chocoFeature := makeCmd("choco", "feature", "disable", "-n", "autoUninstaller")
-	mustExec(chocoFeature, "choco deature disabled failed %v")
+	mustExec(chocoFeature, "choco feature disabled failed %v")
 
-	helloChocoUninstall := makeCmd("choco", "uninstall", "hello", "-v", "-d", "-y", "--force")
+	helloChocoUninstall := makeCmd("choco", "uninstall", "hello", "-v", "-d", "-y", "--force", "-n", "--skipautouninstaller")
 	mustExec(helloChocoUninstall, "hello choco package uninstall failed %v")
 
 	mustNotHaveWindowsService("HelloSvc")
