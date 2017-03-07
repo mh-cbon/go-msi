@@ -9,3 +9,4 @@
 /testing/.vagrant/
 /.glide/
 testing/vendor
+testing/hello/vendor
