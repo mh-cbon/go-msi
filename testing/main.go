@@ -216,20 +216,21 @@ func mustSucceed(err error, format ...string) {
 	}
 }
 func mustSucceedDetailed(err error, e interface{}, format ...string) {
+	if x, ok := e.(stdouter); ok {
+		fmt.Printf("%T:%v\n", x, x.Stdout())
+	}
+	if x, ok := e.(stderrer); ok {
+		fmt.Printf("%T:%v\n", x, x.Stderr())
+	}
 	if err != nil {
-		details := "\n\n"
-		if x, ok := e.(stdouter); ok {
-			details += fmt.Sprintf("%T:%v\n", x, x.Stdout())
-		}
-		if x, ok := e.(stderrer); ok {
-			details += fmt.Sprintf("%T:%v\n", x, x.Stderr())
-		}
 		if len(format) > 0 {
-			err = fmt.Errorf(format[0]+details, err)
+			err = fmt.Errorf(format[0], err)
 		} else {
-			err = fmt.Errorf("%v%v", err, details)
+			err = fmt.Errorf("%v", err)
 		}
 		log.Fatal(err)
+	} else {
+
 	}
 }
 func mustFail(err error, format ...string) {
