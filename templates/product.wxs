@@ -104,7 +104,7 @@
          {{range $i, $e := .InstallHooks}}
          <Custom Action="CustomInstallExec{{$i}}" After="{{if eq $i 0}}InstallFiles{{else}}CustomInstallExec{{dec $i}}{{end}}">NOT Installed AND NOT REMOVE</Custom>
          {{end}}
-         {{range $i, $e := .InstallHooks}}
+         {{range $i, $e := .UninstallHooks}}
          <Custom Action="CustomUninstallExec{{$i}}" After="{{if eq $i 0}}InstallInitialize{{else}}CustomUninstallExec{{dec $i}}{{end}}">REMOVE ~= "ALL"</Custom>
          {{end}}
       </InstallExecuteSequence>
