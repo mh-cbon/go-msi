@@ -1,9 +1,13 @@
 set -x
 set -e
 
+# sudo dnf install http://download.virtualbox.org/virtualbox/5.1.18/VirtualBox-5.1-5.1.18_114002_fedora25-1.x86_64.rpm -y
+# sudo dnf install kernel-devel -y
+# sudo /sbin/vboxconfig # sometime needed.
+
 # prepare and load vagrant
-vagrant plugin install winrm
 vagrant plugin install winrm-fs
+vagrant plugin install winrm
 vagrant up --provider=virtualbox
 
 # prepare hello program like appveyor
