@@ -1,300 +1,365 @@
 <!DOCTYPE html>
 <html lang="en-us">
+  
   <head>
-    <meta charset="UTF-8">
-    <title>Go-msi by mh-cbon</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
-  </head>
+  <meta charset="UTF-8">
+  <title>go-msi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#157878">
+  <link rel="stylesheet" href="/go-msi//css/normalize.css">
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/go-msi//css/cayman.css">
+</head>
+
   <body>
     <section class="page-header">
-      <h1 class="project-name">Go-msi</h1>
-      <h2 class="project-tagline">Easy way to generate msi package for a Go project</h2>
-      <a href="https://github.com/mh-cbon/go-msi" class="btn">View on GitHub</a>
-      <a href="https://github.com/mh-cbon/go-msi/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/mh-cbon/go-msi/tarball/master" class="btn">Download .tar.gz</a>
-    </section>
+  <h1 class="project-name">go-msi</h1>
+  <h2 class="project-tagline">Easy way to generate msi package for a Go project</h2>
+  <a href="http://github.com/mh-cbon/go-msi" class="btn">View on GitHub</a>
+  <a href="http://github.com/mh-cbon/go-msi/zipball/gh-pages" class="btn">Download .zip</a>
+  <a href="http://github.com/mh-cbon/go-msi/tarball/gh-pages" class="btn">Download .tar.gz</a>
+</section>
+
 
     <section class="main-content">
-      <h1>
-<a id="go-msi" class="anchor" href="#go-msi" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>go-msi</h1>
+      
+      <h1 id="go-msi">go-msi</h1>
 
-<p>Easy way to generate msi package for a Go project.</p>
+<p><a href="https://ci.appveyor.com/project/mh-cbon/go-msi"><img src="https://ci.appveyor.com/api/projects/status/github/mh-cbon/go-msi?branch=master&amp;svg=true" alt="appveyor Status" /></a></p>
+
+<p>Package go-msi helps to generate msi package for a Go project.</p>
 
 <p>This tool is part of the <a href="https://github.com/mh-cbon/go-github-release">go-github-release workflow</a></p>
 
-<h1>
-<a id="install" class="anchor" href="#install" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install</h1>
+<p>Find a demo program <a href="https://github.com/mh-cbon/go-msi/tree/master/testing/hello">here</a></p>
 
-<p>Pick an msi package <a href="https://github.com/mh-cbon/go-msi/releases">here</a> !</p>
-
-<p><strong>chocolatey</strong></p>
-
-<div class="highlight highlight-source-shell"><pre>choco install go-msi</pre></div>
-
-<p><strong>deb/ubuntu/rpm source repositories</strong></p>
-
-<div class="highlight highlight-source-shell"><pre>wget -O - https://raw.githubusercontent.com/mh-cbon/latest/master/source.sh \
-<span class="pl-k">|</span> GH=mh-cbon/go-msi sh -xe
-<span class="pl-c"># or</span>
-curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/source.sh \
-<span class="pl-k">|</span> GH=mh-cbon/go-msi sh -xe</pre></div>
-
-<p><strong>deb/ubuntu/rpm</strong></p>
-
-<div class="highlight highlight-source-shell"><pre>curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh \
-<span class="pl-k">|</span> GH=mh-cbon/go-msi sh -xe
-<span class="pl-c"># or</span>
-wget -q -O - --no-check-certificate \
-https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh \
-<span class="pl-k">|</span> GH=mh-cbon/go-msi sh -xe</pre></div>
-
-<p><strong>go</strong></p>
-
-<div class="highlight highlight-source-shell"><pre>mkdir -p <span class="pl-smi">$GOPATH</span>/src/github.com/mh-cbon
-<span class="pl-c1">cd</span> <span class="pl-smi">$GOPATH</span>/src/github.com/mh-cbon
-git clone https://github.com/mh-cbon/go-msi.git
-<span class="pl-c1">cd</span> go-msi
-glide install
-go install</pre></div>
-
-<h1>
-<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h1>
-
+<h1 id="toc">TOC</h1>
 <ul>
-<li>A windows machine (see <a href="https://github.com/mh-cbon/go-msi/blob/master/appveyor-recipe.md">here</a> for an appveyor file, see <a href="https://github.com/mh-cbon/go-msi/blob/master/unice-recipe.md">here</a> for unix friendly users)</li>
-<li>wix &gt;= 3.10 (may work on older release, but it is untested, feel free to report)</li>
-<li>you must add wix bin to your PATH</li>
+  <li><a href="#install">Install</a>
+    <ul>
+      <li><a href="#go">Go</a></li>
+      <li><a href="#chocolatey">Chocolatey</a></li>
+      <li><a href="#linux-rpmdeb-repository">linux rpm/deb repository</a></li>
+      <li><a href="#linux-rpmdeb-standalone-package">linux rpm/deb standalone package</a></li>
+    </ul>
+  </li>
+  <li><a href="#usage">Usage</a>
+    <ul>
+      <li><a href="#requirements">Requirements</a></li>
+      <li><a href="#workflow">Workflow</a></li>
+      <li><a href="#configuration-file">configuration file</a></li>
+      <li><a href="#license-file">License file</a></li>
+    </ul>
+  </li>
+  <li><a href="#personnalization">Personnalization</a>
+    <ul>
+      <li><a href="#wix-templates">wix templates</a></li>
+    </ul>
+  </li>
+  <li><a href="#cli">Cli</a></li>
+  <li><a href="#recipes">Recipes</a>
+    <ul>
+      <li><a href="#appveyor">Appveyor</a></li>
+      <li><a href="#unix-like">Unix like</a></li>
+      <li><a href="#release-the-project">Release the project</a></li>
+    </ul>
+  </li>
+  <li><a href="#history">History</a></li>
+  <li><a href="#credits">Credits</a></li>
 </ul>
 
-<h1>
-<a id="workflow" class="anchor" href="#workflow" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Workflow</h1>
+<h1 id="install">Install</h1>
+
+<p>Check the <a href="https://github.com/mh-cbon/go-msi/releases">release page</a>!</p>
+
+<h4 id="go">Go</h4>
+
+<div class="language-sh highlighter-rouge"><pre class="highlight"><code>go get github.com/mh-cbon/go-msi
+</code></pre>
+</div>
+
+<h4 id="chocolatey">Chocolatey</h4>
+<div class="language-sh highlighter-rouge"><pre class="highlight"><code>choco install go-msi
+</code></pre>
+</div>
+
+<h4 id="linux-rpmdeb-repository">linux rpm/deb repository</h4>
+<div class="language-sh highlighter-rouge"><pre class="highlight"><code>wget -O - https://raw.githubusercontent.com/mh-cbon/latest/master/source.sh <span class="se">\</span>
+| <span class="nv">GH</span><span class="o">=</span>mh-cbon/go-msi sh -xe
+<span class="c"># or</span>
+curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/source.sh <span class="se">\</span>
+| <span class="nv">GH</span><span class="o">=</span>mh-cbon/go-msi sh -xe
+</code></pre>
+</div>
+
+<h4 id="linux-rpmdeb-standalone-package">linux rpm/deb standalone package</h4>
+<div class="language-sh highlighter-rouge"><pre class="highlight"><code>curl -L https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh <span class="se">\</span>
+| <span class="nv">GH</span><span class="o">=</span>mh-cbon/go-msi sh -xe
+<span class="c"># or</span>
+wget -q -O - --no-check-certificate <span class="se">\</span>
+https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh <span class="se">\</span>
+| <span class="nv">GH</span><span class="o">=</span>mh-cbon/go-msi sh -xe
+</code></pre>
+</div>
+
+<h1 id="usage">Usage</h1>
+
+<h3 id="requirements">Requirements</h3>
+
+<ul>
+  <li>A windows machine (see <a href="https://github.com/mh-cbon/go-msi/blob/master/appveyor-recipe.md">here</a> for an appveyor file, see <a href="https://github.com/mh-cbon/go-msi/blob/master/unice-recipe.md">here</a> for unix friendly users)</li>
+  <li>wix &gt;= 3.10 (may work on older release, but it is untested, feel free to report)</li>
+  <li>you must add wix bin to your PATH</li>
+</ul>
+
+<h3 id="workflow">Workflow</h3>
 
 <p>For simple cases,</p>
 
 <ul>
-<li>Create a <code>wix.json</code> file like <a href="https://github.com/mh-cbon/go-msi/blob/master/wix.json">this one</a>
-</li>
-<li>Apply it guids with <code>go-msi set-guid</code>, you must do it once only for each app.</li>
-<li>Run <code>go-msi make --msi your_program.msi --version 0.0.2</code>
-</li>
+  <li>Create a <code class="highlighter-rouge">wix.json</code> file like <a href="https://github.com/mh-cbon/go-msi/blob/master/wix.json">this one</a></li>
+  <li>Apply it guids with <code class="highlighter-rouge">go-msi set-guid</code>, you must do it once only for each app.</li>
+  <li>Run <code class="highlighter-rouge">go-msi make --msi your_program.msi --version 0.0.2</code></li>
 </ul>
 
-<h3>
-<a id="wixjson" class="anchor" href="#wixjson" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>wix.json</h3>
+<h3 id="configuration-file">configuration file</h3>
 
-<p><code>wix.json</code> file describe the desired packaging rules between your sources and the resulting msi file.</p>
+<p><code class="highlighter-rouge">wix.json</code> file describe the desired packaging rules between your sources and the resulting msi file.</p>
+
+<p><a href="https://github.com/mh-cbon/go-msi/blob/master/testing/hello/wix.json">Check the demo json file</a></p>
 
 <p>Post an issue if it is not self-explanatory.</p>
 
-<p>Always double check the documentation and SO when you face a difficulty with <code>heat</code>, <code>candle</code>, <code>light</code></p>
+<p>Always double check the documentation and <a href="https://stackoverflow.com">SO</a>
+when you face a difficulty with <code class="highlighter-rouge">heat</code>, <code class="highlighter-rouge">candle</code>, <code class="highlighter-rouge">light</code></p>
 
 <ul>
-<li><a href="http://wixtoolset.org/documentation/">http://wixtoolset.org/documentation/</a></li>
-<li><a href="http://stackoverflow.com/questions/tagged/wix">http://stackoverflow.com/questions/tagged/wix</a></li>
+  <li>http://wixtoolset.org/documentation/</li>
+  <li>http://stackoverflow.com/questions/tagged/wix</li>
 </ul>
 
-<p>If you wonder why <code>INSTALLDIR</code>, <code>[INSTALLDIR]</code>, this is part of wix rules, please check their documentation.</p>
+<p>If you wonder why <code class="highlighter-rouge">INSTALLDIR</code>, <code class="highlighter-rouge">[INSTALLDIR]</code>, this is part of wix rules, please check their documentation.</p>
 
-<h3>
-<a id="wix-templates" class="anchor" href="#wix-templates" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>wix templates</h3>
+<h3 id="license-file">License file</h3>
+
+<p>Take care to the license file, it must be an <code class="highlighter-rouge">rtf</code> file, it must be encoded with <code class="highlighter-rouge">Windows1252</code> charset.</p>
+
+<p>I have provided some tools to help with that matter.</p>
+
+<h1 id="personnalization">Personnalization</h1>
+
+<h3 id="wix-templates">wix templates</h3>
 
 <p>For simplicity a default install flow is provided, which you can find <a href="https://github.com/mh-cbon/go-msi/tree/master/templates">here</a></p>
 
 <p>You can create a new one for your own personalization,
 you should only take care to reproduce the go templating already
-defined for <code>files</code>, <code>directories</code>, <code>environment variables</code>, <code>license</code> and <code>shortcuts</code>.</p>
+defined for <code class="highlighter-rouge">files</code>, <code class="highlighter-rouge">directories</code>, <code class="highlighter-rouge">environment variables</code>, <code class="highlighter-rouge">license</code> and <code class="highlighter-rouge">shortcuts</code>.</p>
 
-<p>I guess most of your changes will be about the <code>WixUI_HK.wxs</code> file.</p>
+<p>I guess most of your changes will be about the <code class="highlighter-rouge">WixUI_HK.wxs</code> file.</p>
 
-<h3>
-<a id="license-file" class="anchor" href="#license-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License file</h3>
+<h1 id="cli">Cli</h1>
 
-<p>Take care to the license file, it must be an <code>rtf</code> file, it must be encoded with <code>Windows1252</code> charset.</p>
-
-<p>I have provided some tools to help with that matter.</p>
-
-<h1>
-<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h1>
-
-<div class="highlight highlight-source-shell"><pre>NAME:
-   go-msi - Easy msi pakage <span class="pl-k">for</span> Go
+<h6 id="-go-msi--h">$ go-msi -h</h6>
+<div class="language-sh highlighter-rouge"><pre class="highlight"><code>NAME:
+   go-msi - Easy msi pakage <span class="k">for </span>Go
 
 USAGE:
-   go-msi <span class="pl-k">&lt;</span>cmd<span class="pl-k">&gt;</span> <span class="pl-k">&lt;</span>options<span class="pl-k">&gt;</span>
+   go-msi &lt;cmd&gt; &lt;options&gt;
 
 VERSION:
-   0.0.1
+   1.0.1
 
 COMMANDS:
-     check-json           Check the JSON wix manifest
-     set-guid             Sets appropriate guids <span class="pl-k">in</span> your wix manifest
-     generate-templates   Generate wix templates
-     to-windows           Write Windows1252 encoded file
-     to-rtf               Write RTF formatted file
-     gen-wix-cmd          Generate a batch file of Wix commands to run
-     run-wix-cmd          Run the batch file of Wix commands
-     make                 All-in-one <span class="pl-c1">command</span> to make MSI files
+     check-json          Check the JSON wix manifest
+     <span class="nb">set</span>-guid            Sets appropriate guids <span class="k">in </span>your wix manifest
+     generate-templates  Generate wix templates
+     to-windows          Write Windows1252 encoded file
+     to-rtf              Write RTF formatted file
+     gen-wix-cmd         Generate a batch file of Wix commands to run
+     run-wix-cmd         Run the batch file of Wix commands
+     make                All-in-one <span class="nb">command </span>to make MSI files
+     choco               Generate a chocolatey package of your msi files
+     <span class="nb">help</span>, h             Shows a list of commands or <span class="nb">help </span><span class="k">for </span>one <span class="nb">command
 
-GLOBAL OPTIONS:
-   --help, -h       show <span class="pl-c1">help</span>
-   --version, -v    print the version</pre></div>
+</span>GLOBAL OPTIONS:
+   --help, -h     show <span class="nb">help</span>
+   --version, -v  print the version
+</code></pre>
+</div>
 
-<h3>
-<a id="check-json" class="anchor" href="#check-json" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>check-json</h3>
-
-<div class="highlight highlight-source-shell"><pre>NAME:
+<h6 id="-go-msi-check-json--h">$ go-msi check-json -h</h6>
+<div class="language-sh highlighter-rouge"><pre class="highlight"><code>NAME:
    go-msi check-json - Check the JSON wix manifest
 
 USAGE:
-   go-msi check-json [<span class="pl-c1">command</span> options] [arguments...]
+   go-msi check-json <span class="o">[</span><span class="nb">command </span>options] <span class="o">[</span>arguments...]
 
 OPTIONS:
-   --path value, -p value   Path to the wix manifest file (default: <span class="pl-s"><span class="pl-pds">"</span>wix.json<span class="pl-pds">"</span></span>)</pre></div>
+   --path value, -p value  Path to the wix manifest file <span class="o">(</span>default: <span class="s2">"wix.json"</span><span class="o">)</span>
+</code></pre>
+</div>
 
-<h3>
-<a id="set-guid" class="anchor" href="#set-guid" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>set-guid</h3>
-
-<div class="highlight highlight-source-shell"><pre>NAME:
-   go-msi set-guid - Sets appropriate guids <span class="pl-k">in</span> your wix manifest
+<h6 id="-go-msi-set-guid--h">$ go-msi set-guid -h</h6>
+<div class="language-sh highlighter-rouge"><pre class="highlight"><code>NAME:
+   go-msi <span class="nb">set</span>-guid - Sets appropriate guids <span class="k">in </span>your wix manifest
 
 USAGE:
-   go-msi set-guid [<span class="pl-c1">command</span> options] [arguments...]
+   go-msi <span class="nb">set</span>-guid <span class="o">[</span><span class="nb">command </span>options] <span class="o">[</span>arguments...]
 
 OPTIONS:
-   --path value, -p value   Path to the wix manifest file (default: <span class="pl-s"><span class="pl-pds">"</span>wix.json<span class="pl-pds">"</span></span>)</pre></div>
+   --path value, -p value  Path to the wix manifest file <span class="o">(</span>default: <span class="s2">"wix.json"</span><span class="o">)</span>
+</code></pre>
+</div>
 
-<h3>
-<a id="generate-templates" class="anchor" href="#generate-templates" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>generate-templates</h3>
-
-<div class="highlight highlight-source-shell"><pre>NAME:
-   go-msi generate-templates - Generate wix templates
+<h6 id="-go-msi-make--h">$ go-msi make -h</h6>
+<div class="language-sh highlighter-rouge"><pre class="highlight"><code>NAME:
+   go-msi make - All-in-one <span class="nb">command </span>to make MSI files
 
 USAGE:
-   go-msi generate-templates [<span class="pl-c1">command</span> options] [arguments...]
+   go-msi make <span class="o">[</span><span class="nb">command </span>options] <span class="o">[</span>arguments...]
 
 OPTIONS:
-   --path value, -p value     Path to the wix manifest file (default: <span class="pl-s"><span class="pl-pds">"</span>wix.json<span class="pl-pds">"</span></span>)
-   --src value, -s value      Directory path to the wix templates files (default: <span class="pl-s"><span class="pl-pds">"</span>go-msi/templates<span class="pl-pds">"</span></span>)
-   --out value, -o value      Directory path to the generated wix templates files (default: <span class="pl-s"><span class="pl-pds">"</span>builder<span class="pl-pds">"</span></span>)
+   --path value, -p value     Path to the wix manifest file <span class="o">(</span>default: <span class="s2">"wix.json"</span><span class="o">)</span>
+   --src value, -s value      Directory path to the wix templates files <span class="o">(</span>default: <span class="s2">"/home/mh-cbon/gow/bin/templates"</span><span class="o">)</span>
+   --out value, -o value      Directory path to the generated wix cmd file <span class="o">(</span>default: <span class="s2">"/tmp/go-msi382498824"</span><span class="o">)</span>
+   --arch value, -a value     A target architecture, amd64 or 386 <span class="o">(</span>ia64 is not handled<span class="o">)</span>
+   --msi value, -m value      Path to write resulting msi file to
    --version value            The version of your program
-   --license value, -l value  Path to the license file</pre></div>
+   --license value, -l value  Path to the license file
+   --keep, -k                 Keep output directory containing build files <span class="o">(</span>useful <span class="k">for </span>debug<span class="o">)</span>
+</code></pre>
+</div>
 
-<h3>
-<a id="to-windows" class="anchor" href="#to-windows" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>to-windows</h3>
-
-<div class="highlight highlight-source-shell"><pre>NAME:
-   go-msi to-windows - Write Windows1252 encoded file
-
-USAGE:
-   go-msi to-windows [<span class="pl-c1">command</span> options] [arguments...]
-
-OPTIONS:
-   --src value, -s value  Path to an UTF-8 encoded file
-   --out value, -o value  Path to the ANSI generated file</pre></div>
-
-<h3>
-<a id="to-rtf" class="anchor" href="#to-rtf" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>to-rtf</h3>
-
-<div class="highlight highlight-source-shell"><pre>NAME:
-   go-msi to-rtf - Write RTF formatted file
-
-USAGE:
-   go-msi to-rtf [<span class="pl-c1">command</span> options] [arguments...]
-
-OPTIONS:
-   --src value, -s value   Path to a text file
-   --out value, -o value   Path to the RTF generated file
-   --reencode, -e          Also re encode UTF-8 to Windows1252 charset</pre></div>
-
-<h3>
-<a id="gen-wix-cmd" class="anchor" href="#gen-wix-cmd" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>gen-wix-cmd</h3>
-
-<div class="highlight highlight-source-shell"><pre>NAME:
-   go-msi gen-wix-cmd - Generate a batch file of Wix commands to run
-
-USAGE:
-   go-msi gen-wix-cmd [<span class="pl-c1">command</span> options] [arguments...]
-
-OPTIONS:
-   --path value, -p value  Path to the wix manifest file (default: <span class="pl-s"><span class="pl-pds">"</span>wix.json<span class="pl-pds">"</span></span>)
-   --src value, -s value   Directory path to the wix templates files (default: <span class="pl-s"><span class="pl-pds">"</span>go-msi/templates<span class="pl-pds">"</span></span>)
-   --out value, -o value   Directory path to the generated wix cmd file (default: <span class="pl-s"><span class="pl-pds">"</span>builder<span class="pl-pds">"</span></span>)
-   --arch value, -a value  A target architecture , amd64 or 386 (ia64 is not handled)
-   --msi value, -m value   Path to write resulting msi file to</pre></div>
-
-<h3>
-<a id="run-wix-cmd" class="anchor" href="#run-wix-cmd" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>run-wix-cmd</h3>
-
-<div class="highlight highlight-source-shell"><pre>NAME:
-   go-msi run-wix-cmd - Run the batch file of Wix commands
-
-USAGE:
-   go-msi run-wix-cmd [<span class="pl-c1">command</span> options] [arguments...]
-
-OPTIONS:
-   --out value, -o value    Directory path to the generated wix cmd file (default: <span class="pl-s"><span class="pl-pds">"</span>builder<span class="pl-pds">"</span></span>)</pre></div>
-
-<h3>
-<a id="make" class="anchor" href="#make" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>make</h3>
-
-<div class="highlight highlight-source-shell"><pre>NAME:
-   go-msi make - All-in-one <span class="pl-c1">command</span> to make MSI files
-
-USAGE:
-   go-msi make [<span class="pl-c1">command</span> options] [arguments...]
-
-OPTIONS:
-   --path value, -p value       Path to the wix manifest file (default: <span class="pl-s"><span class="pl-pds">"</span>wix.json<span class="pl-pds">"</span></span>)
-   --src value, -s value        Directory path to the wix templates files (default: <span class="pl-s"><span class="pl-pds">"</span>go-msi/templates<span class="pl-pds">"</span></span>)
-   --out value, -o value        Directory path to the generated wix cmd file (default: <span class="pl-s"><span class="pl-pds">"</span>builder<span class="pl-pds">"</span></span>)
-   --arch value, -a value         A target architecture , amd64 or 386 (ia64 is not handled)
-   --msi value, -m value        Path to write resulting msi file to
-   --version value              The version of your program
-   --license value, -l value    Path to the license file</pre></div>
-
-<h3>
-<a id="choco" class="anchor" href="#choco" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>choco</h3>
-
-<div class="highlight highlight-source-shell"><pre>NAME:
+<h6 id="-go-msi-choco--h">$ go-msi choco -h</h6>
+<div class="language-sh highlighter-rouge"><pre class="highlight"><code>NAME:
    go-msi choco - Generate a chocolatey package of your msi files
 
 USAGE:
-   go-msi choco [<span class="pl-c1">command</span> options] [arguments...]
+   go-msi choco <span class="o">[</span><span class="nb">command </span>options] <span class="o">[</span>arguments...]
 
 OPTIONS:
-   --path value, -p value     Path to the wix manifest file (default: <span class="pl-s"><span class="pl-pds">"</span>wix.json<span class="pl-pds">"</span></span>)
-   --src value, -s value      Directory path to the wix templates files (default: <span class="pl-s"><span class="pl-pds">"</span>go-msi/templates<span class="pl-pds">"</span></span>)
-   --version value            The version of your program
-   --out value, -o value      Directory path to the generated chocolatey build file (default: <span class="pl-s"><span class="pl-pds">"</span>builder<span class="pl-pds">"</span></span>)
-   --input value, -i value    Path to the msi file to package into the chocolatey package
-   --keep, -k                 Keep output directory containing build files (useful <span class="pl-k">for</span> debug)
-   --changelog-cmd, -c value  A <span class="pl-c1">command</span> to generate the content of the changelog.</pre></div>
+   --path value, -p value           Path to the wix manifest file <span class="o">(</span>default: <span class="s2">"wix.json"</span><span class="o">)</span>
+   --src value, -s value            Directory path to the wix templates files <span class="o">(</span>default: <span class="s2">"/home/mh-cbon/gow/bin/templates/choco"</span><span class="o">)</span>
+   --version value                  The version of your program
+   --out value, -o value            Directory path to the generated chocolatey build file <span class="o">(</span>default: <span class="s2">"/tmp/go-msi271938418"</span><span class="o">)</span>
+   --input value, -i value          Path to the msi file to package into the chocolatey package
+   --changelog-cmd value, -c value  A <span class="nb">command </span>to generate the content of the changlog <span class="k">in </span>the package
+   --keep, -k                       Keep output directory containing build files <span class="o">(</span>useful <span class="k">for </span>debug<span class="o">)</span>
+</code></pre>
+</div>
 
-<h1>
-<a id="credits" class="anchor" href="#credits" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Credits</h1>
+<h6 id="-go-msi-generate-templates--h">$ go-msi generate-templates -h</h6>
+<div class="language-sh highlighter-rouge"><pre class="highlight"><code>NAME:
+   go-msi generate-templates - Generate wix templates
+
+USAGE:
+   go-msi generate-templates <span class="o">[</span><span class="nb">command </span>options] <span class="o">[</span>arguments...]
+
+OPTIONS:
+   --path value, -p value     Path to the wix manifest file <span class="o">(</span>default: <span class="s2">"wix.json"</span><span class="o">)</span>
+   --src value, -s value      Directory path to the wix templates files <span class="o">(</span>default: <span class="s2">"/home/mh-cbon/gow/bin/templates"</span><span class="o">)</span>
+   --out value, -o value      Directory path to the generated wix templates files <span class="o">(</span>default: <span class="s2">"/tmp/go-msi866678416"</span><span class="o">)</span>
+   --version value            The version of your program
+   --license value, -l value  Path to the license file
+</code></pre>
+</div>
+
+<h6 id="-go-msi-to-windows--h">$ go-msi to-windows -h</h6>
+<div class="language-sh highlighter-rouge"><pre class="highlight"><code>NAME:
+   go-msi to-windows - Write Windows1252 encoded file
+
+USAGE:
+   go-msi to-windows <span class="o">[</span><span class="nb">command </span>options] <span class="o">[</span>arguments...]
+
+OPTIONS:
+   --src value, -s value  Path to an UTF-8 encoded file
+   --out value, -o value  Path to the ANSI generated file
+</code></pre>
+</div>
+
+<h6 id="-go-msi-to-rtf--h">$ go-msi to-rtf -h</h6>
+<div class="language-sh highlighter-rouge"><pre class="highlight"><code>NAME:
+   go-msi to-rtf - Write RTF formatted file
+
+USAGE:
+   go-msi to-rtf <span class="o">[</span><span class="nb">command </span>options] <span class="o">[</span>arguments...]
+
+OPTIONS:
+   --src value, -s value  Path to a text file
+   --out value, -o value  Path to the RTF generated file
+   --reencode, -e         Also re encode UTF-8 to Windows1252 charset
+</code></pre>
+</div>
+
+<h6 id="-go-msi-gen-wix-cmd--h">$ go-msi gen-wix-cmd -h</h6>
+<div class="language-sh highlighter-rouge"><pre class="highlight"><code>NAME:
+   go-msi gen-wix-cmd - Generate a batch file of Wix commands to run
+
+USAGE:
+   go-msi gen-wix-cmd <span class="o">[</span><span class="nb">command </span>options] <span class="o">[</span>arguments...]
+
+OPTIONS:
+   --path value, -p value  Path to the wix manifest file <span class="o">(</span>default: <span class="s2">"wix.json"</span><span class="o">)</span>
+   --src value, -s value   Directory path to the wix templates files <span class="o">(</span>default: <span class="s2">"/home/mh-cbon/gow/bin/templates"</span><span class="o">)</span>
+   --out value, -o value   Directory path to the generated wix cmd file <span class="o">(</span>default: <span class="s2">"/tmp/go-msi189807731"</span><span class="o">)</span>
+   --arch value, -a value  A target architecture, amd64 or 386 <span class="o">(</span>ia64 is not handled<span class="o">)</span>
+   --msi value, -m value   Path to write resulting msi file to
+</code></pre>
+</div>
+
+<h6 id="-go-msi-run-wix-cmd--h">$ go-msi run-wix-cmd -h</h6>
+<div class="language-sh highlighter-rouge"><pre class="highlight"><code>NAME:
+   go-msi run-wix-cmd - Run the batch file of Wix commands
+
+USAGE:
+   go-msi run-wix-cmd <span class="o">[</span><span class="nb">command </span>options] <span class="o">[</span>arguments...]
+
+OPTIONS:
+   --out value, -o value  Directory path to the generated wix cmd file <span class="o">(</span>default: <span class="s2">"/tmp/go-msi984988414"</span><span class="o">)</span>
+</code></pre>
+</div>
+
+<h1 id="recipes">Recipes</h1>
+
+<h3 id="appveyor">Appveyor</h3>
+
+<p>Please check <a href="https://github.com/mh-cbon/go-msi/blob/master/appveyor-recipe.md">this</a></p>
+
+<h3 id="unix-like">Unix like</h3>
+
+<p>Please check <a href="https://github.com/mh-cbon/go-msi/blob/master/unice-recipe.md">this</a></p>
+
+<h3 id="release-the-project">Release the project</h3>
+
+<div class="language-sh highlighter-rouge"><pre class="highlight"><code>gump patch -d <span class="c"># check</span>
+gump patch <span class="c"># bump</span>
+</code></pre>
+</div>
+
+<h1 id="history">History</h1>
+
+<p><a href="CHANGELOG.md">CHANGELOG</a></p>
+
+<h1 id="credits">Credits</h1>
 
 <p>A big big thanks to</p>
 
 <ul>
-<li>
-<code>Helge Klein</code>, which i do not know personally, but made this project possible by sharing a real world example at
-<a href="https://helgeklein.com/blog/2014/09/real-world-example-wix-msi-application-installer/">https://helgeklein.com/blog/2014/09/real-world-example-wix-msi-application-installer/</a>
-</li>
-<li>all SO contributors on <code>wix</code> tag.</li>
+  <li><code class="highlighter-rouge">Helge Klein</code>, which i do not know personally, but made this project possible by sharing a real world example at
+https://helgeklein.com/blog/2014/09/real-world-example-wix-msi-application-installer/</li>
+  <li>all SO contributors on <code class="highlighter-rouge">wix</code> tag.</li>
 </ul>
 
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/mh-cbon/go-msi">Go-msi</a> is maintained by <a href="https://github.com/mh-cbon">mh-cbon</a>.</span>
 
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
-      </footer>
+
+      <footer class="site-footer">
+  <span class="site-footer-owner"><a href="">go-msi</a> is maintained by <a href="https://github.com/mh-cbon">mh-cbon</a>.</span>
+  <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+</footer>
+
 
     </section>
 
-  
   </body>
 </html>
