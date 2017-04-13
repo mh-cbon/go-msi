@@ -9,6 +9,27 @@ This tool is part of the [go-github-release workflow](https://github.com/mh-cbon
 
 Find a demo program [here](https://github.com/mh-cbon/go-msi/tree/master/testing/hello)
 
+# TOC
+- [Install](#install)
+  - [Go](#go)
+  - [Chocolatey](#chocolatey)
+  - [linux rpm/deb repository](#linux-rpmdeb-repository)
+  - [linux rpm/deb standalone package](#linux-rpmdeb-standalone-package)
+- [Usage](#usage)
+  - [Requirements](#requirements)
+  - [Workflow](#workflow)
+  - [configuration file](#configuration-file)
+  - [License file](#license-file)
+- [Personnalization](#personnalization)
+  - [wix templates](#wix-templates)
+- [Cli](#cli)
+- [Recipes](#recipes)
+  - [Appveyor](#appveyor)
+  - [Unix like](#unix-like)
+  - [Release the project](#release-the-project)
+- [History](#history)
+- [Credits](#credits)
+
 # Install
 
 Check the [release page](https://github.com/mh-cbon/go-msi/releases)!
@@ -44,13 +65,15 @@ https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh \
 | GH=mh-cbon/go-msi sh -xe
 ```
 
-# Requirements
+# Usage
+
+### Requirements
 
 - A windows machine (see [here](https://github.com/mh-cbon/go-msi/blob/master/appveyor-recipe.md) for an appveyor file, see [here](https://github.com/mh-cbon/go-msi/blob/master/unice-recipe.md) for unix friendly users)
 - wix >= 3.10 (may work on older release, but it is untested, feel free to report)
 - you must add wix bin to your PATH
 
-# Workflow
+### Workflow
 
 For simple cases,
 
@@ -58,7 +81,7 @@ For simple cases,
 - Apply it guids with `go-msi set-guid`, you must do it once only for each app.
 - Run `go-msi make --msi your_program.msi --version 0.0.2`
 
-### wix.json
+### configuration file
 
 `wix.json` file describe the desired packaging rules between your sources and the resulting msi file.
 
@@ -74,6 +97,14 @@ when you face a difficulty with `heat`, `candle`, `light`
 
 If you wonder why `INSTALLDIR`, `[INSTALLDIR]`, this is part of wix rules, please check their documentation.
 
+### License file
+
+Take care to the license file, it must be an `rtf` file, it must be encoded with `Windows1252` charset.
+
+I have provided some tools to help with that matter.
+
+# Personnalization
+
 ### wix templates
 
 For simplicity a default install flow is provided, which you can find [here](https://github.com/mh-cbon/go-msi/tree/master/templates)
@@ -84,13 +115,7 @@ defined for `files`, `directories`, `environment variables`, `license` and `shor
 
 I guess most of your changes will be about the `WixUI_HK.wxs` file.
 
-### License file
-
-Take care to the license file, it must be an `rtf` file, it must be encoded with `Windows1252` charset.
-
-I have provided some tools to help with that matter.
-
-# Usage
+# Cli
 
 
 ###### $ go-msi -h
@@ -102,7 +127,7 @@ USAGE:
    go-msi <cmd> <options>
 
 VERSION:
-   0.0.0
+   1.0.1
 
 COMMANDS:
      check-json          Check the JSON wix manifest
@@ -159,7 +184,7 @@ USAGE:
 OPTIONS:
    --path value, -p value     Path to the wix manifest file (default: "wix.json")
    --src value, -s value      Directory path to the wix templates files (default: "/home/mh-cbon/gow/bin/templates")
-   --out value, -o value      Directory path to the generated wix cmd file (default: "/tmp/go-msi492954495")
+   --out value, -o value      Directory path to the generated wix cmd file (default: "/tmp/go-msi382498824")
    --arch value, -a value     A target architecture, amd64 or 386 (ia64 is not handled)
    --msi value, -m value      Path to write resulting msi file to
    --version value            The version of your program
@@ -180,7 +205,7 @@ OPTIONS:
    --path value, -p value           Path to the wix manifest file (default: "wix.json")
    --src value, -s value            Directory path to the wix templates files (default: "/home/mh-cbon/gow/bin/templates/choco")
    --version value                  The version of your program
-   --out value, -o value            Directory path to the generated chocolatey build file (default: "/tmp/go-msi341502273")
+   --out value, -o value            Directory path to the generated chocolatey build file (default: "/tmp/go-msi271938418")
    --input value, -i value          Path to the msi file to package into the chocolatey package
    --changelog-cmd value, -c value  A command to generate the content of the changlog in the package
    --keep, -k                       Keep output directory containing build files (useful for debug)
@@ -198,7 +223,7 @@ USAGE:
 OPTIONS:
    --path value, -p value     Path to the wix manifest file (default: "wix.json")
    --src value, -s value      Directory path to the wix templates files (default: "/home/mh-cbon/gow/bin/templates")
-   --out value, -o value      Directory path to the generated wix templates files (default: "/tmp/go-msi784111949")
+   --out value, -o value      Directory path to the generated wix templates files (default: "/tmp/go-msi866678416")
    --version value            The version of your program
    --license value, -l value  Path to the license file
 ```
@@ -244,7 +269,7 @@ USAGE:
 OPTIONS:
    --path value, -p value  Path to the wix manifest file (default: "wix.json")
    --src value, -s value   Directory path to the wix templates files (default: "/home/mh-cbon/gow/bin/templates")
-   --out value, -o value   Directory path to the generated wix cmd file (default: "/tmp/go-msi206154432")
+   --out value, -o value   Directory path to the generated wix cmd file (default: "/tmp/go-msi189807731")
    --arch value, -a value  A target architecture, amd64 or 386 (ia64 is not handled)
    --msi value, -m value   Path to write resulting msi file to
 ```
@@ -259,8 +284,29 @@ USAGE:
    go-msi run-wix-cmd [command options] [arguments...]
 
 OPTIONS:
-   --out value, -o value  Directory path to the generated wix cmd file (default: "/tmp/go-msi131931185")
+   --out value, -o value  Directory path to the generated wix cmd file (default: "/tmp/go-msi984988414")
 ```
+
+# Recipes
+
+### Appveyor
+
+Please check [this](https://github.com/mh-cbon/go-msi/blob/master/appveyor-recipe.md)
+
+### Unix like
+
+Please check [this](https://github.com/mh-cbon/go-msi/blob/master/unice-recipe.md)
+
+### Release the project
+
+```sh
+gump patch -d # check
+gump patch # bump
+```
+
+# History
+
+[CHANGELOG](CHANGELOG.md)
 
 # Credits
 
@@ -269,3 +315,4 @@ A big big thanks to
 - `Helge Klein`, which i do not know personally, but made this project possible by sharing a real world example at
 https://helgeklein.com/blog/2014/09/real-world-example-wix-msi-application-installer/
 - all SO contributors on `wix` tag.
+

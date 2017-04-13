@@ -8,6 +8,8 @@ This tool is part of the [go-github-release workflow](https://github.com/mh-cbon
 
 Find a demo program [here](https://github.com/mh-cbon/go-msi/tree/master/testing/hello)
 
+# {{toc 5}}
+
 # Install
 
 {{template "gh/releases" .}}
@@ -24,13 +26,15 @@ Find a demo program [here](https://github.com/mh-cbon/go-msi/tree/master/testing
 #### linux rpm/deb standalone package
 {{template "linux/gh_pkg" .}}
 
-# Requirements
+# Usage
+
+### Requirements
 
 - A windows machine (see [here](https://github.com/mh-cbon/go-msi/blob/master/appveyor-recipe.md) for an appveyor file, see [here](https://github.com/mh-cbon/go-msi/blob/master/unice-recipe.md) for unix friendly users)
 - wix >= 3.10 (may work on older release, but it is untested, feel free to report)
 - you must add wix bin to your PATH
 
-# Workflow
+### Workflow
 
 For simple cases,
 
@@ -38,7 +42,7 @@ For simple cases,
 - Apply it guids with `go-msi set-guid`, you must do it once only for each app.
 - Run `go-msi make --msi your_program.msi --version 0.0.2`
 
-### wix.json
+### configuration file
 
 `wix.json` file describe the desired packaging rules between your sources and the resulting msi file.
 
@@ -54,6 +58,14 @@ when you face a difficulty with `heat`, `candle`, `light`
 
 If you wonder why `INSTALLDIR`, `[INSTALLDIR]`, this is part of wix rules, please check their documentation.
 
+### License file
+
+Take care to the license file, it must be an `rtf` file, it must be encoded with `Windows1252` charset.
+
+I have provided some tools to help with that matter.
+
+# Personnalization
+
 ### wix templates
 
 For simplicity a default install flow is provided, which you can find [here](https://github.com/mh-cbon/go-msi/tree/master/templates)
@@ -64,33 +76,48 @@ defined for `files`, `directories`, `environment variables`, `license` and `shor
 
 I guess most of your changes will be about the `WixUI_HK.wxs` file.
 
-### License file
+# Cli
 
-Take care to the license file, it must be an `rtf` file, it must be encoded with `Windows1252` charset.
+{{exec "go-msi" "-h" | color "sh"}}
 
-I have provided some tools to help with that matter.
+{{exec "go-msi" "check-json" "-h" | color "sh"}}
 
-# Usage
+{{exec "go-msi" "set-guid" "-h" | color "sh"}}
 
-{{cli "go-msi" "-h"}}
+{{exec "go-msi" "make" "-h" | color "sh"}}
 
-{{cli "go-msi" "check-json" "-h"}}
+{{exec "go-msi" "choco" "-h" | color "sh"}}
 
-{{cli "go-msi" "set-guid" "-h"}}
+{{exec "go-msi" "generate-templates" "-h" | color "sh"}}
 
-{{cli "go-msi" "make" "-h"}}
+{{exec "go-msi" "to-windows" "-h" | color "sh"}}
 
-{{cli "go-msi" "choco" "-h"}}
+{{exec "go-msi" "to-rtf" "-h" | color "sh"}}
 
-{{cli "go-msi" "generate-templates" "-h"}}
+{{exec "go-msi" "gen-wix-cmd" "-h" | color "sh"}}
 
-{{cli "go-msi" "to-windows" "-h"}}
+{{exec "go-msi" "run-wix-cmd" "-h" | color "sh"}}
 
-{{cli "go-msi" "to-rtf" "-h"}}
+# Recipes
 
-{{cli "go-msi" "gen-wix-cmd" "-h"}}
+### Appveyor
 
-{{cli "go-msi" "run-wix-cmd" "-h"}}
+Please check [this](https://github.com/mh-cbon/go-msi/blob/master/appveyor-recipe.md)
+
+### Unix like
+
+Please check [this](https://github.com/mh-cbon/go-msi/blob/master/unice-recipe.md)
+
+### Release the project
+
+```sh
+gump patch -d # check
+gump patch # bump
+```
+
+# History
+
+[CHANGELOG](CHANGELOG.md)
 
 # Credits
 
