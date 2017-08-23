@@ -38,7 +38,12 @@ func main() {
 	helloPkgSetup := makeCmd("C:/go-msi/go-msi.exe", "set-guid")
 	mustExec(helloPkgSetup, "hello packaging setup failed %v")
 
-	helloPkg := makeCmd("C:/go-msi/go-msi.exe", "make", "--msi", "hello.msi", "--version", "0.0.1", "--arch", "amd64")
+	helloPkg := makeCmd("C:/go-msi/go-msi.exe", "make",
+		"--msi", "hello.msi",
+		"--version", "0.0.1",
+		"--arch", "amd64",
+		"--keep",
+	)
 	mustExec(helloPkg, "hello packaging failed %v")
 
 	resultPackage := makeFile("hello.msi")
@@ -78,9 +83,12 @@ func main() {
 	// mustShowEnv("$env:path")
 	// mustEnvEq("$env:some", "")
 
-	helloChocoPkg := makeCmd("C:/go-msi/go-msi.exe",
-		"choco", "--input", "hello.msi", "--version", "0.0.1",
-		"-c", _qp("C:/Program Files/changelog/changelog.exe")+" ghrelease --version 0.0.1")
+	helloChocoPkg := makeCmd("C:/go-msi/go-msi.exe", "choco",
+		"--input", "hello.msi",
+		"--version", "0.0.1",
+		"-c", _qp("C:/Program Files/changelog/changelog.exe")+" ghrelease --version 0.0.1",
+		"--keep",
+	)
 	mustExec(helloChocoPkg, "hello choco package make failed %v")
 
 	helloNuPkg := makeFile("hello.0.0.1.nupkg")
