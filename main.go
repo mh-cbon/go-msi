@@ -509,6 +509,10 @@ func generateWixCommands(c *cli.Context) error {
 	msi := c.String("msi")
 	arch := c.String("arch")
 
+	if msi == "" {
+		return cli.NewExitError("--msi parameter must be set", 1)
+	}
+
 	templates, err := tpls.Find(src, "*.wxs")
 	if err != nil {
 		return cli.NewExitError(err.Error(), 1)
@@ -594,6 +598,10 @@ func quickMake(c *cli.Context) error {
 	msi := c.String("msi")
 	arch := c.String("arch")
 	keep := c.Bool("keep")
+
+	if msi == "" {
+		return cli.NewExitError("--msi parameter must be set", 1)
+	}
 
 	wixFile := manifest.WixManifest{}
 	if err := wixFile.Load(path); err != nil {
