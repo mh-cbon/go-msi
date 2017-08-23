@@ -709,7 +709,7 @@ func chocoMake(c *cli.Context) error {
 		sout := string(out)
 		souts := strings.Split(sout, "\n")
 		if len(souts) > 2 {
-			souts = souts[2:]
+			souts = souts[2:] // why ? command line artifacts ? todo: put an explanation here.
 		}
 		sout = strings.Join(souts, "\n")
 
