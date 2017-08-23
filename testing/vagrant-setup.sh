@@ -15,12 +15,12 @@ vagrant winrm -c "mkdir c:\\gopath\\src\\github.com\\mh-cbon\\go-msi\\testing\\h
 vagrant winrm -c 'Copy-Item C:\\vagrant\\hello\\* -destination c:\\gopath\\src\\github.com\\mh-cbon\\go-msi\\testing\\hello\\ -recurse -Force'
 
 # setup go
-wget https://storage.googleapis.com/golang/go1.7.4.windows-amd64.msi
-vagrant winrm -c "COPY C:\\vagrant\\go1.7.4.windows-amd64.msi C:\\go.msi"
+wget https://storage.googleapis.com/golang/go1.8.3.windows-amd64.msi
+vagrant winrm -c "COPY C:\\vagrant\\go1.8.3.windows-amd64.msi C:\\go.msi"
 vagrant winrm -c "msiexec.exe /i C:\\go.msi /quiet"
 vagrant winrm -c "setx GOPATH C:\\gopath\\"
 vagrant winrm -c "ls env:GOPATH"
-rm go1.7.4.windows-amd64.msi
+rm go1.8.3.windows-amd64.msi
 
 # setup changelog
 wget https://github.com/mh-cbon/changelog/releases/download/0.0.25/changelog-amd64.msi
