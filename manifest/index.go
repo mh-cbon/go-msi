@@ -146,21 +146,21 @@ func (wixFile *WixManifest) Load(p string) error {
 }
 
 //SetGuids generates and apply guid values appropriately
-func (wixFile *WixManifest) SetGuids() (bool, error) {
+func (wixFile *WixManifest) SetGuids(force bool) (bool, error) {
 	updated := false
-	if wixFile.UpgradeCode == "" {
+	if wixFile.UpgradeCode == "" || force {
 		wixFile.UpgradeCode = uuid.NewV4().String()
 		updated = true
 	}
-	if wixFile.Files.GUID == "" {
+	if wixFile.Files.GUID == "" || force {
 		wixFile.Files.GUID = uuid.NewV4().String()
 		updated = true
 	}
-	if wixFile.Env.GUID == "" && len(wixFile.Env.Vars) > 0 {
+	if (wixFile.Env.GUID == "" || force) && len(wixFile.Env.Vars) > 0 {
 		wixFile.Env.GUID = uuid.NewV4().String()
 		updated = true
 	}
-	if wixFile.Shortcuts.GUID == "" && len(wixFile.Shortcuts.Items) > 0 {
+	if (wixFile.Shortcuts.GUID == "" || force) && len(wixFile.Shortcuts.Items) > 0 {
 		wixFile.Shortcuts.GUID = uuid.NewV4().String()
 		updated = true
 	}

@@ -74,6 +74,10 @@ func main() {
 					Value: "wix.json",
 					Usage: "Path to the wix manifest file",
 				},
+				cli.BoolFlag{
+					Name:  "force, f",
+					Usage: "Force update the guids",
+				},
 			},
 		},
 		{
@@ -361,6 +365,7 @@ func checkJSON(c *cli.Context) error {
 
 func setGUID(c *cli.Context) error {
 	path := c.String("path")
+	force := c.Bool("force")
 
 	wixFile := manifest.WixManifest{}
 	err := wixFile.Load(path)
@@ -368,7 +373,7 @@ func setGUID(c *cli.Context) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	updated, err := wixFile.SetGuids()
+	updated, err := wixFile.SetGuids(force)
 	if err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
@@ -609,7 +614,7 @@ func quickMake(c *cli.Context) error {
 	}
 
 	if wixFile.NeedGUID() {
-		if _, err := wixFile.SetGuids(); err != nil {
+		if _, err := wixFile.SetGuids(false); err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
 	}
