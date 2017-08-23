@@ -1,6 +1,6 @@
 # appveyor recipe to create msi package
 
-This is an HOWDOI build an msi package from a non windows machine using appveyor cloud service.
+This is an HOWDOI build an msi package from a windows machine using appveyor cloud service.
 
 
 ### Requirements
@@ -87,7 +87,7 @@ after_deploy:
 test: off
 
 # need this to deploy assets,
-# note that each MUST must match only one file
+# note that each MUST match only one file
 artifacts:
   - path: '*-386.msi'
     name: msi-x86
