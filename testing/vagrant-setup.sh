@@ -6,8 +6,8 @@ set -e
 # sudo /sbin/vboxconfig # sometime needed.
 
 # prepare and load vagrant
-vagrant plugin install winrm-fs
-vagrant plugin install winrm
+# vagrant plugin install winrm-fs # seems useless since vagrant 1.9.7
+# vagrant plugin install winrm
 vagrant up --provider=virtualbox
 
 # prepare hello program like appveyor
