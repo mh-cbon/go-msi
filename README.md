@@ -1,6 +1,6 @@
 # go-msi
 
-[![appveyor Status](https://ci.appveyor.com/api/projects/status/github/mh-cbon/go-msi?branch=master&svg=true)](https://ci.appveyor.com/project/mh-cbon/go-msi)
+[![Appveyor Status](https://ci.appveyor.com/api/projects/status/github/mh-cbon/go-msi?branch=master&svg=true)](https://ci.appveyor.com/projects/mh-cbon/go-msi)
 
 Package go-msi helps to generate msi package for a Go project.
 
@@ -35,11 +35,9 @@ Find a demo program [here](https://github.com/mh-cbon/go-msi/tree/master/testing
 Check the [release page](https://github.com/mh-cbon/go-msi/releases)!
 
 #### Go
-
 ```sh
 go get github.com/mh-cbon/go-msi
 ```
-
 
 #### Chocolatey
 ```sh
@@ -71,7 +69,8 @@ https://raw.githubusercontent.com/mh-cbon/latest/master/install.sh \
 
 - A windows machine (see [here](https://github.com/mh-cbon/go-msi/blob/master/appveyor-recipe.md) for an appveyor file, see [here](https://github.com/mh-cbon/go-msi/blob/master/unice-recipe.md) for unix friendly users)
 - wix >= 3.10 (may work on older release, but it is untested, feel free to report)
-- you must add wix bin to your PATH
+- you must add wix bin to your `PATH`
+- use `check-env` sub command to get a report.
 
 ### Workflow
 
@@ -117,7 +116,6 @@ I guess most of your changes will be about the `WixUI_HK.wxs` file.
 
 # Cli
 
-
 ###### $ go-msi -h
 ```sh
 NAME:
@@ -127,10 +125,11 @@ USAGE:
    go-msi <cmd> <options>
 
 VERSION:
-   1.0.1
+   0.0.0
 
 COMMANDS:
      check-json          Check the JSON wix manifest
+     check-env           Provide a report about your environment setup
      set-guid            Sets appropriate guids in your wix manifest
      generate-templates  Generate wix templates
      to-windows          Write Windows1252 encoded file
@@ -146,6 +145,14 @@ GLOBAL OPTIONS:
    --version, -v  print the version
 ```
 
+###### $ go-msi check-env -h
+```sh
+NAME:
+   go-msi check-env - Provide a report about your environment setup
+
+USAGE:
+   go-msi check-env [arguments...]
+```
 
 ###### $ go-msi check-json -h
 ```sh
@@ -159,7 +166,6 @@ OPTIONS:
    --path value, -p value  Path to the wix manifest file (default: "wix.json")
 ```
 
-
 ###### $ go-msi set-guid -h
 ```sh
 NAME:
@@ -172,7 +178,6 @@ OPTIONS:
    --path value, -p value  Path to the wix manifest file (default: "wix.json")
 ```
 
-
 ###### $ go-msi make -h
 ```sh
 NAME:
@@ -184,14 +189,13 @@ USAGE:
 OPTIONS:
    --path value, -p value     Path to the wix manifest file (default: "wix.json")
    --src value, -s value      Directory path to the wix templates files (default: "/home/mh-cbon/gow/bin/templates")
-   --out value, -o value      Directory path to the generated wix cmd file (default: "/tmp/go-msi382498824")
+   --out value, -o value      Directory path to the generated wix cmd file (default: "/tmp/go-msi907793490")
    --arch value, -a value     A target architecture, amd64 or 386 (ia64 is not handled)
    --msi value, -m value      Path to write resulting msi file to
    --version value            The version of your program
    --license value, -l value  Path to the license file
    --keep, -k                 Keep output directory containing build files (useful for debug)
 ```
-
 
 ###### $ go-msi choco -h
 ```sh
@@ -205,12 +209,11 @@ OPTIONS:
    --path value, -p value           Path to the wix manifest file (default: "wix.json")
    --src value, -s value            Directory path to the wix templates files (default: "/home/mh-cbon/gow/bin/templates/choco")
    --version value                  The version of your program
-   --out value, -o value            Directory path to the generated chocolatey build file (default: "/tmp/go-msi271938418")
+   --out value, -o value            Directory path to the generated chocolatey build file (default: "/tmp/go-msi391536363")
    --input value, -i value          Path to the msi file to package into the chocolatey package
    --changelog-cmd value, -c value  A command to generate the content of the changlog in the package
    --keep, -k                       Keep output directory containing build files (useful for debug)
 ```
-
 
 ###### $ go-msi generate-templates -h
 ```sh
@@ -223,11 +226,10 @@ USAGE:
 OPTIONS:
    --path value, -p value     Path to the wix manifest file (default: "wix.json")
    --src value, -s value      Directory path to the wix templates files (default: "/home/mh-cbon/gow/bin/templates")
-   --out value, -o value      Directory path to the generated wix templates files (default: "/tmp/go-msi866678416")
+   --out value, -o value      Directory path to the generated wix templates files (default: "/tmp/go-msi457443442")
    --version value            The version of your program
    --license value, -l value  Path to the license file
 ```
-
 
 ###### $ go-msi to-windows -h
 ```sh
@@ -241,7 +243,6 @@ OPTIONS:
    --src value, -s value  Path to an UTF-8 encoded file
    --out value, -o value  Path to the ANSI generated file
 ```
-
 
 ###### $ go-msi to-rtf -h
 ```sh
@@ -257,7 +258,6 @@ OPTIONS:
    --reencode, -e         Also re encode UTF-8 to Windows1252 charset
 ```
 
-
 ###### $ go-msi gen-wix-cmd -h
 ```sh
 NAME:
@@ -269,11 +269,10 @@ USAGE:
 OPTIONS:
    --path value, -p value  Path to the wix manifest file (default: "wix.json")
    --src value, -s value   Directory path to the wix templates files (default: "/home/mh-cbon/gow/bin/templates")
-   --out value, -o value   Directory path to the generated wix cmd file (default: "/tmp/go-msi189807731")
+   --out value, -o value   Directory path to the generated wix cmd file (default: "/tmp/go-msi364346502")
    --arch value, -a value  A target architecture, amd64 or 386 (ia64 is not handled)
    --msi value, -m value   Path to write resulting msi file to
 ```
-
 
 ###### $ go-msi run-wix-cmd -h
 ```sh
@@ -284,7 +283,7 @@ USAGE:
    go-msi run-wix-cmd [command options] [arguments...]
 
 OPTIONS:
-   --out value, -o value  Directory path to the generated wix cmd file (default: "/tmp/go-msi984988414")
+   --out value, -o value  Directory path to the generated wix cmd file (default: "/tmp/go-msi949078727")
 ```
 
 # Recipes
@@ -315,4 +314,3 @@ A big big thanks to
 - `Helge Klein`, which i do not know personally, but made this project possible by sharing a real world example at
 https://helgeklein.com/blog/2014/09/real-world-example-wix-msi-application-installer/
 - all SO contributors on `wix` tag.
-

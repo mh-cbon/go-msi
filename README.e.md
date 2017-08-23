@@ -32,7 +32,8 @@ Find a demo program [here](https://github.com/mh-cbon/go-msi/tree/master/testing
 
 - A windows machine (see [here](https://github.com/mh-cbon/go-msi/blob/master/appveyor-recipe.md) for an appveyor file, see [here](https://github.com/mh-cbon/go-msi/blob/master/unice-recipe.md) for unix friendly users)
 - wix >= 3.10 (may work on older release, but it is untested, feel free to report)
-- you must add wix bin to your PATH
+- you must add wix bin to your `PATH`
+- use `check-env` sub command to get a report.
 
 ### Workflow
 
@@ -78,25 +79,27 @@ I guess most of your changes will be about the `WixUI_HK.wxs` file.
 
 # Cli
 
-{{exec "go-msi" "-h" | color "sh"}}
+###### $ {{exec "go-msi" "-h" | color "sh"}}
 
-{{exec "go-msi" "check-json" "-h" | color "sh"}}
+###### $ {{exec "go-msi" "check-env" "-h" | color "sh"}}
 
-{{exec "go-msi" "set-guid" "-h" | color "sh"}}
+###### $ {{exec "go-msi" "check-json" "-h" | color "sh"}}
 
-{{exec "go-msi" "make" "-h" | color "sh"}}
+###### $ {{exec "go-msi" "set-guid" "-h" | color "sh"}}
 
-{{exec "go-msi" "choco" "-h" | color "sh"}}
+###### $ {{exec "go-msi" "make" "-h" | color "sh"}}
 
-{{exec "go-msi" "generate-templates" "-h" | color "sh"}}
+###### $ {{exec "go-msi" "choco" "-h" | color "sh"}}
 
-{{exec "go-msi" "to-windows" "-h" | color "sh"}}
+###### $ {{exec "go-msi" "generate-templates" "-h" | color "sh"}}
 
-{{exec "go-msi" "to-rtf" "-h" | color "sh"}}
+###### $ {{exec "go-msi" "to-windows" "-h" | color "sh"}}
 
-{{exec "go-msi" "gen-wix-cmd" "-h" | color "sh"}}
+###### $ {{exec "go-msi" "to-rtf" "-h" | color "sh"}}
 
-{{exec "go-msi" "run-wix-cmd" "-h" | color "sh"}}
+###### $ {{exec "go-msi" "gen-wix-cmd" "-h" | color "sh"}}
+
+###### $ {{exec "go-msi" "run-wix-cmd" "-h" | color "sh"}}
 
 # Recipes
 

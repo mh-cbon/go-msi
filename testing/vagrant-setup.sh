@@ -37,6 +37,12 @@ rm -fr templates
 vagrant winrm -c 'COPY C:\\vagrant\\go-msi.exe C:\\go-msi\\'
 rm -fr go-msi.exe
 
+# quick test/setup
+# GOOS=windows GOARCH=amd64 go build -o go-msi.exe ../main.go
+# vagrant winrm -c 'COPY C:\\vagrant\\go-msi.exe C:\\go-msi\\'
+# rm -fr go-msi.exe
+# vagrant winrm -c 'C:\\go-msi\\go-msi.exe check-env'
+
 
 # setup wix
 wget -O wix310-binaries.zip http://wixtoolset.org/downloads/v3.10.3.3007/wix310-binaries.zip

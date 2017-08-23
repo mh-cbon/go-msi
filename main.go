@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/mh-cbon/go-msi/manifest"
@@ -14,6 +15,7 @@ import (
 	"github.com/mh-cbon/go-msi/tpls"
 	"github.com/mh-cbon/go-msi/util"
 	"github.com/mh-cbon/go-msi/wix"
+	"github.com/mh-cbon/semver"
 	"github.com/mh-cbon/stringexec"
 	"github.com/urfave/cli"
 )
@@ -56,6 +58,11 @@ func main() {
 					Usage: "Path to the wix manifest file",
 				},
 			},
+		},
+		{
+			Name:   "check-env",
+			Usage:  "Provide a report about your environment setup",
+			Action: checkEnv,
 		},
 		{
 			Name:   "set-guid",
@@ -273,6 +280,57 @@ func main() {
 	}
 
 	app.Run(os.Args)
+}
+
+var verReg = regexp.MustCompile(`\s[0-9]+[.][0-9]+[.][0-9]+`)
+
+func checkEnv(c *cli.Context) error {
+
+	for _, b := range []string{"heat", "light", "candle"} {
+		if out, err := util.Exec(b, "-h"); out == "" {
+			fmt.Printf("!!	%v not found: %q\n", b, err)
+		} else {
+			match := verReg.FindAllString(out, -1)
+			if len(match) < 1 {
+				fmt.Printf("??	%v probably not found\n", b)
+			} else {
+				version := strings.TrimSpace(match[0])
+				ver, err := semver.NewVersion(version)
+				if err != nil {
+					fmt.Printf("??	%v found but its version is not parsable %v\n", b, version)
+				} else {
+					min := "3.10.0"
+					if !ver.GreaterThan(semver.MustParse(min)) {
+						fmt.Printf("!!	%v found %v but %v is required\n", b, version, min)
+					} else {
+						fmt.Printf("ok	%v found %v\n", b, version)
+					}
+				}
+			}
+		}
+	}
+	if out, err := util.Exec("choco", "-v"); out == "" {
+		fmt.Printf("!!	%v not found: %q\n", "chocolatey", err)
+	} else {
+		match := verReg.FindAllString(" "+out, -1)
+		if len(match) < 1 {
+			fmt.Printf("??	%v probably not found\n", "chocolatey")
+		} else {
+			version := strings.TrimSpace(match[0])
+			ver, err := semver.NewVersion(version)
+			if err != nil {
+				fmt.Printf("??	%v found but its version is not parsable %v\n", "chocolatey", version)
+			} else {
+				min := "0.10.0"
+				if !ver.GreaterThan(semver.MustParse(min)) {
+					fmt.Printf("!!	%v found %v but >%v is required\n", "chocolatey", version, min)
+				} else {
+					fmt.Printf("ok	%v found %v\n", "chocolatey", version)
+				}
+			}
+		}
+	}
+	return nil
 }
 
 func checkJSON(c *cli.Context) error {

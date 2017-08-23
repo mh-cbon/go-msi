@@ -55,3 +55,10 @@ func ComputeSha256(filepath string) (string, error) {
 	}
 	return hex.EncodeToString(hasher.Sum(nil)), nil
 }
+
+//Exec computes the sha256 value of a file content.
+func Exec(w string, args ...string) (string, error) {
+	cmd := exec.Command(w, args...)
+	out, err := cmd.CombinedOutput()
+	return string(out), err
+}
