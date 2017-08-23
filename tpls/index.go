@@ -1,8 +1,14 @@
 package tpls
 
 import (
+	"bytes"
+	"fmt"
+	"io"
+	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 
 	"github.com/mattn/go-zglob"
@@ -13,6 +19,26 @@ var funcMap = template.FuncMap{
 	"dec": func(i int) int {
 		return i - 1
 	},
+	"cat": func(filename string) string {
+		out, err := ioutil.ReadFile(filename)
+		if err != nil {
+			panic(fmt.Errorf("failed to read file %q", filename))
+		}
+		return string(out)
+	},
+	"download": func(url string) string {
+		response, err := http.Get(url)
+		if err != nil {
+			panic(fmt.Errorf("failed to download url %q", url))
+		}
+		defer response.Body.Close()
+		var b bytes.Buffer
+		if _, err := io.Copy(&b, response.Body); err != nil {
+			panic(fmt.Errorf("failed to download url %q", url))
+		}
+		return b.String()
+	},
+	"upper": strings.ToUpper,
 }
 
 // Find all wxs fies in given directory

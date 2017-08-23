@@ -32,5 +32,7 @@
     <file src="{{.Choco.BuildDir}}\chocolateyInstall.ps1" target="tools" />
     <file src="{{.Choco.BuildDir}}\chocolateyUninstall.ps1" target="tools" />
     <file src="{{.Choco.BuildDir}}\{{.Choco.MsiFile}}" target="tools" />
+    <file src="{{.Choco.BuildDir}}\LICENSE.txt" target="tools" />
+    <file src="{{.Choco.BuildDir}}\VERIFICATION.txt" target="tools" />
   </files>
 </package>
