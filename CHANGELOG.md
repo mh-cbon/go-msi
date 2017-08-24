@@ -1,5 +1,23 @@
 # Changelog - go-msi
 
+### 1.0.2
+
+__Changes__
+
+- `go-msi set-guid`: close #22: add `--force,-f` flags.
+- `go-msi check-env`: display a report of your environment.
+- close #17 #27: improve error message when --msi flag is not provided in the command line
+- choco: packages now include `tools/VERIFICATION.txt` and `tools/LICENSE.txt` to the package.
+
+__Contributors__
+
+- mh-cbon
+- solvingJ
+
+Released by mh-cbon, Wed 23 Aug 2017 -
+[see the diff](https://github.com/mh-cbon/go-msi/compare/1.0.1...1.0.2#diff)
+______________
+
 ### 1.0.1
 
 __Changes__
