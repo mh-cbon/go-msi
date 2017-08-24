@@ -1,4 +1,18 @@
 
+1.0.2
+
+  * `go-msi set-guid`: close #22: add `--force,-f` flags.
+  * `go-msi check-env`: display a report of your environment.
+  * close #17 #27: improve error message when --msi flag is not provided in the command line
+  * choco: packages now include `tools/VERIFICATION.txt` and `tools/LICENSE.txt` to the package.
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+  - solvingJ <jerrywiltse@gmail.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Wed, 23 Aug 2017 18:29:58 +0200
+
+
+
 1.0.1
 
   * closes #2 Add support for (un)install hooks (run with elevated  privileges)
