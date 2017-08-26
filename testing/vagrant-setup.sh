@@ -17,7 +17,7 @@ vagrant winrm -c 'Copy-Item C:\\vagrant\\hello\\* -destination c:\\gopath\\src\\
 # setup go
 VERSION=`curl https://golang.org/VERSION?m=text`
 wget https://storage.googleapis.com/golang/$VERSION.windows-amd64.msi
-vagrant winrm -c "COPY C:\\vagrant\\go1.8.3.windows-amd64.msi C:\\go.msi"
+vagrant winrm -c "COPY C:\\vagrant\\$VERSION.windows-amd64.msi C:\\go.msi"
 vagrant winrm -c "msiexec.exe /i C:\\go.msi /quiet"
 vagrant winrm -c "setx GOPATH C:\\gopath\\"
 vagrant winrm -c "ls env:GOPATH"
