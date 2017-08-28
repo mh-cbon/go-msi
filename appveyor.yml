@@ -58,7 +58,7 @@ build_script:
 deploy_script:
   - never-fail jfrog bt pc --user %GH_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/msi/%GH_APP%
   - never-fail jfrog bt pc --user %GH_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/choco/%GH_APP%
-  - never-fail curl -X "DELETE" -u%GH_USER%:%BT_KEY% https://api.bintray.com/content/%GH_USER%/choco/%GH_APP%/%GH_APP%.%VERSION%.nupkg # workaround until --override=true is honored in next upload
+  - never-fail curl -X "DELETE" -u%GH_USER%:%BT_KEY% https://api.bintray.com/content/%GH_USER%/choco/%GH_APP%.%VERSION%.nupkg # workaround until --override=true is honored in next upload
   - jfrog bt upload --user %GH_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%.%VERSION%.nupkg %GH_USER%/choco/%GH_APP%/%VERSION%
   - set GOARCH=386
   - jfrog bt upload --user %GH_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%-%GOARCH%-%VERSION%.msi %GH_USER%/msi/%GH_APP%/%VERSION%
