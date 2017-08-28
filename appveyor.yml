@@ -18,6 +18,7 @@ install:
   - set VERSION=1.0.2
   - set PATH=%WIX%\bin;%PATH%
   - set PATH=%GOPATH%\bin;%PATH%
+  - set PATH=%ProgramFiles%\changelog;%PATH%
   - choco install changelog -y
   - curl -fsSk -o jfrog.exe -L "https://api.bintray.com/content/jfrog/jfrog-cli-go/$latest/jfrog-cli-windows-amd64/jfrog.exe?bt_package=jfrog-cli-windows-amd64"
   - go get -u github.com/mh-cbon/never-fail
@@ -57,7 +58,7 @@ build_script:
 deploy_script:
   - never-fail jfrog bt pc --user %GH_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/msi/%GH_APP%
   - never-fail jfrog bt pc --user %GH_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/choco/%GH_APP%
-  - DIR
+  - curl -X "DELETE" -u%GH_USER%:%BT_KEY% https://api.bintray.com/content/%GH_USER%/choco/%GH_APP%/%GH_APP%.%VERSION%.nupkg || echo "file does not exist" # workaround until --override=true is honored in next upload
   - jfrog bt upload --user %GH_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%.%VERSION%.nupkg %GH_USER%/choco/%GH_APP%/%VERSION%
   - set GOARCH=386
   - jfrog bt upload --user %GH_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%-%GOARCH%-%VERSION%.msi %GH_USER%/msi/%GH_APP%/%VERSION%
