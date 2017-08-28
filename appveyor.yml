@@ -65,8 +65,6 @@ before_test:
   - cd ..
   # run tests
   - go run testing\\main.go
-  - DIR "%APPVEYOR_BUILD_FOLDER%"
-  - echo "%APPVEYOR_BUILD_FOLDER%"
 
 # run custom scripts
 build_script:
@@ -84,6 +82,8 @@ build_script:
   - .\go-msi.exe choco --path wix.json --version %VERSION% --input %GH_APP%-%GOARCH%-%VERSION%.msi --changelog-cmd "changelog ghrelease --version %VERSION%"
 
 deploy_script:
+  - DIR "%APPVEYOR_BUILD_FOLDER%"
+  - echo "%APPVEYOR_BUILD_FOLDER%"
   - never-fail jfrog bt pc --user %GH_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/msi/%GH_APP%
   - jfrog bt upload --user %GH_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%-%GOARCH%-%VERSION%.msi %GH_USER%/msi/%GH_APP%
   - never-fail jfrog bt pc --user %GH_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/choco/%GH_APP%
