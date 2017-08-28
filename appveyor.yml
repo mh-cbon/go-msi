@@ -15,6 +15,8 @@ environment:
   # BT_REPO_MSI : public-msi
   # BT_REPO_CHOCO : public-choco
   # BT_SUBJECT : bincrafters
+  BT_KEY:
+    secure: l5T2H4WucO8v6MeJH4SKGTiNtxehhonidN3tOna3FC3VxEzwPNNLgVEKXnBWvH0W
 
 # environment:
 #   GOPATH: c:\gopath
