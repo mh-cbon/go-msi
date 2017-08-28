@@ -82,10 +82,10 @@ before_deploy:
   - .\go-msi.exe choco --path wix.json --version %VERSION% --input %GH_APP%-%GOARCH%-%VERSION%.msi --changelog-cmd "changelog ghrelease --version %VERSION%"
 
 deploy_script:
-  - jfrog bt pc --user %BT_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/msi/%GH_APP%
-  - jfrog bt upload --user %BT_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%-%GOARCH%-%VERSION%.msi %GH_USER %/msi/%GH_APP%/%VERSION%
-  - jfrog bt pc --user %BT_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/choco/%GH_APP%
-  - jfrog bt upload --user %BT_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%.%VERSION%.nupkg %GH_USER %/choco/%GH_APP%/%VERSION%
+  - jfrog bt pc --user %GH_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/msi/%GH_APP%
+  - jfrog bt upload --user %GH_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%-%GOARCH%-%VERSION%.msi %GH_USER %/msi/%GH_APP%/%VERSION%
+  - jfrog bt pc --user %GH_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/choco/%GH_APP%
+  - jfrog bt upload --user %GH_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%.%VERSION%.nupkg %GH_USER %/choco/%GH_APP%/%VERSION%
 
 # after_deploy:
 #   - .\go-msi.exe choco --input %APPVEYOR_BUILD_FOLDER%\%APPVEYOR_PROJECT_NAME%-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME%
