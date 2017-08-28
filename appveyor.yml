@@ -31,6 +31,9 @@ install:
   - set VERSION=1.0.2
   - set PATH=%WIX%\bin;%PATH%
   - set PATH=%GOPATH%\bin;%PATH%
+  - rl -fsSk -o changelog-amd64.msi -L 'https://github.com/mh-cbon/changelog/releases/download/0.0.25/changelog-amd64.msi'
+  - msiexec.exe /i changelog-amd64.msi /quiet
+  - DEL /F changelog-amd64.msi
   - curl -fsSk -o jfrog.exe -L "https://api.bintray.com/content/jfrog/jfrog-cli-go/$latest/jfrog-cli-windows-amd64/jfrog.exe?bt_package=jfrog-cli-windows-amd64"
   - go get -u github.com/Masterminds/glide
   - glide install
@@ -46,9 +49,6 @@ install:
   # - go get -u github.com/Masterminds/glide
 
 before_test:
-  - ps: Start-FileDownload 'https://github.com/mh-cbon/changelog/releases/download/0.0.25/changelog-amd64.msi'
-  - msiexec.exe /i changelog-amd64.msi /quiet
-  - DEL /F changelog-amd64.msi
   # do a manual installation of go-msi from pulled source code
   - mkdir C:\go-msi\
   - set GOARCH=amd64
@@ -64,7 +64,7 @@ before_test:
   - go run testing\\main.go
 
 # run custom scripts
-build_script:
+before_deploy:
   # x386
   - set GOARCH=386
   - go build -o %GH_APP%.exe --ldflags "-X main.VERSION=%VERSION%" main.go
