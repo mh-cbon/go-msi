@@ -65,22 +65,22 @@ before_test:
   - cd ..
   # run tests
   - go run testing\\main.go
+  - DIR "%APPVEYOR_BUILD_FOLDER%"
+  - echo "%APPVEYOR_BUILD_FOLDER%"
 
 # run custom scripts
 build_script:
   # x386
   - set GOARCH=386
   - go build -o %GH_APP%.exe --ldflags "-X main.VERSION=%VERSION%" main.go
-  - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\%GH_APP%-%GOARCH%-%VERSION%.msi --version %VERSION% --arch %GOARCH%
-  - cp %APPVEYOR_BUILD_FOLDER%\%GH_APP%-%GOARCH%-%VERSION%.msi %APPVEYOR_BUILD_FOLDER%\%GH_APP%-%GOARCH%.msi
-  - DIR "%APPVEYOR_BUILD_FOLDER%"
-  - echo "%APPVEYOR_BUILD_FOLDER%"
+  - .\go-msi.exe make --msi %GH_APP%-%GOARCH%-%VERSION%.msi --version %VERSION% --arch %GOARCH%
+  - cp %GH_APP%-%GOARCH%-%VERSION%.msi %GH_APP%-%GOARCH%.msi
   - .\go-msi.exe choco --path wix.json --version %VERSION% --input %GH_APP%-%GOARCH%-%VERSION%.msi --changelog-cmd "changelog ghrelease --version %VERSION%"
   # amd64
   - set GOARCH=amd64
   - go build -o %GH_APP%.exe --ldflags "-X main.VERSION=%VERSION%" main.go
-  - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\%GH_APP%-%GOARCH%-%VERSION%.msi --version %VERSION% --arch %GOARCH%
-  - cp %APPVEYOR_BUILD_FOLDER%\%GH_APP%-%GOARCH%-%VERSION%.msi %APPVEYOR_BUILD_FOLDER%\%GH_APP%-%GOARCH%.msi
+  - .\go-msi.exe make --msi %GH_APP%-%GOARCH%-%VERSION%.msi --version %VERSION% --arch %GOARCH%
+  - cp %GH_APP%-%GOARCH%-%VERSION%.msi %GH_APP%-%GOARCH%.msi
   - .\go-msi.exe choco --path wix.json --version %VERSION% --input %GH_APP%-%GOARCH%-%VERSION%.msi --changelog-cmd "changelog ghrelease --version %VERSION%"
 
 deploy_script:
