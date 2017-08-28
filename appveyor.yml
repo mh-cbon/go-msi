@@ -51,6 +51,7 @@ build_script:
   - go build -o %GH_APP%.exe --ldflags "-X main.VERSION=%VERSION%" main.go
   - .\go-msi.exe make --msi %GH_APP%-%GOARCH%-%VERSION%.msi --version %VERSION% --arch %GOARCH%
   - cp %GH_APP%-%GOARCH%-%VERSION%.msi %GH_APP%-%GOARCH%.msi
+  # nuget package is built only for the x86 arch.
   - .\go-msi.exe choco --path wix.json --version %VERSION% --input %GH_APP%-%GOARCH%-%VERSION%.msi --changelog-cmd "changelog ghrelease --version %VERSION%"
   # amd64
   - set GOARCH=amd64
@@ -61,7 +62,8 @@ build_script:
 deploy_script:
   - never-fail jfrog bt pc --user %GH_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/msi/%GH_APP%
   - never-fail jfrog bt pc --user %GH_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/choco/%GH_APP%
-  - jfrog bt upload --user %GH_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%.%VERSION%.nupkg %GH_USER%/choco/%GH_APP%/%VERSION%
+  - DIR
+  - jfrog bt upload --user %GH_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%.%VERSION%.nupkg %GH_USER%/choco/%GH_APP%
   - set GOARCH=386
   - jfrog bt upload --user %GH_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%-%GOARCH%-%VERSION%.msi %GH_USER%/msi/%GH_APP%/%VERSION%
   - set GOARCH=amd64
