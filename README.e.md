@@ -18,7 +18,7 @@ Find a demo program [here](https://github.com/mh-cbon/go-msi/tree/master/testing
 {{template "go/install" .}}
 
 #### Chocolatey
-{{template "choco/install" .}}
+{{template "choco_bintray/install" .}}
 
 #### linux rpm/deb repository
 {{template "linux/gh_src_repo" .}}

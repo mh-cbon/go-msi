@@ -39,6 +39,7 @@ before_test:
   - cd ..
   # run tests
   - go run testing\\main.go
+  - cd && dir *msi
 
 # run custom scripts
 build_script:
