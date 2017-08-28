@@ -1,5 +1,4 @@
 image: Visual Studio 2017
-build: off
 clone_folder: c:\gopath\src\github.com\%APPVEYOR_REPO_NAME%
 
 # skip_non_tags: true
@@ -67,7 +66,7 @@ before_test:
   - go run testing\\main.go
 
 # run custom scripts
-before_deploy:
+build_script:
   # x386
   - set GOARCH=386
   - go build -o %GH_APP%.exe --ldflags "-X main.VERSION=%VERSION%" main.go
@@ -83,8 +82,9 @@ before_deploy:
 
 deploy_script:
   - jfrog bt pc --user %GH_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/msi/%GH_APP%
+  - jfrog bt pc --user %GH_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/msi/%GH_APP%/%VERSION%
   - jfrog bt upload --user %GH_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%-%GOARCH%-%VERSION%.msi %GH_USER %/msi/%GH_APP%/%VERSION%
-  - jfrog bt pc --user %GH_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/choco/%GH_APP%
+  - jfrog bt pc --user %GH_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/choco/%GH_APP%/%VERSION%
   - jfrog bt upload --user %GH_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%.%VERSION%.nupkg %GH_USER %/choco/%GH_APP%/%VERSION%
 
 # after_deploy:
