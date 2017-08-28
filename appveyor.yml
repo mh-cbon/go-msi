@@ -31,7 +31,7 @@ install:
   - set VERSION=1.0.2
   - set PATH=%WIX%\bin;%PATH%
   - set PATH=%GOPATH%\bin;%PATH%
-  - rl -fsSk -o changelog-amd64.msi -L 'https://github.com/mh-cbon/changelog/releases/download/0.0.25/changelog-amd64.msi'
+  - curl -fsSk -o changelog-amd64.msi -L 'https://github.com/mh-cbon/changelog/releases/download/0.0.25/changelog-amd64.msi'
   - msiexec.exe /i changelog-amd64.msi /quiet
   - DEL /F changelog-amd64.msi
   - curl -fsSk -o jfrog.exe -L "https://api.bintray.com/content/jfrog/jfrog-cli-go/$latest/jfrog-cli-windows-amd64/jfrog.exe?bt_package=jfrog-cli-windows-amd64"
