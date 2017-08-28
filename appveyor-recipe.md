@@ -22,11 +22,8 @@ This is an HOWDOI build an msi package from a windows machine using appveyor clo
 __appveyor.yml__
 
 ```yml
-version: "{build}"
-
-os: Windows Server 2012 R2
-
-clone_folder: c:\gopath\src\github.com\mh-cbon\go-msi             # Change this
+image: Visual Studio 2017
+clone_folder: c:\gopath\src\github.com\%APPVEYOR_REPO_NAME%
 
 # trigger build/deploy only on tag
 # if false, take care that %APPVEYOR_REPO_TAG_NAME% won t be set on commit
@@ -35,52 +32,60 @@ skip_non_tags: true
 
 environment:
   GOPATH: c:\gopath
-  GO15VENDOREXPERIMENT: 1
+  JFROG_CLI_OFFER_CONFIG: false
+  VCS_URL: https://github.com/%APPVEYOR_REPO_NAME%
+  BT_KEY:
+    secure: yyyy
   CHOCOKEY:
-    # Change this to your encrypted token value
     secure: xxxxx
 
 install:
   # wix setup
-  - curl -fsSL -o C:\wix310-binaries.zip http://static.wixtoolset.org/releases/v3.10.3.3007/wix310-binaries.zip
-  - 7z x C:\wix310-binaries.zip -y -r -oC:\wix310
-  - set PATH=C:\wix310;%PATH%
+  - set PATH=%WIX%\bin;%PATH%
   # go setup
-  - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
-  - go version
-  - go env
+  - set PATH=%GOPATH%\bin;%PATH%
   # glide setup, if your package uses it
+  - go get -u github.com/mh-cbon/never-fail
   - go get -u github.com/Masterminds/glide
-  # go-msi setup, choose one
+  # setup go-msi, choose one method
+  #
   # method 1: static link
   # - curl -fsSL -o C:\go-msi.msi https://github.com/mh-cbon/go-msi/releases/download/0.0.22/go-msi-amd64.msi
   # - msiexec.exe /i C:\go-msi.msi /quiet
   # - set PATH=C:\Program Files\go-msi\;%PATH% # for some reason, go-msi path needs to be added manually :(...
+  #
   # method 2: via gh-api-cli
   # - curl -fsSL -o C:\latest.bat https://raw.githubusercontent.com/mh-cbon/latest/master/latest.bat
   # - cmd /C C:\latest.bat mh-cbon go-msi amd64
   # - set PATH=C:\Program Files\go-msi\;%PATH%
+  #
   # method 3: via chocolatey
+  - choco install changelog -y
   - choco install go-msi -y
+  - glide install
 
 
 build_script:
-  # your project setup
-  - glide install
-  # Change this
-  - set MYAPP=go-msi
+  - set GH_APP=%APPVEYOR_PROJECT_NAME%
+  - set GH_USER=%APPVEYOR_ACCOUNT_NAME%
+  - set VERSION=%APPVEYOR_REPO_TAG_NAME%
+  # - set VERSION=1.0.2 # fake it when needed
   - set GOARCH=386
-  - go build -o %MYAPP%.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
-  - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\%MYAPP%-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME% --arch %GOARCH%
+  - go build -o %MYAPP%.exe --ldflags "-X main.VERSION=%VERSION%" main.go
+  - .\go-msi.exe make --msi %GH_APP%-%GOARCH%.msi --version %VERSION% --arch %GOARCH%
   - set GOARCH=amd64
-  - go build -o %MYAPP%.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
-  - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\%MYAPP%-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME% --arch %GOARCH%
+  - go build -o %MYAPP%.exe --ldflags "-X main.VERSION=%VERSION%" main.go
+  - .\go-msi.exe make --msi %GH_APP%-%GOARCH%.msi --version %VERSION% --arch %GOARCH%
 
 after_deploy:
-  # Change this
-  - set MYAPP=go-msi
-  - .\go-msi.exe choco --input %APPVEYOR_BUILD_FOLDER%\%MYAPP%-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME%
-  - choco push -k="'%CHOCOKEY%'" %MYAPP%.%APPVEYOR_REPO_TAG_NAME%.nupkg
+  # Choco push
+  - .\go-msi.exe choco --input %GH_APP%-%GOARCH%.msi --version %VERSION% --changelog-cmd "changelog ghrelease --version %VERSION%"
+  - choco push -k="'%CHOCOKEY%'" %GH_APP%.%VERSION%.nupkg
+    # Bintray push
+  - never-fail jfrog bt pc --user %GH_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/msi/%GH_APP%
+  - jfrog bt upload --user %GH_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%-%GOARCH%-%VERSION%.msi %GH_USER%/msi/%GH_APP%/%VERSION%
+  - never-fail jfrog bt pc --user %GH_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/choco/%GH_APP%
+  - jfrog bt upload --user %GH_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%.%VERSION%.nupkg %GH_USER%/choco/%GH_APP%/%VERSION%
 
 
 # to disable automatic tests
@@ -123,10 +128,12 @@ every time you create a tag and push it on the remote,
 `choco` package is generated from the amd64 build,
 and uploaded to your choco account.
 
-[go here](https://ci.appveyor.com/tools/encrypt)
-to generate the secure variable containing your `choco` api key.
+Both `msi` nad `nupkg` artifacts are uploaded to your bintray repos (/msi/ and /choco/)
 
-For an easy way to release,
+[go here](https://ci.appveyor.com/tools/encrypt)
+to generate the secure variable containing your `choco` api key and your `bintray` key.
+
+For an easy way to bump,
 you can use [gump](https://github.com/mh-cbon/gump),
 with a script like this,
 
