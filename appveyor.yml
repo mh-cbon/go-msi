@@ -1,6 +1,6 @@
 image: Visual Studio 2017
 
-clone_folder: c:\gopath\src\github.com\%APPVEYOR_PROJECT_SLUG%
+clone_folder: c:\gopath\src\github.com\%APPVEYOR_REPO_NAME%
 
 # skip_non_tags: true
 
@@ -75,9 +75,9 @@ build_script:
   - .\go-msi.exe choco --path wix.json --version %VERSION% --input %APPVEYOR_PROJECT_NAME%-%GOARCH%-%VERSION%.msi --changelog-cmd "changelog ghrelease --version %VERSION%"
 
 deploy_script:
-  - jfrog bt pc --user %BT_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_PROJECT_SLUG% %APPVEYOR_ACCOUNT_NAME%/msi/%APPVEYOR_PROJECT_NAME%
+  - jfrog bt pc --user %BT_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %APPVEYOR_ACCOUNT_NAME%/msi/%APPVEYOR_PROJECT_NAME%
   - jfrog bt upload --user %BT_USER% --key %BT_KEY%  --override=true --publish=true %APPVEYOR_PROJECT_NAME%-%GOARCH%-%VERSION%.msi %APPVEYOR_ACCOUNT_NAME %/msi/%APPVEYOR_PROJECT_NAME%/%VERSION%
-  - jfrog bt pc --user %BT_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_PROJECT_SLUG% %APPVEYOR_ACCOUNT_NAME%/choco/%APPVEYOR_PROJECT_NAME%
+  - jfrog bt pc --user %BT_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %APPVEYOR_ACCOUNT_NAME%/choco/%APPVEYOR_PROJECT_NAME%
   - jfrog bt upload --user %BT_USER% --key %BT_KEY%  --override=true --publish=true %APPVEYOR_PROJECT_NAME%.%VERSION%.nupkg %APPVEYOR_ACCOUNT_NAME %/choco/%APPVEYOR_PROJECT_NAME%/%VERSION%
 
 # after_deploy:
