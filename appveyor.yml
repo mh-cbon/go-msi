@@ -1,61 +1,88 @@
-# version format
-version: "{build}"
+image: Visual Studio 2017
 
-# Operating system (build VM template)
-os: Windows Server 2012 R2
-
-clone_folder: c:\gopath\src\github.com\mh-cbon\go-msi
+clone_folder: c:\gopath\src\github.com\%APPVEYOR_PROJECT_SLUG%
 
 # skip_non_tags: true
 
 # environment variables
 environment:
   GOPATH: c:\gopath
-  GO15VENDOREXPERIMENT: 1
-  CHOCOKEY:
-    secure: HRc9tf57V3c3dVyn8hvMkKeiwK2oyWvOSjNXembIAQctNx+GTGBBaHI3bh+8cIgy
+  JFROG_CLI_OFFER_CONFIG: false
+  VCS_URL: https://github.com/%APPVEYOR_REPO_NAME%
+  # MYAPP: go-msi
+  # VERSION: 1.0.1
+  # MSVC_DEFAULT_OPTIONS : ON
+  # BT_REPO_MSI : public-msi
+  # BT_REPO_CHOCO : public-choco
+  # BT_SUBJECT : bincrafters
+
+# environment:
+#   GOPATH: c:\gopath
+#   GO15VENDOREXPERIMENT: 1
+#   CHOCOKEY:
+#     secure: HRc9tf57V3c3dVyn8hvMkKeiwK2oyWvOSjNXembIAQctNx+GTGBBaHI3bh+8cIgy
 
 # scripts that run after cloning repository
+
 install:
-  - ps: Write-Host "APPVEYOR_BUILD_VERSION=$env:APPVEYOR_BUILD_VERSION";
-  - ps: Write-Host "APPVEYOR_REPO_TAG_NAME=$env:APPVEYOR_REPO_TAG_NAME";
-  - ps: if (-not (Test-Path env:APPVEYOR_REPO_TAG_NAME)) { $env:APPVEYOR_REPO_TAG_NAME = '0.0.2' }
-  - ps: ls env:APPVEYOR_REPO_TAG_NAME
-  - curl -fsSL -o C:\wix310-binaries.zip http://static.wixtoolset.org/releases/v3.10.3.3007/wix310-binaries.zip
-  - 7z x C:\wix310-binaries.zip -y -r -oC:\wix310
-  - set PATH=C:\wix310;%PATH%
-  - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
+  - set PATH=%WIX%\bin;%PATH%
+  - set PATH=%GOPATH%\bin;%PATH%
+  - curl -fsSk -o jfrog.exe -L "https://api.bintray.com/content/jfrog/jfrog-cli-go/$latest/jfrog-cli-windows-amd64/jfrog.exe?bt_package=jfrog-cli-windows-amd64"
   - go get -u github.com/Masterminds/glide
-
-# to run your custom scripts instead of automatic MSBuild
-build_script:
   - glide install
-  - set MYAPP=go-msi
-  - set GOARCH=386
-  - go build -o %MYAPP%.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
-  - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\%MYAPP%-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME% --arch %GOARCH%
-  - set GOARCH=amd64
-  - go build -o %MYAPP%.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
-  - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\%MYAPP%-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME% --arch %GOARCH%
 
-after_deploy:
-  - .\go-msi.exe choco --input %APPVEYOR_BUILD_FOLDER%\%MYAPP%-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME%
-  - choco push -k="'%CHOCOKEY%'" %MYAPP%.%APPVEYOR_REPO_TAG_NAME%.nupkg
+  # - ps: Write-Host "APPVEYOR_BUILD_VERSION=$env:APPVEYOR_BUILD_VERSION";
+  # - ps: Write-Host "APPVEYOR_REPO_TAG_NAME=$env:APPVEYOR_REPO_TAG_NAME";
+  # - ps: if (-not (Test-Path env:APPVEYOR_REPO_TAG_NAME)) { $env:APPVEYOR_REPO_TAG_NAME = '0.0.2' }
+  # - ps: ls env:APPVEYOR_REPO_TAG_NAME
+  # - curl -fsSL -o C:\wix310-binaries.zip http://static.wixtoolset.org/releases/v3.10.3.3007/wix310-binaries.zip
+  # - 7z x C:\wix310-binaries.zip -y -r -oC:\wix310
+  # - set PATH=C:\wix310;%PATH%
+  # - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
+  # - go get -u github.com/Masterminds/glide
 
 before_test:
   - ps: Start-FileDownload 'https://github.com/mh-cbon/changelog/releases/download/0.0.25/changelog-amd64.msi'
   - msiexec.exe /i changelog-amd64.msi /quiet
   - DEL /F changelog-amd64.msi
+  # do a manual installation of go-msi from pulled source code
   - mkdir C:\go-msi\
   - set GOARCH=amd64
   - go build -o C:\go-msi\go-msi.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
   - XCOPY /I /E templates C:\go-msi\templates
+  # prepare tests packages
   - cd testing\\hello
   - glide install
   - cd ..
   - glide install
   - cd ..
+  # run tests
   - go run testing\\main.go
+
+# run custom scripts
+build_script:
+  # x386
+  - set GOARCH=386
+  - go build -o %APPVEYOR_PROJECT_NAME%.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
+  - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\%APPVEYOR_PROJECT_NAME%-%GOARCH%-%VERSION%.msi --version %APPVEYOR_REPO_TAG_NAME% --arch %GOARCH%
+  - cp %APPVEYOR_BUILD_FOLDER%\%APPVEYOR_PROJECT_NAME%-%GOARCH%-%VERSION%.msi %APPVEYOR_BUILD_FOLDER%\%APPVEYOR_PROJECT_NAME%-%GOARCH%.msi
+  - .\go-msi.exe choco --path wix.json --version %VERSION% --input %APPVEYOR_PROJECT_NAME%-%GOARCH%-%VERSION%.msi --changelog-cmd "changelog ghrelease --version %VERSION%"
+  # amd64
+  - set GOARCH=amd64
+  - go build -o %APPVEYOR_PROJECT_NAME%.exe --ldflags "-X main.VERSION=%APPVEYOR_REPO_TAG_NAME%" main.go
+  - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\%APPVEYOR_PROJECT_NAME%-%GOARCH%-%VERSION%.msi --version %APPVEYOR_REPO_TAG_NAME% --arch %GOARCH%
+  - cp %APPVEYOR_BUILD_FOLDER%\%APPVEYOR_PROJECT_NAME%-%GOARCH%-%VERSION%.msi %APPVEYOR_BUILD_FOLDER%\%APPVEYOR_PROJECT_NAME%-%GOARCH%.msi
+  - .\go-msi.exe choco --path wix.json --version %VERSION% --input %APPVEYOR_PROJECT_NAME%-%GOARCH%-%VERSION%.msi --changelog-cmd "changelog ghrelease --version %VERSION%"
+
+deploy_script:
+  - jfrog bt pc --user %BT_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_PROJECT_SLUG% %APPVEYOR_ACCOUNT_NAME%/msi/%APPVEYOR_PROJECT_NAME%
+  - jfrog bt upload --user %BT_USER% --key %BT_KEY%  --override=true --publish=true %APPVEYOR_PROJECT_NAME%-%GOARCH%-%VERSION%.msi %APPVEYOR_ACCOUNT_NAME %/msi/%APPVEYOR_PROJECT_NAME%/%VERSION%
+  - jfrog bt pc --user %BT_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_PROJECT_SLUG% %APPVEYOR_ACCOUNT_NAME%/choco/%APPVEYOR_PROJECT_NAME%
+  - jfrog bt upload --user %BT_USER% --key %BT_KEY%  --override=true --publish=true %APPVEYOR_PROJECT_NAME%.%VERSION%.nupkg %APPVEYOR_ACCOUNT_NAME %/choco/%APPVEYOR_PROJECT_NAME%/%VERSION%
+
+# after_deploy:
+#   - .\go-msi.exe choco --input %APPVEYOR_BUILD_FOLDER%\%APPVEYOR_PROJECT_NAME%-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME%
+  # - choco push -k="'%CHOCOKEY%'" %APPVEYOR_PROJECT_NAME%.%APPVEYOR_REPO_TAG_NAME%.nupkg
 
 artifacts:
   - path: '*-386.msi'
