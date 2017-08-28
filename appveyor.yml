@@ -67,22 +67,22 @@ before_test:
 build_script:
   # x386
   - set GOARCH=386
-  - go build -o %APP%.exe --ldflags "-X main.VERSION=%VERSION%" main.go
-  - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\%APP%-%GOARCH%-%VERSION%.msi --version %VERSION% --arch %GOARCH%
-  - cp %APPVEYOR_BUILD_FOLDER%\%APP%-%GOARCH%-%VERSION%.msi %APPVEYOR_BUILD_FOLDER%\%APP%-%GOARCH%.msi
-  - .\go-msi.exe choco --path wix.json --version %VERSION% --input %APP%-%GOARCH%-%VERSION%.msi --changelog-cmd "changelog ghrelease --version %VERSION%"
+  - go build -o %GH_APP%.exe --ldflags "-X main.VERSION=%VERSION%" main.go
+  - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\%GH_APP%-%GOARCH%-%VERSION%.msi --version %VERSION% --arch %GOARCH%
+  - cp %APPVEYOR_BUILD_FOLDER%\%GH_APP%-%GOARCH%-%VERSION%.msi %APPVEYOR_BUILD_FOLDER%\%GH_APP%-%GOARCH%.msi
+  - .\go-msi.exe choco --path wix.json --version %VERSION% --input %GH_APP%-%GOARCH%-%VERSION%.msi --changelog-cmd "changelog ghrelease --version %VERSION%"
   # amd64
   - set GOARCH=amd64
-  - go build -o %APP%.exe --ldflags "-X main.VERSION=%VERSION%" main.go
-  - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\%APP%-%GOARCH%-%VERSION%.msi --version %VERSION% --arch %GOARCH%
-  - cp %APPVEYOR_BUILD_FOLDER%\%APP%-%GOARCH%-%VERSION%.msi %APPVEYOR_BUILD_FOLDER%\%APP%-%GOARCH%.msi
-  - .\go-msi.exe choco --path wix.json --version %VERSION% --input %APP%-%GOARCH%-%VERSION%.msi --changelog-cmd "changelog ghrelease --version %VERSION%"
+  - go build -o %GH_APP%.exe --ldflags "-X main.VERSION=%VERSION%" main.go
+  - .\go-msi.exe make --msi %APPVEYOR_BUILD_FOLDER%\%GH_APP%-%GOARCH%-%VERSION%.msi --version %VERSION% --arch %GOARCH%
+  - cp %APPVEYOR_BUILD_FOLDER%\%GH_APP%-%GOARCH%-%VERSION%.msi %APPVEYOR_BUILD_FOLDER%\%GH_APP%-%GOARCH%.msi
+  - .\go-msi.exe choco --path wix.json --version %VERSION% --input %GH_APP%-%GOARCH%-%VERSION%.msi --changelog-cmd "changelog ghrelease --version %VERSION%"
 
 deploy_script:
-  - jfrog bt pc --user %BT_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/msi/%APP%
-  - jfrog bt upload --user %BT_USER% --key %BT_KEY%  --override=true --publish=true %APP%-%GOARCH%-%VERSION%.msi %GH_USER %/msi/%APP%/%VERSION%
-  - jfrog bt pc --user %BT_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/choco/%APP%
-  - jfrog bt upload --user %BT_USER% --key %BT_KEY%  --override=true --publish=true %APP%.%VERSION%.nupkg %GH_USER %/choco/%APP%/%VERSION%
+  - jfrog bt pc --user %BT_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/msi/%GH_APP%
+  - jfrog bt upload --user %BT_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%-%GOARCH%-%VERSION%.msi %GH_USER %/msi/%GH_APP%/%VERSION%
+  - jfrog bt pc --user %BT_USER% --key %BT_KEY% --licenses=MIT --vcs-url=https://github.com/%APPVEYOR_REPO_NAME% %GH_USER%/choco/%GH_APP%
+  - jfrog bt upload --user %BT_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%.%VERSION%.nupkg %GH_USER %/choco/%GH_APP%/%VERSION%
 
 # after_deploy:
 #   - .\go-msi.exe choco --input %APPVEYOR_BUILD_FOLDER%\%APPVEYOR_PROJECT_NAME%-%GOARCH%.msi --version %APPVEYOR_REPO_TAG_NAME%
