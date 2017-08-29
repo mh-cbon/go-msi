@@ -52,7 +52,7 @@ before_deploy:
   - cp $GH_APP-$OSARCH-$VERSION.deb $GH_APP-$OSARCH.deb
   # upload to bintray
   - curl -fL https://getcli.jfrog.io | sh
-  - ll
+  - ls -alh
   - ./jfrog bt pc --key=$BTKEY --user=$GH_USER --licenses=MIT --vcs-url=https://github.com/$GH_USER/deb $GH_USER/deb/$GH_APP || echo "package already exists"
   - ./jfrog bt upload --override=true --key $BTKEY --publish=true --deb=unstable/main/$OSARCH $GH_APP-$OSARCH-$VERSION.deb $GH_USER/deb/$GH_APP/$VERSION pool/g/$GH_APP/
   # prepare rpm package creation
