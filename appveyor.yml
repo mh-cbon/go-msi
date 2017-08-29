@@ -20,7 +20,8 @@ install:
   - set PATH=%WIX%\bin;%PATH%
   - set PATH=%GOPATH%\bin;%PATH%
   - set PATH=%ProgramFiles%\changelog;%PATH%
-  - choco install changelog -y
+  - set PATH=%ProgramFiles%\gh-api-cli;%PATH%
+  - choco install changelog gh-api-cli -y
   - curl -fsSk -o jfrog.exe -L "https://api.bintray.com/content/jfrog/jfrog-cli-go/$latest/jfrog-cli-windows-amd64/jfrog.exe?bt_package=jfrog-cli-windows-amd64"
   - go get -u github.com/mh-cbon/never-fail
   - go get -u github.com/Masterminds/glide
@@ -67,7 +68,6 @@ deploy_script:
   - set GOARCH=amd64
   - jfrog bt upload --user %GH_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%-%GOARCH%-%VERSION%.msi %GH_USER%/msi/%GH_APP%/%VERSION%
   # next section is a workaround for https://github.com/appveyor/ci/issues/1752
-  - choco install gh-api-cli -y
   - gh-api-cli upload-release-asset -t %GH_TOKEN% -g "*-*.msi" -o %GH_USER% -r %GH_APP% --ver %VERSION%
 
 artifacts:
