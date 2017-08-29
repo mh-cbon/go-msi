@@ -20,9 +20,11 @@ install:
   - if "%x%"=="%VERSION%" set VERSION=1.0.2
   - set PATH=%WIX%\bin;%PATH%
   - set PATH=%GOPATH%\bin;%PATH%
-  - set PATH=%ProgramFiles%\changelog;%PATH%
-  - set PATH=%ProgramFiles%\gh-api-cli;%PATH%
+  # - set PATH=%ProgramFiles%\changelog;%PATH%
+  # - set PATH=%ProgramFiles%\gh-api-cli;%PATH%
   - choco install changelog gh-api-cli -y
+  - refreshenv
+  - changelog -h
   - curl -fsSk -o jfrog.exe -L "https://api.bintray.com/content/jfrog/jfrog-cli-go/$latest/jfrog-cli-windows-amd64/jfrog.exe?bt_package=jfrog-cli-windows-amd64"
   - go get -u github.com/mh-cbon/never-fail
   - go get -u github.com/Masterminds/glide
