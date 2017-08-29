@@ -5,44 +5,73 @@ services:
 
 language: go
 go:
-  - 1.8
+  - 1.9
 
 env:
+  matrix:
+    - GOARCH=amd64 OSARCH=amd64
+    - GOARCH=386 OSARCH=i386
   global:
-    - GH=mh-cbon/go-msi
-    - APP=go-msi
-    - EMAIL=mh-cbon@users.noreply.github.com
-    - JEKYLL=pietromenna/jekyll-cayman-theme
-    - MYAPP=go-msi
-    - MYEMAIL=mh-cbon@users.noreply.github.com
-    - secure: RZ0ydDdI/aRHO7T56eUX9TH8HqGamstxZCXYJcTyIRCch2poplxau7YcgeJs2dqjsfdudTfNaIBTncY6erLHfBXNYgobx29vx0fXMznODS2IzL5bpSf3LyYq0HoQYrGM5UhttAIwb4Z6tL1oIFQ9127DbUKGeWuo0hKqnz7hxYZZDXIe1ki/CaGGs5vGEfgeZEA19g68yN6MefEHqCWo4rFp0Stf5tYEdH7K/vKkjGZPpEYq+BCsrh1d+m9BuzbhdRxlCcx5+MPHjluk1x6ddKcjT8mKHfSI39QKVz4lNKX6Apn4EDNvjNX3PhxUqZJD2ekr8u7PadEy96ftqJi3X3nqtgyVvPHYBekQXu1Gajec52Lv9miZ5dxdfF7U9RPyUJERu3Qe7yq3ogyOURvpui84saFjPow15t39LXk2RRoydP/y2HMU+C3a9V1wflM7WdFlwsu6XPlZsL42yDb9LtKrw+/9RpC43OovYCQvB33HnTxWmsluE3UUBZQ2QaH1AunXGL0LAPAJaESMMD5jlZZMm3ldmjnVa559vdqH1j7U9gRkYqFUe5er7wK5BIfZTa0gB5LEyYxVMx4sJqBpomlrqUB2mAN9WlVHbE9MRDi6iVDI93uizZj7wuGF9pnOpvqzly7iqfB2Z+uXKOyRpUWaLuVUxJCRKfByS7JrdNM=
+    - VERSION=${TRAVIS_TAG}
+    - GH_USER=${TRAVIS_REPO_SLUG%/*}
+    - GH_APP=${TRAVIS_REPO_SLUG#*/}
+    - JFROG_CLI_OFFER_CONFIG=false
+    # - secure: RZ0ydDdI/aRHO7T56eUX9TH8HqGamstxZCXYJcTyIRCch2poplxau7YcgeJs2dqjsfdudTfNaIBTncY6erLHfBXNYgobx29vx0fXMznODS2IzL5bpSf3LyYq0HoQYrGM5UhttAIwb4Z6tL1oIFQ9127DbUKGeWuo0hKqnz7hxYZZDXIe1ki/CaGGs5vGEfgeZEA19g68yN6MefEHqCWo4rFp0Stf5tYEdH7K/vKkjGZPpEYq+BCsrh1d+m9BuzbhdRxlCcx5+MPHjluk1x6ddKcjT8mKHfSI39QKVz4lNKX6Apn4EDNvjNX3PhxUqZJD2ekr8u7PadEy96ftqJi3X3nqtgyVvPHYBekQXu1Gajec52Lv9miZ5dxdfF7U9RPyUJERu3Qe7yq3ogyOURvpui84saFjPow15t39LXk2RRoydP/y2HMU+C3a9V1wflM7WdFlwsu6XPlZsL42yDb9LtKrw+/9RpC43OovYCQvB33HnTxWmsluE3UUBZQ2QaH1AunXGL0LAPAJaESMMD5jlZZMm3ldmjnVa559vdqH1j7U9gRkYqFUe5er7wK5BIfZTa0gB5LEyYxVMx4sJqBpomlrqUB2mAN9WlVHbE9MRDi6iVDI93uizZj7wuGF9pnOpvqzly7iqfB2Z+uXKOyRpUWaLuVUxJCRKfByS7JrdNM=
 
 before_install:
+  - sudo add-apt-repository 'deb https://dl.bintray.com/bincrafters/public-deb unstable main'
   - sudo apt-get -qq update
+  - sudo apt-get install --allow-unauthenticated changelog go-bin-deb fakeroot
   - mkdir -p ${GOPATH}/bin
   - cd ~
   - curl https://glide.sh/get | sh
 
 install:
-  - cd $GOPATH/src/github.com/$GH
+  - cd $GOPATH/src/github.com/$TRAVIS_REPO_SLUG
   - glide install
   - go install
 
 script:
-  - wget -O - https://raw.githubusercontent.com/mh-cbon/gh-pages/master/all.sh | sh -x
+  # - wget -O - https://raw.githubusercontent.com/mh-cbon/gh-pages/master/all.sh | sh -x
   - echo "pass, ok."
 
-before_deploy:
-  - mkdir -p build/{386,amd64}
-  - GOOS=linux GOARCH=386 go build --ldflags "-X main.TPLPATH=/usr/share/$APP/" --ldflags "-X main.VERSION=${TRAVIS_TAG}" -o build/386/$APP main.go
-  - GOOS=linux GOARCH=amd64 go build --ldflags "-X main.TPLPATH=/usr/share/$APP/" --ldflags "-X main.VERSION=${TRAVIS_TAG}" -o build/amd64/$APP main.go
-  - curl -L https://raw.githubusercontent.com/mh-cbon/go-bin-deb/master/create-pkg.sh | GH=$GH sh -xe
-  - curl -L https://raw.githubusercontent.com/mh-cbon/go-bin-rpm/master/create-pkg.sh | GH=$GH sh -xe
+# before_deploy:
+#   - mkdir -p build/{386,amd64}
+#   - GOOS=linux GOARCH=386 go build --ldflags "-X main.TPLPATH=/usr/share/$APP/" --ldflags "-X main.VERSION=${TRAVIS_TAG}" -o build/386/$APP main.go
+#   - GOOS=linux GOARCH=amd64 go build --ldflags "-X main.TPLPATH=/usr/share/$APP/" --ldflags "-X main.VERSION=${TRAVIS_TAG}" -o build/amd64/$APP main.go
+#   - curl -L https://raw.githubusercontent.com/mh-cbon/go-bin-deb/master/create-pkg.sh | GH=$GH sh -xe
+#   - curl -L https://raw.githubusercontent.com/mh-cbon/go-bin-rpm/master/create-pkg.sh | GH=$GH sh -xe
 
-after_deploy:
-  - wget -O - https://raw.githubusercontent.com/mh-cbon/gh-pages/master/all.sh | sh -x
-  - curl -L https://raw.githubusercontent.com/mh-cbon/go-bin-deb/master/setup-repository.sh | GH=$GH EMAIL=$EMAIL sh -xe
-  - curl -L https://raw.githubusercontent.com/mh-cbon/go-bin-rpm/master/setup-repository.sh | GH=$GH EMAIL=$EMAIL sh -xe
+before_deploy:
+  # create the deb package
+  - cd $GOPATH/src/github.com/$TRAVIS_REPO_SLUG
+  - mkdir -p build/$OSARCH
+  - GOOS=linux GOARCH=$GOARCH go build --ldflags "-X main.VERSION=$VERSION" -o build/$OSARCH/$GH_APP main.go
+  - go-bin-deb generate --file deb.json -a $OSARCH --version $VERSION -o $GH_APP-$OSARCH-$VERSION.deb
+  # copy the deb for gh release (backward compatibility)
+  - cp $GH_APP-$OSARCH-$VERSION.deb $GH_APP-$OSARCH.deb
+  # upload to bintray
+  - curl -fL https://getcli.jfrog.io | sh
+  - ./jfrog bt pc --key=$BTKEY --user=$GH_USER --licenses=MIT --vcs-url=https://github.com/$GH_USER/deb $GH_USER/deb/$GH_APP || echo "package already exists"
+  - ./jfrog bt upload --override=true --key $BTKEY --publish=true --deb=unstable/main/$OSARCH $GH_APP-$OSARCH-$VERSION.deb $GH_USER/deb/$GH_APP/$VERSION pool/g/$GH_APP/
+  # prepare rpm package creation
+  - docker pull fedora
+  # create the package in the docker
+  - >
+    docker run -v $PWD:/mnt/travis fedora /bin/sh -c
+    "cd /mnt/travis && (curl -s -L https://bintray.com/bincrafters/public-rpm/rpm > /etc/yum.repos.d/w.repo) && dnf install go-bin-rpm changelog rpm-build -y --quiet && go-bin-rpm generate --file rpm.json -a $OSARCH --version $VERSION -o $GH_APP-$OSARCH-$VERSION.rpm"
+  # copy the rpm for gh release (backward compatibility)
+  - cp $GH_APP-$OSARCH-$VERSION.rpm $GH_APP-$OSARCH.rpm
+  # upload to bintray
+  - curl -fL https://getcli.jfrog.io | sh
+  - ./jfrog bt pc --key=$BTKEY --user=$GH_USER --licenses=MIT --vcs-url=https://github.com/$GH_USER/rpm $GH_USER/rpm/$GH_APP || echo "package already exists"
+  - ./jfrog bt upload --override=true --key $BTKEY --publish=true --deb=unstable/main/$OSARCH $GH_APP-$OSARCH-$VERSION.rpm $GH_USER/rpm/$GH_APP/$VERSION pool/g/$GH_APP/
+
+
+# after_deploy:
+#   - wget -O - https://raw.githubusercontent.com/mh-cbon/gh-pages/master/all.sh | sh -x
+#   - curl -L https://raw.githubusercontent.com/mh-cbon/go-bin-deb/master/setup-repository.sh | GH=$GH EMAIL=$EMAIL sh -xe
+#   - curl -L https://raw.githubusercontent.com/mh-cbon/go-bin-rpm/master/setup-repository.sh | GH=$GH EMAIL=$EMAIL sh -xe
 
 deploy:
   provider: releases
@@ -50,10 +79,10 @@ deploy:
     secure: Dmi4to/C++oBkvIX2Q+hYvUkikb3au3T0jbhXDgl3WxCaz//TX28TJNzjYU/kR0etXGuQCwafPd8rUcWnz02X9ZUN2PG0Vx28BmOmQ3n7+1EDEkRTOP5e6vI6ZUSeti/YYsNjPLiw4UpQYcCIVCp07Cw4MlNfS/8IL5gcfnsQWU+YiBxG8zp6v6oz8utBpqa2Ax6JZ5aELoOiO7s11LB2M8VwbE3/drwz0ztEpAkocIGIq5zgG2SuG3yPKqA80Pimu/k96qxxlLy/ZBE+EYWz2JFaN88V9RO01l7ccYesENeYABK+iU0bI88UTFfY+QAU71zPB75u1dQpEP5K2u3OseaUhq59YObKBHKl6Z6mPb61SbdTeEokf2XEPBN3RTHPPKIYezxYKCavjGXkAXTQAR5FBZdvGZk04Kxw5jT13X+UzTxeo9gSkQGng4JgSIO4M1wJT+gPezbxYF7huIFFMGKUaCDy60PU0gN7HuDjkdcFwjdYfk5BQkeoaI8sUTp4fhHtjXjiVU8opk+LPIYd7muAV3tNtQz14P+0zQlceRimP2hAklVRF/8XdSq+X5f1bKnRnolSlSYj6x8laGOpE2cQ1CPfVQIkxMD9r9ZZmER4VHvhsgXHmuvhnjGIp36u5aT7uBhdtPocyZsW56KhuwMLpuePmy7ykQr+PI11z4=
   file_glob: true
   file:
-    - $APP-386.deb
-    - $APP-amd64.deb
-    - $APP-386.rpm
-    - $APP-amd64.rpm
+    - $GH_APP-386.deb
+    - $GH_APP-amd64.deb
+    - $GH_APP-386.rpm
+    - $GH_APP-amd64.rpm
   skip_cleanup: true
   on:
     tags: true
