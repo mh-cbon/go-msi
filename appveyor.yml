@@ -10,6 +10,8 @@ environment:
   VCS_URL: https://github.com/%APPVEYOR_REPO_NAME%
   BT_KEY:
     secure: P9xGXGG38T4AvO8XXXXcbaDG2sSN4t6KH92zssGp0nrbyQAZuxHD9F84s6PM9mOD
+  GH_TOKEN:
+    secure: WVMaMjrLzXN8YNcnFRfcucTYWtvoDeE/4b2TUGQBZDvv7u+ERBQ///z5Q8qYSt0L
 
 install:
   - set GH_APP=%APPVEYOR_PROJECT_NAME%
@@ -64,6 +66,9 @@ deploy_script:
   - jfrog bt upload --user %GH_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%-%GOARCH%-%VERSION%.msi %GH_USER%/msi/%GH_APP%/%VERSION%
   - set GOARCH=amd64
   - jfrog bt upload --user %GH_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%-%GOARCH%-%VERSION%.msi %GH_USER%/msi/%GH_APP%/%VERSION%
+  # next section is a workaround for https://github.com/appveyor/ci/issues/1752
+  - choco install gh-api-cli -y
+  - gh-api-cli upload-release-asset -t %GH_TOKEN% -g "*-*.msi" -o %GH_USER% -r %GH_APP% --ver %VERSION%
 
 artifacts:
   - path: '*-386.msi'
