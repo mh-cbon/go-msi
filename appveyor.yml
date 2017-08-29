@@ -43,7 +43,7 @@ before_test:
   - go run testing\\main.go
   - cd && dir *msi
 
-# run custom scripts
+# build msi artifacts
 build_script:
   # x386
   - set GOARCH=386
