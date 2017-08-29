@@ -86,4 +86,5 @@ deploy:
     desription: "Release %APPVEYOR_REPO_TAG_NAME%"
     auth_token:
       secure: WVMaMjrLzXN8YNcnFRfcucTYWtvoDeE/4b2TUGQBZDvv7u+ERBQ///z5Q8qYSt0L
+    on:
       appveyor_repo_tag: true   # deploy on tag push only
