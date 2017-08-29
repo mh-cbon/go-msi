@@ -68,7 +68,8 @@ deploy_script:
   - set GOARCH=amd64
   - jfrog bt upload --user %GH_USER% --key %BT_KEY%  --override=true --publish=true %GH_APP%-%GOARCH%-%VERSION%.msi %GH_USER%/msi/%GH_APP%/%VERSION%
   # next section is a workaround for https://github.com/appveyor/ci/issues/1752
-  - gh-api-cli upload-release-asset -t %GH_TOKEN% -g "*-*.msi" -o %GH_USER% -r %GH_APP% --ver %VERSION%
+  - gh-api-cli upload-release-asset -t %GH_TOKEN% -g "*-386.msi" -o %GH_USER% -r %GH_APP% --ver %VERSION%
+  - gh-api-cli upload-release-asset -t %GH_TOKEN% -g "*-amd64.msi" -o %GH_USER% -r %GH_APP% --ver %VERSION%
 
 artifacts:
   - path: '*-386.msi'
