@@ -9,8 +9,8 @@ go:
 
 env:
   matrix:
-    - GOARCH=amd64 OSARCH=amd64
-    - GOARCH=386 OSARCH=i386
+    - OKARCH=amd64 OSARCH=amd64
+    - OKARCH=386 OSARCH=i386
   global:
     - VERSION=${TRAVIS_TAG}
     - GH_USER=${TRAVIS_REPO_SLUG%/*}
@@ -40,8 +40,8 @@ script:
 
 # before_deploy:
 #   - mkdir -p build/{386,amd64}
-#   - GOOS=linux GOARCH=386 go build --ldflags "-X main.TPLPATH=/usr/share/$APP/" --ldflags "-X main.VERSION=${TRAVIS_TAG}" -o build/386/$APP main.go
-#   - GOOS=linux GOARCH=amd64 go build --ldflags "-X main.TPLPATH=/usr/share/$APP/" --ldflags "-X main.VERSION=${TRAVIS_TAG}" -o build/amd64/$APP main.go
+#   - GOOS=linux OKARCH=386 go build --ldflags "-X main.TPLPATH=/usr/share/$APP/" --ldflags "-X main.VERSION=${TRAVIS_TAG}" -o build/386/$APP main.go
+#   - GOOS=linux OKARCH=amd64 go build --ldflags "-X main.TPLPATH=/usr/share/$APP/" --ldflags "-X main.VERSION=${TRAVIS_TAG}" -o build/amd64/$APP main.go
 #   - curl -L https://raw.githubusercontent.com/mh-cbon/go-bin-deb/master/create-pkg.sh | GH=$GH sh -xe
 #   - curl -L https://raw.githubusercontent.com/mh-cbon/go-bin-rpm/master/create-pkg.sh | GH=$GH sh -xe
 
@@ -49,10 +49,10 @@ before_deploy:
   # create the deb package
   - cd $GOPATH/src/github.com/$TRAVIS_REPO_SLUG
   - mkdir -p build/$OSARCH
-  - GOOS=linux GOARCH=$GOARCH go build --ldflags "-X main.VERSION=$VERSION" -o build/$OSARCH/$GH_APP main.go
+  - GOOS=linux go build --ldflags "-X main.VERSION=$VERSION" -o build/$OSARCH/$GH_APP main.go
   - go-bin-deb generate --file deb.json -a $OSARCH --version $VERSION -o $GH_APP-$OSARCH-$VERSION.deb
   # copy the deb for gh release (backward compatibility)
-  - cp $GH_APP-$OSARCH-$VERSION.deb $GH_APP-$GOARCH.deb
+  - cp $GH_APP-$OSARCH-$VERSION.deb $GH_APP-$OKARCH.deb
   # upload to bintray
   - curl -fL https://getcli.jfrog.io | sh
   - ls -alh
@@ -65,7 +65,7 @@ before_deploy:
     docker run -v $PWD:/mnt/travis fedora /bin/sh -c
     "cd /mnt/travis && (curl -s -L https://bintray.com/bincrafters/public-rpm/rpm > /etc/yum.repos.d/w.repo) && dnf install go-bin-rpm changelog rpm-build -y --quiet && go-bin-rpm generate --file rpm.json -a $OSARCH --version $VERSION -o $GH_APP-$OSARCH-$VERSION.rpm"
   # copy the rpm for gh release (backward compatibility)
-  - cp $GH_APP-$OSARCH-$VERSION.rpm $GH_APP-$GOARCH.rpm
+  - cp $GH_APP-$OSARCH-$VERSION.rpm $GH_APP-$OKARCH.rpm
   # upload to bintray
   - ./jfrog bt pc --key=$BTKEY --user=$GH_USER --licenses=MIT --vcs-url=https://github.com/$GH_USER/rpm $GH_USER/rpm/$GH_APP || echo "package already exists"
   - ./jfrog bt upload --override=true --key $BTKEY --publish=true --deb=unstable/main/$OSARCH $GH_APP-$OSARCH-$VERSION.rpm $GH_USER/rpm/$GH_APP/$VERSION pool/g/$GH_APP/
@@ -82,8 +82,8 @@ deploy:
     secure: Dmi4to/C++oBkvIX2Q+hYvUkikb3au3T0jbhXDgl3WxCaz//TX28TJNzjYU/kR0etXGuQCwafPd8rUcWnz02X9ZUN2PG0Vx28BmOmQ3n7+1EDEkRTOP5e6vI6ZUSeti/YYsNjPLiw4UpQYcCIVCp07Cw4MlNfS/8IL5gcfnsQWU+YiBxG8zp6v6oz8utBpqa2Ax6JZ5aELoOiO7s11LB2M8VwbE3/drwz0ztEpAkocIGIq5zgG2SuG3yPKqA80Pimu/k96qxxlLy/ZBE+EYWz2JFaN88V9RO01l7ccYesENeYABK+iU0bI88UTFfY+QAU71zPB75u1dQpEP5K2u3OseaUhq59YObKBHKl6Z6mPb61SbdTeEokf2XEPBN3RTHPPKIYezxYKCavjGXkAXTQAR5FBZdvGZk04Kxw5jT13X+UzTxeo9gSkQGng4JgSIO4M1wJT+gPezbxYF7huIFFMGKUaCDy60PU0gN7HuDjkdcFwjdYfk5BQkeoaI8sUTp4fhHtjXjiVU8opk+LPIYd7muAV3tNtQz14P+0zQlceRimP2hAklVRF/8XdSq+X5f1bKnRnolSlSYj6x8laGOpE2cQ1CPfVQIkxMD9r9ZZmER4VHvhsgXHmuvhnjGIp36u5aT7uBhdtPocyZsW56KhuwMLpuePmy7ykQr+PI11z4=
   file_glob: true
   file:
-    - $GH_APP-$GOARCH.deb
-    - $GH_APP-$GOARCH.rpm
+    - $GH_APP-$OKARCH.deb
+    - $GH_APP-$OKARCH.rpm
   skip_cleanup: true
   on:
     tags: true
