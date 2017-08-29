@@ -1,3 +1,8 @@
+
+# to support the project, click the ad!
+
+thanks!
+
 <a href="https://app.codesponsor.io/link/aHBhB5M68Fescjjp9VC9TtJs/mh-cbon/go-msi" rel="nofollow"><img src="https://app.codesponsor.io/embed/aHBhB5M68Fescjjp9VC9TtJs/mh-cbon/go-msi.svg" style="width: 888px; height: 68px;" alt="Sponsor" /></a>
 
 # go-msi
@@ -199,7 +204,7 @@ USAGE:
 OPTIONS:
    --path value, -p value     Path to the wix manifest file (default: "wix.json")
    --src value, -s value      Directory path to the wix templates files (default: "/home/mh-cbon/gow/bin/templates")
-   --out value, -o value      Directory path to the generated wix cmd file (default: "/tmp/go-msi342573393")
+   --out value, -o value      Directory path to the generated wix cmd file (default: "/tmp/go-msi000867861")
    --arch value, -a value     A target architecture, amd64 or 386 (ia64 is not handled)
    --msi value, -m value      Path to write resulting msi file to
    --version value            The version of your program
@@ -219,7 +224,7 @@ OPTIONS:
    --path value, -p value           Path to the wix manifest file (default: "wix.json")
    --src value, -s value            Directory path to the wix templates files (default: "/home/mh-cbon/gow/bin/templates/choco")
    --version value                  The version of your program
-   --out value, -o value            Directory path to the generated chocolatey build file (default: "/tmp/go-msi043080742")
+   --out value, -o value            Directory path to the generated chocolatey build file (default: "/tmp/go-msi025992027")
    --input value, -i value          Path to the msi file to package into the chocolatey package
    --changelog-cmd value, -c value  A command to generate the content of the changlog in the package
    --keep, -k                       Keep output directory containing build files (useful for debug)
@@ -236,7 +241,7 @@ USAGE:
 OPTIONS:
    --path value, -p value     Path to the wix manifest file (default: "wix.json")
    --src value, -s value      Directory path to the wix templates files (default: "/home/mh-cbon/gow/bin/templates")
-   --out value, -o value      Directory path to the generated wix templates files (default: "/tmp/go-msi951442211")
+   --out value, -o value      Directory path to the generated wix templates files (default: "/tmp/go-msi107164014")
    --version value            The version of your program
    --license value, -l value  Path to the license file
 ```
@@ -279,7 +284,7 @@ USAGE:
 OPTIONS:
    --path value, -p value  Path to the wix manifest file (default: "wix.json")
    --src value, -s value   Directory path to the wix templates files (default: "/home/mh-cbon/gow/bin/templates")
-   --out value, -o value   Directory path to the generated wix cmd file (default: "/tmp/go-msi773231985")
+   --out value, -o value   Directory path to the generated wix cmd file (default: "/tmp/go-msi162366883")
    --arch value, -a value  A target architecture, amd64 or 386 (ia64 is not handled)
    --msi value, -m value   Path to write resulting msi file to
 ```
@@ -293,7 +298,7 @@ USAGE:
    go-msi run-wix-cmd [command options] [arguments...]
 
 OPTIONS:
-   --out value, -o value  Directory path to the generated wix cmd file (default: "/tmp/go-msi455564167")
+   --out value, -o value  Directory path to the generated wix cmd file (default: "/tmp/go-msi880475575")
 ```
 
 # Recipes
