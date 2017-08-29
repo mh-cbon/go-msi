@@ -1,5 +1,5 @@
 image: Visual Studio 2017
-clone_folder: c:\gopath\src\github.com\%APPVEYOR_REPO_NAME%
+clone_folder: c:\gopath\src\github.com\%APPVEYOR_ACCOUNT_NAME%\%APPVEYOR_PROJECT_SLUG%
 
 # skip_non_tags: true
 
@@ -12,9 +12,6 @@ environment:
     secure: P9xGXGG38T4AvO8XXXXcbaDG2sSN4t6KH92zssGp0nrbyQAZuxHD9F84s6PM9mOD
 
 install:
-  - echo "APPVEYOR_PROJECT_SLUG=%APPVEYOR_PROJECT_SLUG%"
-  - echo "APPVEYOR_PROJECT_NAME=%APPVEYOR_PROJECT_NAME%"
-  - echo "APPVEYOR_ACCOUNT_NAME=%APPVEYOR_ACCOUNT_NAME%"
   - set GH_APP=%APPVEYOR_PROJECT_NAME%
   - set GH_USER=%APPVEYOR_ACCOUNT_NAME%
   - set VERSION=%APPVEYOR_REPO_TAG_NAME%
