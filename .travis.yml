@@ -22,7 +22,7 @@ env:
     - secure: IRw6MHgW2lWOTywZVxn9rF5Sp91Iji/XJNT1dGs/gCogEojzE84K8OlWmPb090cGmJR+wv5wp0be5G34qYV0vssxseOVRZ4JZN0EqOOQGSPZxrbVc1aXMv4JKfe8SlBh18IG6O2bZW1uQHCpBz1QSygzG7o7wD1/j7q83PMxy4IMzfRNcbjRUmqK10/TMiDUuPTYXIAi5RKgrIghvfaIvtl3DG++BquhfYKex5u98kTcLDJ2eHTfWsl7UMcvHDamYVIDt5WFfPidfkkG8BXD5bwjgldGZ7CiXPevrslKeE5ZV3cjBRvSxcnGGOEE/hN9hhCiVCz/YJIc6v9QoTIRG9nv9RulCBAHsZJZXa3NymERioMi/+b5H7J3hluRSPpGHsGCefygi3lL7mq4lPhZAd78Rq6gkEG10sNcRjiP3nCsSFlTWIMyZmiTy27FvV9C8rCihAg0vMdx/mA0AWLDLjAvzSeNJAOiV6pXTDVIZVTiE82cTyqV9YrKZ9E7cxJz9mOfBEZ1AT5SRw6hFsQ7g+cPvscpL0l10S5WinfmGJzu+vjJ9RzYETSRrO1PUiOk4puyjW+AQmFy7CjL7lS7fL8xGsx3xENq1FW1NhRFP22jwA0wcWjXlDCRYzCLbuDBRfSasFZCQKEUTeOuvplTA/Yx62Es36TtgGKIwwYk+1U=
 
 before_install:
-  - sudo add-apt-repository 'deb https://dl.bintray.com/bincrafters/public-deb unstable main'
+  - sudo add-apt-repository 'deb https://dl.bintray.com/mh-cbon/deb unstable main'
   - sudo apt-get -qq update
   - sudo apt-get install --allow-unauthenticated changelog go-bin-deb fakeroot
   - mkdir -p ${GOPATH}/bin
@@ -63,7 +63,7 @@ before_deploy:
   # create the package in the docker
   - >
     docker run -v $PWD:/mnt/travis fedora /bin/sh -c
-    "cd /mnt/travis && (curl -s -L https://bintray.com/bincrafters/public-rpm/rpm > /etc/yum.repos.d/w.repo) && dnf install go-bin-rpm changelog rpm-build -y --quiet && go-bin-rpm generate --file rpm.json -a $OSARCH --version $VERSION -o $GH_APP-$OSARCH-$VERSION.rpm"
+    "cd /mnt/travis && (curl -s -L https://bintray.com/mh-cbon/rpm/rpm > /etc/yum.repos.d/w.repo) && dnf install go-bin-rpm changelog rpm-build -y --quiet && go-bin-rpm generate --file rpm.json -a $OSARCH --version $VERSION -o $GH_APP-$OSARCH-$VERSION.rpm"
   # copy the rpm for gh release (backward compatibility)
   - cp $GH_APP-$OSARCH-$VERSION.rpm $GH_APP-$OKARCH.rpm
   # upload to bintray

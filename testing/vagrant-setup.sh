@@ -54,3 +54,9 @@ rm -fr wix310 wix310*zip
 
 # setup chocolatey
 vagrant winrm -c 'iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex'
+vagrant winrm -c 'choco source add -n=mh-cbon -s="https://api.bintray.com/nuget/mh-cbon/choco"'
+vagrant winrm -c 'choco install changelog go-msi emd gump gh-api-cli -y'
+vagrant winrm -c 'changelog -v'
+vagrant winrm -c 'go-msi -v'
+vagrant winrm -c 'emd -version'
+vagrant winrm -c 'gh-api-cli -v'

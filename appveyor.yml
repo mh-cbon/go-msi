@@ -14,6 +14,7 @@ environment:
     secure: WVMaMjrLzXN8YNcnFRfcucTYWtvoDeE/4b2TUGQBZDvv7u+ERBQ///z5Q8qYSt0L
 
 install:
+  - choco source add -n=mh-cbon -s="https://api.bintray.com/nuget/mh-cbon/choco"
   - choco install changelog gh-api-cli -y
   - refreshenv
   - set GH_APP=%APPVEYOR_PROJECT_NAME%
