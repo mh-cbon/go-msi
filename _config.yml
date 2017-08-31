@@ -1,0 +1,8 @@
+title: Go-msi
+description: Easy way to generate msi package for a Go project
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-cayman
+
+gems:
+  - jekyll-mentions
