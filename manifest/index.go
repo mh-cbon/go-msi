@@ -149,19 +149,35 @@ func (wixFile *WixManifest) Load(p string) error {
 func (wixFile *WixManifest) SetGuids(force bool) (bool, error) {
 	updated := false
 	if wixFile.UpgradeCode == "" || force {
-		wixFile.UpgradeCode = uuid.NewV4().String()
+		uid, e := uuid.NewV4()
+		if e != nil {
+			return updated, fmt.Errorf("error generating UUID: %s", e)
+		}
+		wixFile.UpgradeCode = uid.String()
 		updated = true
 	}
 	if wixFile.Files.GUID == "" || force {
-		wixFile.Files.GUID = uuid.NewV4().String()
+		uid, e := uuid.NewV4()
+		if e != nil {
+			return updated, fmt.Errorf("error generating UUID: %s", e)
+		}
+		wixFile.Files.GUID = uid.String()
 		updated = true
 	}
 	if (wixFile.Env.GUID == "" || force) && len(wixFile.Env.Vars) > 0 {
-		wixFile.Env.GUID = uuid.NewV4().String()
+		uid, e := uuid.NewV4()
+		if e != nil {
+			return updated, fmt.Errorf("error generating UUID: %s", e)
+		}
+		wixFile.Env.GUID = uid.String()
 		updated = true
 	}
 	if (wixFile.Shortcuts.GUID == "" || force) && len(wixFile.Shortcuts.Items) > 0 {
-		wixFile.Shortcuts.GUID = uuid.NewV4().String()
+		uid, e := uuid.NewV4()
+		if e != nil {
+			return updated, fmt.Errorf("error generating UUID: %s", e)
+		}
+		wixFile.Shortcuts.GUID = uid.String()
 		updated = true
 	}
 	return updated, nil
