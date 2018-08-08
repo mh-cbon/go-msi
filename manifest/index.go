@@ -150,22 +150,26 @@ func (wixFile *WixManifest) Load(p string) error {
 func (wixFile *WixManifest) SetGuids(force bool) (bool, error) {
 	updated := false
 	if wixFile.UpgradeCode == "" || force {
-		wixFile.UpgradeCode = uuid.NewV4().String()
+		wixFile.UpgradeCode = makeGUID()
 		updated = true
 	}
 	if wixFile.Files.GUID == "" || force {
-		wixFile.Files.GUID = uuid.NewV4().String()
+		wixFile.Files.GUID = makeGUID()
 		updated = true
 	}
 	if (wixFile.Env.GUID == "" || force) && len(wixFile.Env.Vars) > 0 {
-		wixFile.Env.GUID = uuid.NewV4().String()
+		wixFile.Env.GUID = makeGUID()
 		updated = true
 	}
 	if (wixFile.Shortcuts.GUID == "" || force) && len(wixFile.Shortcuts.Items) > 0 {
-		wixFile.Shortcuts.GUID = uuid.NewV4().String()
+		wixFile.Shortcuts.GUID = makeGUID()
 		updated = true
 	}
 	return updated, nil
+}
+
+func makeGUID() string {
+	return strings.ToUpper(uuid.NewV4().String())
 }
 
 // NeedGUID tells if the manifest json file is missing guid values.
