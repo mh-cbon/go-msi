@@ -38,8 +38,8 @@
                   {{end}}
                </Component>
                {{end}}
-               {{if gt (.Directories | len) 0}}
-               {{range $i, $e := .Directories}}
+               {{if gt (.DirNames | len) 0}}
+               {{range $i, $e := .DirNames}}
                <Directory Id="APPDIR{{$i}}" Name="{{$e}}" />
                {{end}}
                {{end}}
