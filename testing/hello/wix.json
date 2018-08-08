@@ -10,7 +10,7 @@
     ]
   },
   "directories": [
-    "assets"
+    "some/assets"
   ],
   "env": {
     "guid": "",
