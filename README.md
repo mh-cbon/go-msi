@@ -126,7 +126,7 @@ I guess most of your changes will be about the `WixUI_HK.wxs` file.
 # Cli
 
 ###### $ go-msi -h
-```sh
+```
 NAME:
    go-msi - Easy msi pakage for Go
 
@@ -155,7 +155,7 @@ GLOBAL OPTIONS:
 ```
 
 ###### $ go-msi check-env -h
-```sh
+```
 NAME:
    go-msi check-env - Provide a report about your environment setup
 
@@ -164,7 +164,7 @@ USAGE:
 ```
 
 ###### $ go-msi check-json -h
-```sh
+```
 NAME:
    go-msi check-json - Check the JSON wix manifest
 
@@ -176,7 +176,7 @@ OPTIONS:
 ```
 
 ###### $ go-msi set-guid -h
-```sh
+```
 NAME:
    go-msi set-guid - Sets appropriate guids in your wix manifest
 
@@ -189,7 +189,7 @@ OPTIONS:
 ```
 
 ###### $ go-msi make -h
-```sh
+```
 NAME:
    go-msi make - All-in-one command to make MSI files
 
@@ -208,7 +208,7 @@ OPTIONS:
 ```
 
 ###### $ go-msi choco -h
-```sh
+```
 NAME:
    go-msi choco - Generate a chocolatey package of your msi files
 
@@ -226,7 +226,7 @@ OPTIONS:
 ```
 
 ###### $ go-msi generate-templates -h
-```sh
+```
 NAME:
    go-msi generate-templates - Generate wix templates
 
@@ -242,7 +242,7 @@ OPTIONS:
 ```
 
 ###### $ go-msi to-windows -h
-```sh
+```
 NAME:
    go-msi to-windows - Write Windows1252 encoded file
 
@@ -255,7 +255,7 @@ OPTIONS:
 ```
 
 ###### $ go-msi to-rtf -h
-```sh
+```
 NAME:
    go-msi to-rtf - Write RTF formatted file
 
@@ -269,7 +269,7 @@ OPTIONS:
 ```
 
 ###### $ go-msi gen-wix-cmd -h
-```sh
+```
 NAME:
    go-msi gen-wix-cmd - Generate a batch file of Wix commands to run
 
@@ -285,7 +285,7 @@ OPTIONS:
 ```
 
 ###### $ go-msi run-wix-cmd -h
-```sh
+```
 NAME:
    go-msi run-wix-cmd - Run the batch file of Wix commands
 
