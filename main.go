@@ -65,6 +65,30 @@ func main() {
 			Action: checkEnv,
 		},
 		{
+			Name:   "set-files",
+			Usage:  "Adds or removes files from your wix manifest",
+			Action: setFiles,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "path, p",
+					Value: "wix.json",
+					Usage: "Path to the wix manifest file",
+				},
+				cli.StringSliceFlag{
+					Name:  "includes, i",
+					Usage: "Files to include, use of * is permitted",
+				},
+				cli.StringSliceFlag{
+					Name:  "excludes, e",
+					Usage: "Files to exclude, use of * is permitted",
+				},
+				cli.BoolFlag{
+					Name:  "test, t",
+					Usage: "Test mode, does not modify the wix manifest file but exits with an error instead",
+				},
+			},
+		},
+		{
 			Name:   "set-guid",
 			Usage:  "Sets appropriate guids in your wix manifest",
 			Action: setGUID,
@@ -359,6 +383,111 @@ func checkJSON(c *cli.Context) error {
 		fmt.Println("To update your file automatically run:")
 		fmt.Println("     go-msi set-guid")
 		return cli.NewExitError("Incomplete manifest file detected", 1)
+	}
+	return nil
+}
+
+func setFiles(c *cli.Context) error {
+	path := c.String("path")
+	includes := c.StringSlice("includes")
+	excludes := c.StringSlice("excludes")
+	test := c.Bool("test")
+
+	if len(includes) == 0 {
+		return cli.NewExitError(fmt.Errorf("--includes argument is required"), 1)
+	}
+	wixFile := manifest.WixManifest{}
+	err := wixFile.Load(path)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+
+	failed := false
+	dir := filepath.Dir(path)
+	out := make(map[string]bool)
+	err = glob(dir, excludes, func(match string) {
+		out[match] = true
+	})
+	if err != nil {
+		return cli.NewExitError(err, 1)
+	}
+	in := make(map[string]bool)
+	err = glob(dir, includes, func(match string) {
+		if !out[match] {
+			in[match] = true
+			if !isIn(match, wixFile.Files.Items) {
+				fmt.Printf("    adding %q\n", match)
+				failed = true
+				if !test {
+					wixFile.Files.Items = append(wixFile.Files.Items, match)
+				}
+			}
+		}
+	})
+	if err != nil {
+		return cli.NewExitError(err, 1)
+	}
+
+	for i := len(wixFile.Files.Items) - 1; i >= 0; i-- {
+		file := wixFile.Files.Items[i]
+		if !in[file] {
+			fmt.Printf("    removing %q\n", file)
+			failed = true
+			if !test {
+				wixFile.Files.Items = append(wixFile.Files.Items[:i], wixFile.Files.Items[i+1:]...)
+			}
+		}
+
+	}
+
+	if !failed {
+		return nil
+	}
+	if test {
+		return fmt.Errorf("file list not up to date")
+	}
+	err = wixFile.Write(path)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+	fmt.Println("The file is saved on disk")
+	return nil
+}
+
+func isIn(s string, sl []string) bool {
+	for _, e := range sl {
+		if e == s {
+			return true
+		}
+	}
+	return false
+}
+
+func glob(dir string, files []string, f func(match string)) error {
+	for _, file := range files {
+		matches, err := filepath.Glob(filepath.Join(dir, file))
+		if err != nil {
+			return err
+		}
+		if matches == nil {
+			return fmt.Errorf("file %q does not exist", file)
+		}
+		for _, match := range matches {
+			info, err := os.Stat(match)
+			if err != nil {
+				return err
+			}
+			if info.IsDir() {
+				continue
+			}
+			if dir != "" {
+				match, err = filepath.Rel(dir, match)
+				if err != nil {
+					return err
+				}
+			}
+			f(filepath.ToSlash(match))
+		}
 	}
 	return nil
 }
