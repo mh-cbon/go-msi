@@ -768,13 +768,13 @@ func chocoMake(c *cli.Context) error {
 	}
 
 	if changelogCmd != "" {
-		windows, err2 := stringexec.Command(changelogCmd)
-		if err2 != nil {
+		windows, err := stringexec.Command(changelogCmd)
+		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
 		windows.Stderr = os.Stderr
-		out, err3 := windows.Output()
-		if err3 != nil {
+		out, err := windows.Output()
+		if err != nil {
 			return cli.NewExitError(fmt.Sprintf("Failed to execute command to generate the changelog:%q\n%v", changelogCmd, err.Error()), 1)
 		}
 		sout := string(out)
@@ -787,13 +787,13 @@ func chocoMake(c *cli.Context) error {
 		wixFile.Choco.ChangeLog = sout
 	}
 
-	if err = util.CopyFile(filepath.Join(wixFile.Choco.BuildDir, wixFile.Choco.MsiFile), input); err != nil {
+	if err := util.CopyFile(filepath.Join(wixFile.Choco.BuildDir, wixFile.Choco.MsiFile), input); err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
 	for _, tpl := range templates {
 		dst := filepath.Join(out, filepath.Base(tpl))
-		err = tpls.GenerateTemplate(&wixFile, tpl, dst)
+		err := tpls.GenerateTemplate(&wixFile, tpl, dst)
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}

@@ -25,6 +25,7 @@ type WixManifest struct {
 	UpgradeCode    string       `json:"upgrade-code"`
 	Files          WixFiles     `json:"files,omitempty"`
 	Directories    []string     `json:"directories,omitempty"`
+	DirNames       []string     `json:"-"`
 	RelDirs        []string     `json:"-"`
 	Env            WixEnvList   `json:"env,omitempty"`
 	Shortcuts      WixShortcuts `json:"shortcuts,omitempty"`
@@ -205,6 +206,7 @@ func (wixFile *WixManifest) RewriteFilePaths(out string) error {
 		}
 	}
 	for _, d := range wixFile.Directories {
+		wixFile.DirNames = append(wixFile.DirNames, filepath.Base(d))
 		d, err = filepath.Abs(d)
 		if err != nil {
 			return err
