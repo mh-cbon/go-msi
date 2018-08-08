@@ -307,7 +307,13 @@ func main() {
 		},
 	}
 
-	app.Run(os.Args)
+	if err := app.Run(os.Args); err != nil {
+		fmt.Println(err)
+		if e, ok := err.(*cli.ExitError); ok {
+			os.Exit(e.ExitCode())
+		}
+		os.Exit(1)
+	}
 }
 
 var verReg = regexp.MustCompile(`\s[0-9]+[.][0-9]+[.][0-9]+`)
