@@ -23,13 +23,13 @@ type WixManifest struct {
 	VersionOk      string       `json:"-"`
 	License        string       `json:"license,omitempty"`
 	UpgradeCode    string       `json:"upgrade-code"`
-	Files          WixFiles     `json:"files,omitempty"`
+	Files          WixFiles     `json:"files"`
 	Directories    []string     `json:"directories,omitempty"`
 	DirNames       []string     `json:"-"`
 	RelDirs        []string     `json:"-"`
-	Env            WixEnvList   `json:"env,omitempty"`
-	Shortcuts      WixShortcuts `json:"shortcuts,omitempty"`
-	Choco          ChocoSpec    `json:"choco,omitempty"`
+	Env            WixEnvList   `json:"env"`
+	Shortcuts      WixShortcuts `json:"shortcuts"`
+	Choco          ChocoSpec    `json:"choco"`
 	Hooks          []Hook       `json:"hooks,omitempty"`
 	InstallHooks   []Hook       `json:"-"`
 	UninstallHooks []Hook       `json:"-"`
@@ -74,13 +74,13 @@ type Hook struct {
 // WixFiles is the struct to decode files key of the wix.json file.
 type WixFiles struct {
 	GUID  string   `json:"guid"`
-	Items []string `json:"items"`
+	Items []string `json:"items,omitempty"`
 }
 
 // WixEnvList is the struct to decode env key of the wix.json file.
 type WixEnvList struct {
 	GUID string   `json:"guid"`
-	Vars []WixEnv `json:"vars"`
+	Vars []WixEnv `json:"vars,omitempty"`
 }
 
 // WixEnv is the struct to decode env value of the wix.json file.
