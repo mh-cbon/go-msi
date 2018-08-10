@@ -32,7 +32,7 @@ func main() {
 	mustEnvEq("$env:some", "")
 
 	mustMkdirAll("build/amd64")
-	helloBuild := makeCmd("go", "build", "-o", _p("build/amd64/hello.exe"), "hello.go")
+	helloBuild := makeCmd("go", "build", "-o", "build/amd64/hello.exe", "hello.go")
 	mustExec(helloBuild, "hello build failed %v")
 
 	helloPkgSetup := makeCmd("C:/go-msi/go-msi.exe", "set-guid")
@@ -86,7 +86,7 @@ func main() {
 	helloChocoPkg := makeCmd("C:/go-msi/go-msi.exe", "choco",
 		"--input", "hello.msi",
 		"--version", "0.0.1",
-		"-c", _qp("C:/Program Files/changelog/changelog.exe")+" ghrelease --version 0.0.1",
+		"-c", "changelog ghrelease --version 0.0.1",
 		"--keep",
 	)
 	mustExec(helloChocoPkg, "hello choco package make failed %v")
@@ -194,18 +194,6 @@ func mustExecHello(p string, u string) {
 	log.Printf("SUCCESS: Hello program exec %q and query %q succeed\n", p, u)
 }
 
-func _qp(s string) string {
-	return _q(_p(s))
-}
-
-func _q(s string) string {
-	return "\"" + s + "\""
-}
-
-func _p(s string) string {
-	return filepath.Clean(s)
-}
-
 func confirm(err error, message string) {
 	if err == nil {
 		log.Printf("DONE: %v\n", message)
@@ -235,8 +223,6 @@ func mustSucceedDetailed(err error, e interface{}, format ...string) {
 			err = fmt.Errorf("%v", err)
 		}
 		log.Fatal(err)
-	} else {
-
 	}
 }
 func mustFail(err error, format ...string) {
