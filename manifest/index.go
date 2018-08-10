@@ -33,6 +33,7 @@ type WixManifest struct {
 	Hooks          []Hook       `json:"hooks,omitempty"`
 	InstallHooks   []Hook       `json:"-"`
 	UninstallHooks []Hook       `json:"-"`
+	Conditions     []Condition  `json:"conditions,omitempty"`
 }
 
 // ChocoSpec is the struct to decode the choco key of a wix.json file.
@@ -69,6 +70,12 @@ type Hook struct {
 	Command       string `json:"command,omitempty"`
 	CookedCommand string `json:"-"`
 	When          string `json:"when,omitempty"`
+}
+
+// Condition describes a condition to check before installation.
+type Condition struct {
+	Condition string `json:"condition"`
+	Message   string `json:"message"`
 }
 
 // WixFiles is the struct to decode files key of the wix.json file.
@@ -236,11 +243,9 @@ func (wixFile *WixManifest) RewriteFilePaths(out string) error {
 	return nil
 }
 
-// Normalize Appropriately fixes some values within the decoded json
-// It applies defaults values on the wix/msi property to
-// to generate the msi package.
-// It applies defaults values on the choco property to
-// generate a nuget package
+// Normalize appropriately fixes some values within the decoded json.
+// It applies defaults values on the wix/msi property generate the msi package.
+// It applies defaults values on the choco property to generate a nuget package.
 func (wixFile *WixManifest) Normalize() error {
 	// Wix version Field of Product element
 	// does not support semver strings

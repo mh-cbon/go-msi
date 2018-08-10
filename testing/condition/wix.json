@@ -1,0 +1,10 @@
+{
+  "product": "condition",
+  "company": "mh-cbon",
+  "conditions": [
+    {
+      "condition": "Installed OR (VersionNT < 0)",
+      "message": "some condition message"
+    }
+  ]
+}
