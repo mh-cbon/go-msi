@@ -23,16 +23,18 @@ type WixManifest struct {
 	VersionOk      string       `json:"-"`
 	License        string       `json:"license,omitempty"`
 	UpgradeCode    string       `json:"upgrade-code"`
-	Files          WixFiles     `json:"files,omitempty"`
+	Files          WixFiles     `json:"files"`
 	Directories    []string     `json:"directories,omitempty"`
 	DirNames       []string     `json:"-"`
 	RelDirs        []string     `json:"-"`
-	Env            WixEnvList   `json:"env,omitempty"`
-	Shortcuts      WixShortcuts `json:"shortcuts,omitempty"`
-	Choco          ChocoSpec    `json:"choco,omitempty"`
+	Env            WixEnvList   `json:"env"`
+	Shortcuts      WixShortcuts `json:"shortcuts"`
+	Choco          ChocoSpec    `json:"choco"`
 	Hooks          []Hook       `json:"hooks,omitempty"`
 	InstallHooks   []Hook       `json:"-"`
 	UninstallHooks []Hook       `json:"-"`
+	Properties     []Property   `json:"properties,omitempty"`
+	Conditions     []Condition  `json:"conditions,omitempty"`
 }
 
 // ChocoSpec is the struct to decode the choco key of a wix.json file.
@@ -71,16 +73,36 @@ type Hook struct {
 	When          string `json:"when,omitempty"`
 }
 
+// Property describes a property to initialize.
+type Property struct {
+	ID       string    `json:"id"`
+	Registry *Registry `json:"registry,omitempty"`
+}
+
+// Registry describes a registry search.
+type Registry struct {
+	Path string `json:"path"`
+	Root string `json:"-"`
+	Key  string `json:"-"`
+	Name string `json:"-"`
+}
+
+// Condition describes a condition to check before installation.
+type Condition struct {
+	Condition string `json:"condition"`
+	Message   string `json:"message"`
+}
+
 // WixFiles is the struct to decode files key of the wix.json file.
 type WixFiles struct {
 	GUID  string   `json:"guid"`
-	Items []string `json:"items"`
+	Items []string `json:"items,omitempty"`
 }
 
 // WixEnvList is the struct to decode env key of the wix.json file.
 type WixEnvList struct {
 	GUID string   `json:"guid"`
-	Vars []WixEnv `json:"vars"`
+	Vars []WixEnv `json:"vars,omitempty"`
 }
 
 // WixEnv is the struct to decode env value of the wix.json file.
@@ -236,11 +258,9 @@ func (wixFile *WixManifest) RewriteFilePaths(out string) error {
 	return nil
 }
 
-// Normalize Appropriately fixes some values within the decoded json
-// It applies defaults values on the wix/msi property to
-// to generate the msi package.
-// It applies defaults values on the choco property to
-// generate a nuget package
+// Normalize appropriately fixes some values within the decoded json.
+// It applies defaults values on the wix/msi property generate the msi package.
+// It applies defaults values on the choco property to generate a nuget package.
 func (wixFile *WixManifest) Normalize() error {
 	// Wix version Field of Product element
 	// does not support semver strings
@@ -299,6 +319,18 @@ func (wixFile *WixManifest) Normalize() error {
 		case whenUninstall:
 			wixFile.UninstallHooks = append(wixFile.UninstallHooks, hook)
 		}
+	}
+
+	// Split registry path into root, key and name
+	for _, prop := range wixFile.Properties {
+		path := prop.Registry.Path
+		p := strings.Split(path, `\`)
+		if len(p) < 3 {
+			return fmt.Errorf("invalid registry path %q", p)
+		}
+		prop.Registry.Root = p[0]
+		prop.Registry.Key = strings.Join(p[1:len(p)-1], `\`)
+		prop.Registry.Name = p[len(p)-1]
 	}
 
 	return nil

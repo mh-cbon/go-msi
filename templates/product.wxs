@@ -26,6 +26,16 @@
                          Property="OLDERVERSIONBEINGUPGRADED"/>
       </Upgrade>
       <Condition Message="A newer version of this software is already installed.">NOT NEWERVERSIONDETECTED</Condition>
+      {{range $i, $p := .Properties}}
+      <Property Id="{{$p.ID}}">
+         {{if $p.Registry}}
+         <RegistrySearch Id="{{$p.ID}}Search" Root="{{$p.Registry.Root}}" Key="{{$p.Registry.Key}}" Name="{{$p.Registry.Name}}" Type="raw"/>
+         {{end}}
+      </Property>
+      {{end}}
+      {{range $i, $c := .Conditions}}
+      <Condition Message="{{$c.Message}}"><![CDATA[{{$c.Condition}}]]></Condition>
+      {{end}}
 
       <Directory Id="TARGETDIR" Name="SourceDir">
 
@@ -38,10 +48,8 @@
                   {{end}}
                </Component>
                {{end}}
-               {{if gt (.DirNames | len) 0}}
                {{range $i, $e := .DirNames}}
                <Directory Id="APPDIR{{$i}}" Name="{{$e}}" />
-               {{end}}
                {{end}}
             </Directory>
          </Directory>
