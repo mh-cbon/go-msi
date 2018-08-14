@@ -26,6 +26,13 @@
                          Property="OLDERVERSIONBEINGUPGRADED"/>
       </Upgrade>
       <Condition Message="A newer version of this software is already installed.">NOT NEWERVERSIONDETECTED</Condition>
+      {{range $i, $p := .Properties}}
+      <Property Id="{{$p.ID}}">
+         {{if $p.Registry}}
+         <RegistrySearch Id="{{$p.ID}}Search" Root="{{$p.Registry.Root}}" Key="{{$p.Registry.Key}}" Name="{{$p.Registry.Name}}" Type="raw"/>
+         {{end}}
+      </Property>
+      {{end}}
       {{range $i, $c := .Conditions}}
       <Condition Message="{{$c.Message}}"><![CDATA[{{$c.Condition}}]]></Condition>
       {{end}}

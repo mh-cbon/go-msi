@@ -33,6 +33,7 @@ type WixManifest struct {
 	Hooks          []Hook       `json:"hooks,omitempty"`
 	InstallHooks   []Hook       `json:"-"`
 	UninstallHooks []Hook       `json:"-"`
+	Properties     []Property   `json:"properties,omitempty"`
 	Conditions     []Condition  `json:"conditions,omitempty"`
 }
 
@@ -70,6 +71,20 @@ type Hook struct {
 	Command       string `json:"command,omitempty"`
 	CookedCommand string `json:"-"`
 	When          string `json:"when,omitempty"`
+}
+
+// Property describes a property to initialize.
+type Property struct {
+	ID       string    `json:"id"`
+	Registry *Registry `json:"registry,omitempty"`
+}
+
+// Registry describes a registry search.
+type Registry struct {
+	Path string `json:"path"`
+	Root string `json:"-"`
+	Key  string `json:"-"`
+	Name string `json:"-"`
 }
 
 // Condition describes a condition to check before installation.
@@ -304,6 +319,18 @@ func (wixFile *WixManifest) Normalize() error {
 		case whenUninstall:
 			wixFile.UninstallHooks = append(wixFile.UninstallHooks, hook)
 		}
+	}
+
+	// Split registry path into root, key and name
+	for _, prop := range wixFile.Properties {
+		path := prop.Registry.Path
+		p := strings.Split(path, `\`)
+		if len(p) < 3 {
+			return fmt.Errorf("invalid registry path %q", p)
+		}
+		prop.Registry.Root = p[0]
+		prop.Registry.Key = strings.Join(p[1:len(p)-1], `\`)
+		prop.Registry.Name = p[len(p)-1]
 	}
 
 	return nil
