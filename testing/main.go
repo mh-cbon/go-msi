@@ -16,16 +16,60 @@ import (
 
 	"golang.org/x/sys/windows/svc"
 	"golang.org/x/sys/windows/svc/mgr"
+	"golang.org/x/text/encoding/unicode"
+	"golang.org/x/text/transform"
 )
 
 func main() {
+	testHello()
+	testCondition()
+	fmt.Println("\nSuccess!")
+}
 
-	svcName := "HelloSvc"
-
+func testCondition() {
 	confirm(rmFile("log-install.txt"), "install log removal")
 	confirm(rmFile("log-uninstall.txt"), "uninstall log removal")
 
-	wd := makeDir("c:/gopath/src/github.com/mh-cbon/go-msi/testing/hello")
+	gopath := os.Getenv("GOPATH")
+	wd := makeDir(filepath.Join(gopath, "src/github.com/mh-cbon/go-msi/testing/condition"))
+	mustChdir(wd)
+
+	setup := makeCmd("C:/go-msi/go-msi.exe", "set-guid")
+	mustExec(setup, "Packaging setup failed %v")
+
+	msi := "condition.msi"
+	pkg := makeCmd("C:/go-msi/go-msi.exe", "make",
+		"--msi", msi,
+		"--version", "0.0.1",
+		"--arch", "amd64",
+		"--keep",
+	)
+	mustExec(pkg, "Packaging failed %v")
+
+	resultPackage := makeFile(msi)
+	mustExist(resultPackage, "Package file is missing %v")
+
+	packageInstall := makeCmd("msiexec", "/i", msi, "/q", "/log", "log-install.txt")
+	mustFail(packageInstall.Exec(), "Package installation succeeded %v")
+	content := readLog("log-install.txt")
+	mustContain(content, "Product: condition -- some condition message")
+	mustContain(content, "Product: condition -- Installation failed")
+	mustSucceed(rmFile("log-install.txt"), "rmfile failed %v")
+}
+
+func mustContain(s, substr string) {
+	if strings.Index(s, substr) == -1 {
+		log.Println(s)
+		log.Fatalf("Failed to find %q", substr)
+	}
+}
+
+func testHello() {
+	confirm(rmFile("log-install.txt"), "install log removal")
+	confirm(rmFile("log-uninstall.txt"), "uninstall log removal")
+
+	gopath := os.Getenv("GOPATH")
+	wd := makeDir(filepath.Join(gopath, "src/github.com/mh-cbon/go-msi/testing/hello"))
 	mustContains(wd, "hello.go")
 	mustChdir(wd)
 
@@ -35,33 +79,40 @@ func main() {
 	helloBuild := makeCmd("go", "build", "-o", _p("build/amd64/hello.exe"), "hello.go")
 	mustExec(helloBuild, "hello build failed %v")
 
-	helloPkgSetup := makeCmd("C:/go-msi/go-msi.exe", "set-guid")
-	mustExec(helloPkgSetup, "hello packaging setup failed %v")
+	setup := makeCmd("C:/go-msi/go-msi.exe", "set-guid")
+	mustExec(setup, "Packaging setup failed %v")
 
-	helloPkg := makeCmd("C:/go-msi/go-msi.exe", "make",
-		"--msi", "hello.msi",
+	msi := "hello.msi"
+	pkg := makeCmd("C:/go-msi/go-msi.exe", "make",
+		"--msi", msi,
 		"--version", "0.0.1",
 		"--arch", "amd64",
 		"--keep",
 	)
-	mustExec(helloPkg, "hello packaging failed %v")
+	mustExec(pkg, "Packaging failed %v")
 
-	resultPackage := makeFile("hello.msi")
-	mustExists(resultPackage, "Package file is missing %v")
+	resultPackage := makeFile(msi)
+	mustExist(resultPackage, "Package file is missing %v")
 
 	mustNotHaveWindowsService("HelloSvc")
 
-	helloPackageInstall := makeCmd("msiexec", "/i", "hello.msi", "/q", "/log", "log-install.txt")
-	mustExec(helloPackageInstall, "hello package install failed %v")
+	packageInstall := makeCmd("msiexec", "/i", msi, "/q", "/log", "log-install.txt")
+	mustExec(packageInstall, "Package installation failed %v")
 	readFile("log-install.txt")
 	mustSucceed(rmFile("log-install.txt"), "rmfile failed %v")
 
 	// mustShowEnv("$env:path")
 	// mustEnvEq("$env:some", "value")
 
+	mustShowReg(`HKCU\Software\mh-cbon\hello`, "Version")
+	mustRegEq(`HKCU\Software\mh-cbon\hello`, "Version", "some version")
+	mustShowReg(`HKCU\Software\mh-cbon\hello`, "InstallDir")
+	mustRegEq(`HKCU\Software\mh-cbon\hello`, "InstallDir", `C:\Program Files\hello`)
+
 	readDir("C:/Program Files/hello")
 	readDir("C:/Program Files/hello/assets")
 
+	svcName := "HelloSvc"
 	mgr, helloSvc := mustHaveWindowsService(svcName)
 	mustHaveStartedWindowsService(svcName, helloSvc)
 
@@ -73,8 +124,8 @@ func main() {
 	mustSucceed(helloSvc.Close(), "Failed to close the service %v")
 	mgr.Disconnect()
 
-	helloPackageUninstall := makeCmd("msiexec", "/x", "hello.msi", "/q", "/log", "log-uninstall.txt")
-	mustExec(helloPackageUninstall, "hello package uninstall failed %v")
+	packageInstallUninstall := makeCmd("msiexec", "/x", msi, "/q", "/log", "log-uninstall.txt")
+	mustExec(packageInstallUninstall, "hello package uninstall failed %v")
 	readFile("log-uninstall.txt")
 	mustSucceed(rmFile("log-uninstall.txt"), "rmfile failed %v")
 
@@ -83,8 +134,10 @@ func main() {
 	// mustShowEnv("$env:path")
 	// mustEnvEq("$env:some", "")
 
+	mustNoReg(`HKCU\Software\mh-cbon\hello`, "Version")
+
 	helloChocoPkg := makeCmd("C:/go-msi/go-msi.exe", "choco",
-		"--input", "hello.msi",
+		"--input", msi,
 		"--version", "0.0.1",
 		"-c", _qp("C:/Program Files/changelog/changelog.exe")+" ghrelease --version 0.0.1",
 		"--keep",
@@ -92,7 +145,7 @@ func main() {
 	mustExec(helloChocoPkg, "hello choco package make failed %v")
 
 	helloNuPkg := makeFile("hello.0.0.1.nupkg")
-	mustExists(helloNuPkg, "Chocolatey nupkg file is missing %v")
+	mustExist(helloNuPkg, "Chocolatey nupkg file is missing %v")
 
 	mustNotHaveWindowsService("HelloSvc")
 
@@ -187,10 +240,10 @@ func mustQueryHello(u string) {
 }
 
 func mustExecHello(p string, u string) {
-	helloPackageExec := makeCmd(p)
-	mustStart(helloPackageExec, "hello command failed %v")
+	packageInstallExec := makeCmd(p)
+	mustStart(packageInstallExec, "hello command failed %v")
 	mustQueryHello(u)
-	mustKill(helloPackageExec, "hello was not killed properly %v")
+	mustKill(packageInstallExec, "hello was not killed properly %v")
 	log.Printf("SUCCESS: Hello program exec %q and query %q succeed\n", p, u)
 }
 
@@ -253,6 +306,11 @@ func mustShowEnv(e string) {
 	mustExec(psShowEnv, "powershell command failed %v")
 	log.Printf("showEnv ok %v %q", e, psShowEnv.Stdout())
 }
+func mustShowReg(key, value string) {
+	cmd := makeCmd("reg", "query", key, "/v", value)
+	mustExec(cmd, "registry query command failed %v")
+	log.Printf(`showReg ok %v\%v %q`, key, value, cmd.Stdout())
+}
 func maybeShowEnv(e string) *cmdExec {
 	psShowEnv := makeCmd("PowerShell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", e)
 	warnExec(psShowEnv, "powershell command failed %v")
@@ -280,6 +338,15 @@ func mustEnvEq(env string, expect string, format ...string) {
 	f := fmt.Sprintf("Env %q is not equal to want=%q, got=%q", env, expect, got)
 	mustSucceed(isTrue(got == expect, f))
 	log.Printf("mustEnvEq ok %v=%q", env, expect)
+}
+func mustRegEq(key, value, expected string) {
+	cmd := makeCmd("reg", "query", key, "/v", value)
+	mustExec(cmd, "registry query command failed %v")
+	mustContain(cmd.Stdout(), expected)
+}
+func mustNoReg(key, value string) {
+	cmd := makeCmd("reg", "query", key, "/v", value)
+	mustFail(cmd.Exec(), "registry query command succeeded %v, \n%v", cmd.Stdout())
 }
 func mustContains(path fmt.Stringer, file string) {
 	s := mustLs(path)
@@ -365,9 +432,9 @@ type exister interface {
 	exists() bool
 }
 
-func mustExists(e exister, format ...string) {
+func mustExist(e exister, format ...string) {
 	if len(format) < 1 {
-		format[0] = fmt.Sprintf("mustExists err: %T does not exist %q, got %%v", e, e)
+		format[0] = fmt.Sprintf("mustExist err: %T does not exist %q, got %%v", e, e)
 	}
 	mustSucceed(isTrue(e.exists(), format[0]))
 }
@@ -552,10 +619,8 @@ func makeCmd(w string, a ...string) *cmdExec {
 	cmd := exec.Command(mustLookPath(w), a...)
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
-	// cmd.Stdout = &stdout
-	// cmd.Stderr = &stderr
-	cmd.Stdout = os.Stderr
-	cmd.Stderr = os.Stderr
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
 	return &cmdExec{Cmd: cmd, stdout: &stdout, stderr: &stderr}
 }
 
@@ -582,4 +647,22 @@ func readFile(s string) {
 func rmFile(s string) error {
 	s = filepath.Clean(s)
 	return os.Remove(s)
+}
+
+func readLog(filename string) string {
+	b, err := readFileUTF16(filename)
+	mustSucceed(err, fmt.Sprintf("readlog failed %q, err=%%v", filename))
+	return string(b)
+}
+
+func readFileUTF16(filename string) ([]byte, error) {
+	raw, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+	win16be := unicode.UTF16(unicode.BigEndian, unicode.IgnoreBOM)
+	utf16bom := unicode.BOMOverride(win16be.NewDecoder())
+	unicodeReader := transform.NewReader(bytes.NewReader(raw), utf16bom)
+	decoded, err := ioutil.ReadAll(unicodeReader)
+	return decoded, err
 }

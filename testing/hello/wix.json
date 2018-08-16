@@ -10,7 +10,7 @@
     ]
   },
   "directories": [
-    "assets"
+    "some/assets"
   ],
   "env": {
     "guid": "",
@@ -22,6 +22,24 @@
         "system": "no",
         "action": "set",
         "part": "last"
+      }
+    ]
+  },
+  "registries": {
+    "guid": "",
+    "items": [
+      {
+        "path": "HKCU\\Software\\mh-cbon\\hello",
+        "values": [
+          {
+            "name": "Version",
+            "value": "some version"
+          },
+          {
+            "name": "InstallDir",
+            "value": "[INSTALLDIR]"
+          }
+        ]
       }
     ]
   },

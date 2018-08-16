@@ -26,6 +26,17 @@
                          Property="OLDERVERSIONBEINGUPGRADED"/>
       </Upgrade>
       <Condition Message="A newer version of this software is already installed.">NOT NEWERVERSIONDETECTED</Condition>
+      {{range $i, $p := .Properties}}
+      <Property Id="{{$p.ID}}">
+         {{if $p.Registry}}
+         <RegistrySearch Id="{{$p.ID}}Search" Root="{{$p.Registry.Root}}" Key="{{$p.Registry.Key}}"
+            {{if gt ($p.Registry.Name | len) 0}} Name="{{$p.Registry.Name}}" {{end}} Type="raw"/>
+         {{end}}
+      </Property>
+      {{end}}
+      {{range $i, $c := .Conditions}}
+      <Condition Message="{{$c.Message}}"><![CDATA[{{$c.Condition}}]]></Condition>
+      {{end}}
 
       <Directory Id="TARGETDIR" Name="SourceDir">
 
@@ -38,10 +49,8 @@
                   {{end}}
                </Component>
                {{end}}
-               {{if gt (.Directories | len) 0}}
-               {{range $i, $e := .Directories}}
+               {{range $i, $e := .DirNames}}
                <Directory Id="APPDIR{{$i}}" Name="{{$e}}" />
-               {{end}}
                {{end}}
             </Directory>
          </Directory>
@@ -57,6 +66,18 @@
             Action="{{$e.Action}}"
             System="{{$e.System}}" />
           {{end}}
+        </Component>
+        {{end}}
+
+        {{if gt (.Registries.Items | len) 0}}
+        <Component Id="RegistryEntries" Guid="{{.Registries.GUID}}">
+            {{range $i, $r := .Registries.Items}}
+            <RegistryKey Root="{{$r.Root}}" Key="{{$r.Key}}">
+                {{range $j, $v := $r.Values}}
+                <RegistryValue Type="{{$v.Type}}" {{if gt ($v.Name | len) 0}} Name="{{$v.Name}}" {{end}} Value="{{$v.Value}}" {{if eq $i 0}}{{if eq $j 0}} KeyPath="yes" {{end}}{{end}}/>
+                {{end}}
+            </RegistryKey>
+            {{end}}
         </Component>
         {{end}}
 
@@ -115,6 +136,9 @@
          {{end}}
          {{if gt (.Files.Items | len) 0}}
          <ComponentRef Id="ApplicationFiles"/>
+         {{end}}
+         {{if gt (.Registries.Items | len) 0}}
+         <ComponentRef Id="RegistryEntries" />
          {{end}}
          {{if gt (.Shortcuts.Items | len) 0}}
          <ComponentRef Id="ApplicationShortcuts"/>

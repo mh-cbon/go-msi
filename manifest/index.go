@@ -23,15 +23,19 @@ type WixManifest struct {
 	VersionOk      string       `json:"-"`
 	License        string       `json:"license,omitempty"`
 	UpgradeCode    string       `json:"upgrade-code"`
-	Files          WixFiles     `json:"files,omitempty"`
+	Files          WixFiles     `json:"files"`
 	Directories    []string     `json:"directories,omitempty"`
+	DirNames       []string     `json:"-"`
 	RelDirs        []string     `json:"-"`
-	Env            WixEnvList   `json:"env,omitempty"`
-	Shortcuts      WixShortcuts `json:"shortcuts,omitempty"`
-	Choco          ChocoSpec    `json:"choco,omitempty"`
+	Env            WixEnvList   `json:"env"`
+	Registries     Registries   `json:"registries"`
+	Shortcuts      WixShortcuts `json:"shortcuts"`
+	Choco          ChocoSpec    `json:"choco"`
 	Hooks          []Hook       `json:"hooks,omitempty"`
 	InstallHooks   []Hook       `json:"-"`
 	UninstallHooks []Hook       `json:"-"`
+	Properties     []Property   `json:"properties,omitempty"`
+	Conditions     []Condition  `json:"conditions,omitempty"`
 }
 
 // ChocoSpec is the struct to decode the choco key of a wix.json file.
@@ -70,16 +74,36 @@ type Hook struct {
 	When          string `json:"when,omitempty"`
 }
 
+// Property describes a property to initialize.
+type Property struct {
+	ID       string    `json:"id"`
+	Registry *Registry `json:"registry,omitempty"`
+}
+
+// Registry describes a registry entry.
+type Registry struct {
+	Path string `json:"path"`
+	Root string `json:"-"`
+	Key  string `json:"-"`
+	Name string `json:"name,omitempty"`
+}
+
+// Condition describes a condition to check before installation.
+type Condition struct {
+	Condition string `json:"condition"`
+	Message   string `json:"message"`
+}
+
 // WixFiles is the struct to decode files key of the wix.json file.
 type WixFiles struct {
 	GUID  string   `json:"guid"`
-	Items []string `json:"items"`
+	Items []string `json:"items,omitempty"`
 }
 
 // WixEnvList is the struct to decode env key of the wix.json file.
 type WixEnvList struct {
-	GUID string   `json:"guid"`
-	Vars []WixEnv `json:"vars"`
+	GUID string   `json:"guid,omitempty"`
+	Vars []WixEnv `json:"vars,omitempty"`
 }
 
 // WixEnv is the struct to decode env value of the wix.json file.
@@ -106,6 +130,25 @@ type WixShortcut struct {
 	WDir        string `json:"wdir"`
 	Arguments   string `json:"arguments"`
 	Icon        string `json:"icon"` // a path to the ico file, no space in it.
+}
+
+// Registries is the struct to decode registry values.
+type Registries struct {
+	GUID  string         `json:"guid,omitempty"`
+	Items []RegistryItem `json:"items,omitempty"`
+}
+
+// RegistryItem is the struct to decode a registry item.
+type RegistryItem struct {
+	Registry
+	Values []RegistryValue `json:"values,omitempty"`
+}
+
+// RegistryValue is the struct to decode a registry value.
+type RegistryValue struct {
+	Name  string `json:"name"`
+	Type  string `json:"type,omitempty"` // string (default if omitted), integer, ...
+	Value string `json:"value"`
 }
 
 // Write the manifest to the given file,
@@ -149,22 +192,30 @@ func (wixFile *WixManifest) Load(p string) error {
 func (wixFile *WixManifest) SetGuids(force bool) (bool, error) {
 	updated := false
 	if wixFile.UpgradeCode == "" || force {
-		wixFile.UpgradeCode = uuid.NewV4().String()
+		wixFile.UpgradeCode = makeGUID()
 		updated = true
 	}
 	if wixFile.Files.GUID == "" || force {
-		wixFile.Files.GUID = uuid.NewV4().String()
+		wixFile.Files.GUID = makeGUID()
 		updated = true
 	}
 	if (wixFile.Env.GUID == "" || force) && len(wixFile.Env.Vars) > 0 {
-		wixFile.Env.GUID = uuid.NewV4().String()
+		wixFile.Env.GUID = makeGUID()
+		updated = true
+	}
+	if (wixFile.Registries.GUID == "" || force) && len(wixFile.Registries.Items) > 0 {
+		wixFile.Registries.GUID = makeGUID()
 		updated = true
 	}
 	if (wixFile.Shortcuts.GUID == "" || force) && len(wixFile.Shortcuts.Items) > 0 {
-		wixFile.Shortcuts.GUID = uuid.NewV4().String()
+		wixFile.Shortcuts.GUID = makeGUID()
 		updated = true
 	}
 	return updated, nil
+}
+
+func makeGUID() string {
+	return strings.ToUpper(uuid.NewV4().String())
 }
 
 // NeedGUID tells if the manifest json file is missing guid values.
@@ -177,6 +228,9 @@ func (wixFile *WixManifest) NeedGUID() bool {
 		need = true
 	}
 	if wixFile.Env.GUID == "" && len(wixFile.Env.Vars) > 0 {
+		need = true
+	}
+	if wixFile.Registries.GUID == "" && len(wixFile.Registries.Items) > 0 {
 		need = true
 	}
 	if wixFile.Shortcuts.GUID == "" && len(wixFile.Shortcuts.Items) > 0 {
@@ -205,6 +259,7 @@ func (wixFile *WixManifest) RewriteFilePaths(out string) error {
 		}
 	}
 	for _, d := range wixFile.Directories {
+		wixFile.DirNames = append(wixFile.DirNames, filepath.Base(d))
 		d, err = filepath.Abs(d)
 		if err != nil {
 			return err
@@ -230,11 +285,9 @@ func (wixFile *WixManifest) RewriteFilePaths(out string) error {
 	return nil
 }
 
-// Normalize Appropriately fixes some values within the decoded json
-// It applies defaults values on the wix/msi property to
-// to generate the msi package.
-// It applies defaults values on the choco property to
-// generate a nuget package
+// Normalize appropriately fixes some values within the decoded json.
+// It applies defaults values on the wix/msi property generate the msi package.
+// It applies defaults values on the choco property to generate a nuget package.
 func (wixFile *WixManifest) Normalize() error {
 	// Wix version Field of Product element
 	// does not support semver strings
@@ -295,5 +348,33 @@ func (wixFile *WixManifest) Normalize() error {
 		}
 	}
 
+	// Split registry path into root and key
+	for _, prop := range wixFile.Properties {
+		reg := prop.Registry
+		if reg.Root, reg.Key, err = extractRegistry(reg.Path); err != nil {
+			return err
+		}
+	}
+	for i := range wixFile.Registries.Items {
+		it := &wixFile.Registries.Items[i]
+		if it.Root, it.Key, err = extractRegistry(it.Path); err != nil {
+			return err
+		}
+		for j := range it.Values {
+			v := &it.Values[j]
+			if v.Type == "" {
+				v.Type = "string"
+			}
+		}
+	}
+
 	return nil
+}
+
+func extractRegistry(path string) (string, string, error) {
+	p := strings.Split(path, `\`)
+	if len(p) < 2 {
+		return "", "", fmt.Errorf("invalid registry path %q", p)
+	}
+	return p[0], strings.Join(p[1:len(p)], `\`), nil
 }
