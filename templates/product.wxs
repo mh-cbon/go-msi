@@ -29,7 +29,8 @@
       {{range $i, $p := .Properties}}
       <Property Id="{{$p.ID}}">
          {{if $p.Registry}}
-         <RegistrySearch Id="{{$p.ID}}Search" Root="{{$p.Registry.Root}}" Key="{{$p.Registry.Key}}" Name="{{$p.Registry.Name}}" Type="raw"/>
+         <RegistrySearch Id="{{$p.ID}}Search" Root="{{$p.Registry.Root}}" Key="{{$p.Registry.Key}}"
+            {{if gt ($p.Registry.Name | len) 0}} Name="{{$p.Registry.Name}}" {{end}} Type="raw"/>
          {{end}}
       </Property>
       {{end}}
@@ -65,6 +66,18 @@
             Action="{{$e.Action}}"
             System="{{$e.System}}" />
           {{end}}
+        </Component>
+        {{end}}
+
+        {{if gt (.Registries.Items | len) 0}}
+        <Component Id="RegistryEntries" Guid="{{.Registries.GUID}}">
+            {{range $i, $r := .Registries.Items}}
+            <RegistryKey Root="{{$r.Root}}" Key="{{$r.Key}}">
+                {{range $j, $v := $r.Values}}
+                <RegistryValue Type="{{$v.Type}}" {{if gt ($v.Name | len) 0}} Name="{{$v.Name}}" {{end}} Value="{{$v.Value}}" {{if eq $i 0}}{{if eq $j 0}} KeyPath="yes" {{end}}{{end}}/>
+                {{end}}
+            </RegistryKey>
+            {{end}}
         </Component>
         {{end}}
 
@@ -123,6 +136,9 @@
          {{end}}
          {{if gt (.Files.Items | len) 0}}
          <ComponentRef Id="ApplicationFiles"/>
+         {{end}}
+         {{if gt (.Registries.Items | len) 0}}
+         <ComponentRef Id="RegistryEntries" />
          {{end}}
          {{if gt (.Shortcuts.Items | len) 0}}
          <ComponentRef Id="ApplicationShortcuts"/>

@@ -104,6 +104,11 @@ func testHello() {
 	// mustShowEnv("$env:path")
 	// mustEnvEq("$env:some", "value")
 
+	mustShowReg(`HKCU\Software\mh-cbon\hello`, "Version")
+	mustRegEq(`HKCU\Software\mh-cbon\hello`, "Version", "some version")
+	mustShowReg(`HKCU\Software\mh-cbon\hello`, "InstallDir")
+	mustRegEq(`HKCU\Software\mh-cbon\hello`, "InstallDir", `C:\Program Files\hello`)
+
 	readDir("C:/Program Files/hello")
 	readDir("C:/Program Files/hello/assets")
 
@@ -128,6 +133,8 @@ func testHello() {
 
 	// mustShowEnv("$env:path")
 	// mustEnvEq("$env:some", "")
+
+	mustNoReg(`HKCU\Software\mh-cbon\hello`, "Version")
 
 	helloChocoPkg := makeCmd("C:/go-msi/go-msi.exe", "choco",
 		"--input", msi,
@@ -299,6 +306,11 @@ func mustShowEnv(e string) {
 	mustExec(psShowEnv, "powershell command failed %v")
 	log.Printf("showEnv ok %v %q", e, psShowEnv.Stdout())
 }
+func mustShowReg(key, value string) {
+	cmd := makeCmd("reg", "query", key, "/v", value)
+	mustExec(cmd, "registry query command failed %v")
+	log.Printf(`showReg ok %v\%v %q`, key, value, cmd.Stdout())
+}
 func maybeShowEnv(e string) *cmdExec {
 	psShowEnv := makeCmd("PowerShell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", e)
 	warnExec(psShowEnv, "powershell command failed %v")
@@ -326,6 +338,15 @@ func mustEnvEq(env string, expect string, format ...string) {
 	f := fmt.Sprintf("Env %q is not equal to want=%q, got=%q", env, expect, got)
 	mustSucceed(isTrue(got == expect, f))
 	log.Printf("mustEnvEq ok %v=%q", env, expect)
+}
+func mustRegEq(key, value, expected string) {
+	cmd := makeCmd("reg", "query", key, "/v", value)
+	mustExec(cmd, "registry query command failed %v")
+	mustContain(cmd.Stdout(), expected)
+}
+func mustNoReg(key, value string) {
+	cmd := makeCmd("reg", "query", key, "/v", value)
+	mustFail(cmd.Exec(), "registry query command succeeded %v, \n%v", cmd.Stdout())
 }
 func mustContains(path fmt.Stringer, file string) {
 	s := mustLs(path)
@@ -598,10 +619,8 @@ func makeCmd(w string, a ...string) *cmdExec {
 	cmd := exec.Command(mustLookPath(w), a...)
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
-	// cmd.Stdout = &stdout
-	// cmd.Stderr = &stderr
-	cmd.Stdout = os.Stderr
-	cmd.Stderr = os.Stderr
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
 	return &cmdExec{Cmd: cmd, stdout: &stdout, stderr: &stderr}
 }
 

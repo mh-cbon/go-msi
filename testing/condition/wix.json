@@ -5,7 +5,8 @@
     {
       "id": "CURRENTBUILD",
       "registry": {
-        "path": "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\CurrentBuild"
+        "path": "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
+        "name": "CurrentBuild"
       }
     }
   ],

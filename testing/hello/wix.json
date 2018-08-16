@@ -25,6 +25,24 @@
       }
     ]
   },
+  "registries": {
+    "guid": "",
+    "items": [
+      {
+        "path": "HKCU\\Software\\mh-cbon\\hello",
+        "values": [
+          {
+            "name": "Version",
+            "value": "some version"
+          },
+          {
+            "name": "InstallDir",
+            "value": "[INSTALLDIR]"
+          }
+        ]
+      }
+    ]
+  },
   "shortcuts": {
     "guid": "",
     "items": [
