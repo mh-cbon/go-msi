@@ -84,7 +84,7 @@ type Registry struct {
 	Path string `json:"path"`
 	Root string `json:"-"`
 	Key  string `json:"-"`
-	Name string `json:"-"`
+	Name string `json:"name,omitempty"`
 }
 
 // Condition describes a condition to check before installation.
@@ -329,8 +329,7 @@ func (wixFile *WixManifest) Normalize() error {
 			return fmt.Errorf("invalid registry path %q", p)
 		}
 		prop.Registry.Root = p[0]
-		prop.Registry.Key = strings.Join(p[1:len(p)-1], `\`)
-		prop.Registry.Name = p[len(p)-1]
+		prop.Registry.Key = strings.Join(p[1:len(p)], `\`)
 	}
 
 	return nil

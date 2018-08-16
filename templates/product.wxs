@@ -29,7 +29,8 @@
       {{range $i, $p := .Properties}}
       <Property Id="{{$p.ID}}">
          {{if $p.Registry}}
-         <RegistrySearch Id="{{$p.ID}}Search" Root="{{$p.Registry.Root}}" Key="{{$p.Registry.Key}}" Name="{{$p.Registry.Name}}" Type="raw"/>
+         <RegistrySearch Id="{{$p.ID}}Search" Root="{{$p.Registry.Root}}" Key="{{$p.Registry.Key}}"
+            {{if gt ($p.Registry.Name | len) 0}} Name="{{$p.Registry.Name}}" {{end}} Type="raw"/>
          {{end}}
       </Property>
       {{end}}
