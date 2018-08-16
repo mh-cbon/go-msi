@@ -102,7 +102,7 @@ type WixFiles struct {
 
 // WixEnvList is the struct to decode env key of the wix.json file.
 type WixEnvList struct {
-	GUID string   `json:"guid"`
+	GUID string   `json:"guid,omitempty"`
 	Vars []WixEnv `json:"vars,omitempty"`
 }
 
