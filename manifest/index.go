@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 
 	"github.com/Masterminds/semver"
@@ -289,22 +288,17 @@ func (wixFile *WixManifest) RewriteFilePaths(out string) error {
 // It applies defaults values on the wix/msi property generate the msi package.
 // It applies defaults values on the choco property to generate a nuget package.
 func (wixFile *WixManifest) Normalize() error {
+	wixFile.VersionOk = wixFile.Version
 	// Wix version Field of Product element
 	// does not support semver strings
 	// it supports only something like x.x.x.x
 	// So, if the version has metadata/prerelease values,
 	// lets get ride of those and save the workable version
 	// into VersionOk field
-	wixFile.VersionOk = wixFile.Version
 	v, err := semver.NewVersion(wixFile.Version)
-	if err != nil {
-		return fmt.Errorf("Failed to parse version '%v': %v", wixFile.Version, err)
+	if err == nil {
+		wixFile.VersionOk = v.String()
 	}
-	okVersion := ""
-	okVersion += strconv.FormatInt(v.Major(), 10)
-	okVersion += "." + strconv.FormatInt(v.Minor(), 10)
-	okVersion += "." + strconv.FormatInt(v.Patch(), 10)
-	wixFile.VersionOk = okVersion
 
 	// choco fix
 	if wixFile.Choco.ID == "" {
