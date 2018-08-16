@@ -28,6 +28,7 @@ type WixManifest struct {
 	DirNames       []string     `json:"-"`
 	RelDirs        []string     `json:"-"`
 	Env            WixEnvList   `json:"env"`
+	Registries     Registries   `json:"registries"`
 	Shortcuts      WixShortcuts `json:"shortcuts"`
 	Choco          ChocoSpec    `json:"choco"`
 	Hooks          []Hook       `json:"hooks,omitempty"`
@@ -79,7 +80,7 @@ type Property struct {
 	Registry *Registry `json:"registry,omitempty"`
 }
 
-// Registry describes a registry search.
+// Registry describes a registry entry.
 type Registry struct {
 	Path string `json:"path"`
 	Root string `json:"-"`
@@ -129,6 +130,25 @@ type WixShortcut struct {
 	WDir        string `json:"wdir"`
 	Arguments   string `json:"arguments"`
 	Icon        string `json:"icon"` // a path to the ico file, no space in it.
+}
+
+// Registries is the struct to decode registry values.
+type Registries struct {
+	GUID  string         `json:"guid,omitempty"`
+	Items []RegistryItem `json:"items,omitempty"`
+}
+
+// RegistryItem is the struct to decode a registry item.
+type RegistryItem struct {
+	Registry
+	Values []RegistryValue `json:"values,omitempty"`
+}
+
+// RegistryValue is the struct to decode a registry value.
+type RegistryValue struct {
+	Name  string `json:"name"`
+	Type  string `json:"type,omitempty"` // string (default if omitted), integer, ...
+	Value string `json:"value"`
 }
 
 // Write the manifest to the given file,
@@ -183,6 +203,10 @@ func (wixFile *WixManifest) SetGuids(force bool) (bool, error) {
 		wixFile.Env.GUID = makeGUID()
 		updated = true
 	}
+	if (wixFile.Registries.GUID == "" || force) && len(wixFile.Registries.Items) > 0 {
+		wixFile.Registries.GUID = makeGUID()
+		updated = true
+	}
 	if (wixFile.Shortcuts.GUID == "" || force) && len(wixFile.Shortcuts.Items) > 0 {
 		wixFile.Shortcuts.GUID = makeGUID()
 		updated = true
@@ -204,6 +228,9 @@ func (wixFile *WixManifest) NeedGUID() bool {
 		need = true
 	}
 	if wixFile.Env.GUID == "" && len(wixFile.Env.Vars) > 0 {
+		need = true
+	}
+	if wixFile.Registries.GUID == "" && len(wixFile.Registries.Items) > 0 {
 		need = true
 	}
 	if wixFile.Shortcuts.GUID == "" && len(wixFile.Shortcuts.Items) > 0 {
@@ -321,16 +348,33 @@ func (wixFile *WixManifest) Normalize() error {
 		}
 	}
 
-	// Split registry path into root, key and name
+	// Split registry path into root and key
 	for _, prop := range wixFile.Properties {
-		path := prop.Registry.Path
-		p := strings.Split(path, `\`)
-		if len(p) < 3 {
-			return fmt.Errorf("invalid registry path %q", p)
+		reg := prop.Registry
+		if reg.Root, reg.Key, err = extractRegistry(reg.Path); err != nil {
+			return err
 		}
-		prop.Registry.Root = p[0]
-		prop.Registry.Key = strings.Join(p[1:len(p)], `\`)
+	}
+	for i := range wixFile.Registries.Items {
+		it := &wixFile.Registries.Items[i]
+		if it.Root, it.Key, err = extractRegistry(it.Path); err != nil {
+			return err
+		}
+		for j := range it.Values {
+			v := &it.Values[j]
+			if v.Type == "" {
+				v.Type = "string"
+			}
+		}
 	}
 
 	return nil
+}
+
+func extractRegistry(path string) (string, string, error) {
+	p := strings.Split(path, `\`)
+	if len(p) < 2 {
+		return "", "", fmt.Errorf("invalid registry path %q", p)
+	}
+	return p[0], strings.Join(p[1:len(p)], `\`), nil
 }
