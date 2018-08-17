@@ -16,25 +16,25 @@ import (
 
 // WixManifest is the struct to decode a wix.json file.
 type WixManifest struct {
-	Product        string       `json:"product"`
-	Company        string       `json:"company"`
-	Version        string       `json:"version,omitempty"`
-	VersionOk      string       `json:"-"`
-	License        string       `json:"license,omitempty"`
-	UpgradeCode    string       `json:"upgrade-code"`
-	Files          WixFiles     `json:"files"`
-	Directories    []string     `json:"directories,omitempty"`
-	DirNames       []string     `json:"-"`
-	RelDirs        []string     `json:"-"`
-	Env            WixEnvList   `json:"env"`
-	Registries     Registries   `json:"registries"`
-	Shortcuts      WixShortcuts `json:"shortcuts"`
-	Choco          ChocoSpec    `json:"choco"`
-	Hooks          []Hook       `json:"hooks,omitempty"`
-	InstallHooks   []Hook       `json:"-"`
-	UninstallHooks []Hook       `json:"-"`
-	Properties     []Property   `json:"properties,omitempty"`
-	Conditions     []Condition  `json:"conditions,omitempty"`
+	Product        string         `json:"product"`
+	Company        string         `json:"company"`
+	Version        string         `json:"version,omitempty"`
+	VersionOk      string         `json:"-"`
+	License        string         `json:"license,omitempty"`
+	UpgradeCode    string         `json:"upgrade-code"`
+	Files          WixFiles       `json:"files"`
+	Directories    []string       `json:"directories,omitempty"`
+	DirNames       []string       `json:"-"`
+	RelDirs        []string       `json:"-"`
+	Env            WixEnvList     `json:"env"`
+	Registries     []RegistryItem `json:"registries,omitempty"`
+	Shortcuts      WixShortcuts   `json:"shortcuts"`
+	Choco          ChocoSpec      `json:"choco"`
+	Hooks          []Hook         `json:"hooks,omitempty"`
+	InstallHooks   []Hook         `json:"-"`
+	UninstallHooks []Hook         `json:"-"`
+	Properties     []Property     `json:"properties,omitempty"`
+	Conditions     []Condition    `json:"conditions,omitempty"`
 }
 
 // ChocoSpec is the struct to decode the choco key of a wix.json file.
@@ -135,15 +135,10 @@ type WixShortcut struct {
 	Icon        string `json:"icon"` // a path to the ico file, no space in it.
 }
 
-// Registries is the struct to decode registry values.
-type Registries struct {
-	GUID  string         `json:"guid,omitempty"`
-	Items []RegistryItem `json:"items,omitempty"`
-}
-
 // RegistryItem is the struct to decode a registry item.
 type RegistryItem struct {
 	Registry
+	GUID   string          `json:"guid,omitempty"`
 	Values []RegistryValue `json:"values,omitempty"`
 }
 
@@ -192,7 +187,7 @@ func (wixFile *WixManifest) Load(p string) error {
 }
 
 //SetGuids generates and apply guid values appropriately
-func (wixFile *WixManifest) SetGuids(force bool) (bool, error) {
+func (wixFile *WixManifest) SetGuids(force bool) bool {
 	updated := false
 	if wixFile.UpgradeCode == "" || force {
 		wixFile.UpgradeCode = makeGUID()
@@ -206,15 +201,17 @@ func (wixFile *WixManifest) SetGuids(force bool) (bool, error) {
 		wixFile.Env.GUID = makeGUID()
 		updated = true
 	}
-	if (wixFile.Registries.GUID == "" || force) && len(wixFile.Registries.Items) > 0 {
-		wixFile.Registries.GUID = makeGUID()
-		updated = true
+	for i, r := range wixFile.Registries {
+		if r.GUID == "" || force {
+			wixFile.Registries[i].GUID = makeGUID()
+			updated = true
+		}
 	}
 	if (wixFile.Shortcuts.GUID == "" || force) && len(wixFile.Shortcuts.Items) > 0 {
 		wixFile.Shortcuts.GUID = makeGUID()
 		updated = true
 	}
-	return updated, nil
+	return updated
 }
 
 func makeGUID() string {
@@ -223,23 +220,24 @@ func makeGUID() string {
 
 // NeedGUID tells if the manifest json file is missing guid values.
 func (wixFile *WixManifest) NeedGUID() bool {
-	need := false
 	if wixFile.UpgradeCode == "" {
-		need = true
+		return true
 	}
 	if wixFile.Files.GUID == "" {
-		need = true
+		return true
 	}
 	if wixFile.Env.GUID == "" && len(wixFile.Env.Vars) > 0 {
-		need = true
+		return true
 	}
-	if wixFile.Registries.GUID == "" && len(wixFile.Registries.Items) > 0 {
-		need = true
+	for _, r := range wixFile.Registries {
+		if r.GUID == "" {
+			return true
+		}
 	}
 	if wixFile.Shortcuts.GUID == "" && len(wixFile.Shortcuts.Items) > 0 {
-		need = true
+		return true
 	}
-	return need
+	return false
 }
 
 // RewriteFilePaths Reads Files and Directories of the wix.json file
@@ -355,13 +353,13 @@ func (wixFile *WixManifest) Normalize() error {
 			}
 		}
 	}
-	for i := range wixFile.Registries.Items {
-		it := &wixFile.Registries.Items[i]
-		if it.Root, it.Key, err = extractRegistry(it.Path); err != nil {
+	for i := range wixFile.Registries {
+		r := &wixFile.Registries[i]
+		if r.Root, r.Key, err = extractRegistry(r.Path); err != nil {
 			return err
 		}
-		for j := range it.Values {
-			v := &it.Values[j]
+		for j := range r.Values {
+			v := &r.Values[j]
 			if v.Type == "" {
 				v.Type = "string"
 			}
