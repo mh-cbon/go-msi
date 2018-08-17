@@ -87,6 +87,7 @@ func testHello() {
 		"--msi", msi,
 		"--version", "0.0.1",
 		"--arch", "amd64",
+		"--property", "SOME_VERSION=some version",
 		"--keep",
 	)
 	mustExec(pkg, "Packaging failed %v")

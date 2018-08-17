@@ -77,6 +77,7 @@ type Hook struct {
 type Property struct {
 	ID       string    `json:"id"`
 	Registry *Registry `json:"registry,omitempty"`
+	Value    *Value    `json:"value,omitempty"`
 }
 
 // Registry describes a registry entry.
@@ -86,6 +87,9 @@ type Registry struct {
 	Key  string `json:"-"`
 	Name string `json:"name,omitempty"`
 }
+
+// Value describes a simple string value
+type Value string
 
 // Condition describes a condition to check before installation.
 type Condition struct {
@@ -345,8 +349,10 @@ func (wixFile *WixManifest) Normalize() error {
 	// Split registry path into root and key
 	for _, prop := range wixFile.Properties {
 		reg := prop.Registry
-		if reg.Root, reg.Key, err = extractRegistry(reg.Path); err != nil {
-			return err
+		if reg != nil {
+			if reg.Root, reg.Key, err = extractRegistry(reg.Path); err != nil {
+				return err
+			}
 		}
 	}
 	for i := range wixFile.Registries.Items {
