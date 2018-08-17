@@ -33,7 +33,7 @@
         "values": [
           {
             "name": "Version",
-            "value": "some version"
+            "value": "[SOME_VERSION]"
           },
           {
             "name": "InstallDir",

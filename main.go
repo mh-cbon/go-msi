@@ -126,13 +126,15 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "version",
-					Value: "",
 					Usage: "The version of your program",
 				},
 				cli.StringFlag{
 					Name:  "license, l",
-					Value: "",
 					Usage: "Path to the license file",
+				},
+				cli.StringSliceFlag{
+					Name:  "property, pr",
+					Usage: "A property to set defined as Id=Value",
 				},
 			},
 		},
@@ -143,12 +145,10 @@ func main() {
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "src, s",
-					Value: "",
 					Usage: "Path to an UTF-8 encoded file",
 				},
 				cli.StringFlag{
 					Name:  "out, o",
-					Value: "",
 					Usage: "Path to the ANSI generated file",
 				},
 			},
@@ -160,12 +160,10 @@ func main() {
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "src, s",
-					Value: "",
 					Usage: "Path to a text file",
 				},
 				cli.StringFlag{
 					Name:  "out, o",
-					Value: "",
 					Usage: "Path to the RTF generated file",
 				},
 				cli.BoolFlag{
@@ -196,12 +194,10 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "arch, a",
-					Value: "",
 					Usage: "A target architecture, amd64 or 386 (ia64 is not handled)",
 				},
 				cli.StringFlag{
 					Name:  "msi, m",
-					Value: "",
 					Usage: "Path to write resulting msi file to",
 				},
 			},
@@ -240,23 +236,23 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "arch, a",
-					Value: "",
 					Usage: "A target architecture, amd64 or 386 (ia64 is not handled)",
 				},
 				cli.StringFlag{
 					Name:  "msi, m",
-					Value: "",
 					Usage: "Path to write resulting msi file to",
 				},
 				cli.StringFlag{
 					Name:  "version",
-					Value: "",
 					Usage: "The version of your program",
 				},
 				cli.StringFlag{
 					Name:  "license, l",
-					Value: "",
 					Usage: "Path to the license file",
+				},
+				cli.StringSliceFlag{
+					Name:  "property, pr",
+					Usage: "A property to set defined as Id=Value",
 				},
 				cli.BoolFlag{
 					Name:  "keep, k",
@@ -281,7 +277,6 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "version",
-					Value: "",
 					Usage: "The version of your program",
 				},
 				cli.StringFlag{
@@ -291,12 +286,10 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "input, i",
-					Value: "",
 					Usage: "Path to the msi file to package into the chocolatey package",
 				},
 				cli.StringFlag{
 					Name:  "changelog-cmd, c",
-					Value: "",
 					Usage: "A command to generate the content of the changlog in the package",
 				},
 				cli.BoolFlag{
@@ -534,6 +527,7 @@ func generateTemplates(c *cli.Context) error {
 	out := c.String("out")
 	version := c.String("version")
 	license := c.String("license")
+	properties := c.StringSlice("property")
 
 	wixFile := manifest.WixManifest{}
 	err := wixFile.Load(path)
@@ -554,6 +548,10 @@ func generateTemplates(c *cli.Context) error {
 
 	if c.IsSet("license") {
 		wixFile.License = license
+	}
+
+	if err := addProperties(&wixFile, properties); err != nil {
+		return cli.NewExitError(err.Error(), 1)
 	}
 
 	err = wixFile.Normalize()
@@ -735,6 +733,7 @@ func quickMake(c *cli.Context) error {
 	out := c.String("out")
 	version := c.String("version")
 	license := c.String("license")
+	properties := c.StringSlice("property")
 	msi := c.String("msi")
 	arch := c.String("arch")
 	keep := c.Bool("keep")
@@ -768,6 +767,12 @@ func quickMake(c *cli.Context) error {
 	if c.IsSet("license") {
 		wixFile.License = license
 	}
+
+	if err := addProperties(&wixFile, properties); err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+
+	fmt.Println(wixFile.Properties)
 
 	if err := wixFile.Normalize(); err != nil {
 		return cli.NewExitError(err.Error(), 1)
@@ -851,6 +856,23 @@ func quickMake(c *cli.Context) error {
 
 	fmt.Println("All Done!!")
 
+	return nil
+}
+
+func addProperties(wixFile *manifest.WixManifest, properties []string) error {
+	for _, prop := range properties {
+		s := strings.SplitN(prop, "=", 2)
+		if len(s) < 2 {
+			return fmt.Errorf("property definition must be of the form Id=Value")
+		}
+		v := manifest.Value(s[1])
+		wixFile.Properties = append(wixFile.Properties,
+			manifest.Property{
+				ID:    s[0],
+				Value: &v,
+			},
+		)
+	}
 	return nil
 }
 

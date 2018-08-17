@@ -27,7 +27,7 @@
       </Upgrade>
       <Condition Message="A newer version of this software is already installed.">NOT NEWERVERSIONDETECTED</Condition>
       {{range $i, $p := .Properties}}
-      <Property Id="{{$p.ID}}">
+      <Property Id="{{$p.ID}}" {{if $p.Value}} Value="{{$p.Value}}" {{end}}>
          {{if $p.Registry}}
          <RegistrySearch Id="{{$p.ID}}Search" Root="{{$p.Registry.Root}}" Key="{{$p.Registry.Key}}"
             {{if gt ($p.Registry.Name | len) 0}} Name="{{$p.Registry.Name}}" {{end}} Type="raw"/>
