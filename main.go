@@ -764,8 +764,6 @@ func quickMake(c *cli.Context) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	fmt.Println(wixFile.Properties)
-
 	if err := wixFile.Normalize(); err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
