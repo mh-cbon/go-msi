@@ -56,6 +56,7 @@
   "hooks": [
     {"when": "install", "command": "sc.exe create HelloSvc binPath=\"[INSTALLDIR]hello.exe\" type=share start=auto DisplayName=\"Hello!\""},
     {"when": "install", "command": "sc.exe start HelloSvc"},
+    {"when": "install", "command": "this will fail and be ignored", "return": "ignore"},
     {"when": "uninstall", "command": "sc.exe delete HelloSvc"}
   ],
   "choco": {
