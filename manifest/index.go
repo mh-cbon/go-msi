@@ -71,6 +71,7 @@ type Hook struct {
 	Command       string `json:"command,omitempty"`
 	CookedCommand string `json:"-"`
 	When          string `json:"when,omitempty"`
+	Return        string `json:"return,omitempty"`
 }
 
 // Property describes a property to initialize.
