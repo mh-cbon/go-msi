@@ -25,24 +25,22 @@
       }
     ]
   },
-  "registries": {
-    "guid": "",
-    "items": [
-      {
-        "path": "HKCU\\Software\\mh-cbon\\hello",
-        "values": [
-          {
-            "name": "Version",
-            "value": "[SOME_VERSION]"
-          },
-          {
-            "name": "InstallDir",
-            "value": "[INSTALLDIR]"
-          }
-        ]
-      }
-    ]
-  },
+  "registries": [
+    {
+      "guid": "",
+      "path": "HKCU\\Software\\mh-cbon\\hello",
+      "values": [
+        {
+          "name": "Version",
+          "value": "[SOME_VERSION]"
+        },
+        {
+          "name": "InstallDir",
+          "value": "[INSTALLDIR]"
+        }
+      ]
+    }
+  ],
   "shortcuts": {
     "guid": "",
     "items": [
