@@ -414,12 +414,15 @@ func setFiles(c *cli.Context) error {
 	err = glob(dir, includes, func(match string) {
 		if !out[match] {
 			in[match] = true
-			if !isIn(match, wixFile.Files.Items) {
-				fmt.Printf("    adding %q\n", match)
-				failed = true
-				if !test {
-					wixFile.Files.Items = append(wixFile.Files.Items, match)
+			for _, f := range wixFile.Files {
+				if f.Path == match {
+					return
 				}
+			}
+			fmt.Printf("    adding %q\n", match)
+			failed = true
+			if !test {
+				wixFile.Files = append(wixFile.Files, manifest.File{Path: match})
 			}
 		}
 	})
@@ -427,16 +430,15 @@ func setFiles(c *cli.Context) error {
 		return cli.NewExitError(err, 1)
 	}
 
-	for i := len(wixFile.Files.Items) - 1; i >= 0; i-- {
-		file := wixFile.Files.Items[i]
+	for i := len(wixFile.Files) - 1; i >= 0; i-- {
+		file := wixFile.Files[i].Path
 		if !in[file] {
 			fmt.Printf("    removing %q\n", file)
 			failed = true
 			if !test {
-				wixFile.Files.Items = append(wixFile.Files.Items[:i], wixFile.Files.Items[i+1:]...)
+				wixFile.Files = append(wixFile.Files[:i], wixFile.Files[i+1:]...)
 			}
 		}
-
 	}
 
 	if !failed {
@@ -451,15 +453,6 @@ func setFiles(c *cli.Context) error {
 	}
 	fmt.Println("The file is saved on disk")
 	return nil
-}
-
-func isIn(s string, sl []string) bool {
-	for _, e := range sl {
-		if e == s {
-			return true
-		}
-	}
-	return false
 }
 
 func glob(dir string, files []string, f func(match string)) error {

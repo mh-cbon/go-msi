@@ -3,12 +3,11 @@
   "company": "mh-cbon",
   "license": "LICENSE",
   "upgrade-code": "",
-  "files": {
-    "guid": "",
-    "items": [
-      "build/amd64/hello.exe"
-    ]
-  },
+  "files": [
+    {
+      "path": "build/amd64/hello.exe"
+    }
+  ],
   "directories": [
     "some/assets"
   ],

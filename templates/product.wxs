@@ -42,13 +42,11 @@
 
          <Directory Id="$(var.Program_Files)">
             <Directory Id="INSTALLDIR" Name="{{.Product}}">
-               {{if gt (.Files.Items | len) 0}}
-               <Component Id="ApplicationFiles" Guid="{{.Files.GUID}}">
-                  {{range $i, $e := .Files.Items}}
-                    <File Id="ApplicationFile{{$i}}" Source="{{$e}}"/>
-                  {{end}}
-               </Component>
-               {{end}}
+                {{range $i, $e := .Files}}
+                <Component Id="ApplicationFiles{{$i}}" Guid="*">
+                    <File Id="ApplicationFile{{$i}}" Source="{{$e.Path}}"/>
+                </Component>
+                {{end}}
                {{range $i, $e := .DirNames}}
                <Directory Id="APPDIR{{$i}}" Name="{{$e}}" />
                {{end}}
@@ -132,8 +130,8 @@
          {{if gt (.Env.Vars | len) 0}}
          <ComponentRef Id="ENVS"/>
          {{end}}
-         {{if gt (.Files.Items | len) 0}}
-         <ComponentRef Id="ApplicationFiles"/>
+         {{range $i, $e := .Files}}
+         <ComponentRef Id="ApplicationFiles{{$i}}"/>
          {{end}}
          {{range $i, $r := .Registries}}
          <ComponentRef Id="RegistryEntries{{$i}}" />
