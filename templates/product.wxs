@@ -45,7 +45,14 @@
                 {{range $i, $e := .Files}}
                 <Component Id="ApplicationFiles{{$i}}" Guid="*">
                     <File Id="ApplicationFile{{$i}}" Source="{{$e.Path}}"/>
-                </Component>
+                    {{if ($e.Service)}}
+                    <ServiceInstall Id="ServiceInstall{{$i}}" Type="ownProcess" Name="{{$e.Service.Name}}" Start="{{$e.Service.Start}}" Account="LocalSystem" ErrorControl="normal"
+                     {{if gt ($e.Service.DisplayName | len) 0}} DisplayName="{{$e.Service.DisplayName}}" {{end}}
+                     {{if gt ($e.Service.Description | len) 0}} Description="{{$e.Service.Description}}" {{end}}
+                     {{if gt ($e.Service.Arguments | len) 0}} Arguments="{{$e.Service.Arguments}}" {{end}} />
+                    <ServiceControl Id="ServiceControl{{$i}}" Name="{{$e.Service.Name}}" Start="install" Stop="both" Remove="uninstall"/>
+                    {{end}}
+                 </Component>
                 {{end}}
                {{range $i, $e := .DirNames}}
                <Directory Id="APPDIR{{$i}}" Name="{{$e}}" />

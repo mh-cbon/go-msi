@@ -39,7 +39,18 @@ type WixManifest struct {
 
 // File is the struct to decode a file.
 type File struct {
-	Path string `json:"path"`
+	Path    string   `json:"path"`
+	Service *Service `json:"service,omitempty"`
+}
+
+// Service is the struct to decode a service.
+type Service struct {
+	Name        string `json:"name"`
+	Bin         string `json:"-"`
+	Start       string `json:"start"`
+	DisplayName string `json:"display-name,omitempty"`
+	Description string `json:"description,omitempty"`
+	Arguments   string `json:"arguments,omitempty"`
 }
 
 // ChocoSpec is the struct to decode the choco key of a wix.json file.
@@ -355,6 +366,13 @@ func (wixFile *WixManifest) Normalize() error {
 			if v.Type == "" {
 				v.Type = "string"
 			}
+		}
+	}
+
+	// Bind services to their file component
+	for i, file := range wixFile.Files {
+		if file.Service != nil {
+			wixFile.Files[i].Service.Bin = filepath.Base(file.Path)
 		}
 	}
 
