@@ -42,13 +42,18 @@
 
          <Directory Id="$(var.Program_Files)">
             <Directory Id="INSTALLDIR" Name="{{.Product}}">
-               {{if gt (.Files.Items | len) 0}}
-               <Component Id="ApplicationFiles" Guid="{{.Files.GUID}}">
-                  {{range $i, $e := .Files.Items}}
-                    <File Id="ApplicationFile{{$i}}" Source="{{$e}}"/>
-                  {{end}}
-               </Component>
-               {{end}}
+                {{range $i, $e := .Files}}
+                <Component Id="ApplicationFiles{{$i}}" Guid="*">
+                    <File Id="ApplicationFile{{$i}}" Source="{{$e.Path}}"/>
+                    {{if ($e.Service)}}
+                    <ServiceInstall Id="ServiceInstall{{$i}}" Type="ownProcess" Name="{{$e.Service.Name}}" Start="{{$e.Service.Start}}" Account="LocalSystem" ErrorControl="normal"
+                     {{if gt ($e.Service.DisplayName | len) 0}} DisplayName="{{$e.Service.DisplayName}}" {{end}}
+                     {{if gt ($e.Service.Description | len) 0}} Description="{{$e.Service.Description}}" {{end}}
+                     {{if gt ($e.Service.Arguments | len) 0}} Arguments="{{$e.Service.Arguments}}" {{end}} />
+                    <ServiceControl Id="ServiceControl{{$i}}" Name="{{$e.Service.Name}}" Start="install" Stop="both" Remove="uninstall"/>
+                    {{end}}
+                 </Component>
+                {{end}}
                {{range $i, $e := .DirNames}}
                <Directory Id="APPDIR{{$i}}" Name="{{$e}}" />
                {{end}}
@@ -132,8 +137,8 @@
          {{if gt (.Env.Vars | len) 0}}
          <ComponentRef Id="ENVS"/>
          {{end}}
-         {{if gt (.Files.Items | len) 0}}
-         <ComponentRef Id="ApplicationFiles"/>
+         {{range $i, $e := .Files}}
+         <ComponentRef Id="ApplicationFiles{{$i}}"/>
          {{end}}
          {{range $i, $r := .Registries}}
          <ComponentRef Id="RegistryEntries{{$i}}" />

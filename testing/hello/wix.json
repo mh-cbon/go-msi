@@ -3,12 +3,17 @@
   "company": "mh-cbon",
   "license": "LICENSE",
   "upgrade-code": "",
-  "files": {
-    "guid": "",
-    "items": [
-      "build/amd64/hello.exe"
-    ]
-  },
+  "files": [
+    {
+      "path": "build/amd64/hello.exe",
+      "service": {
+        "name": "HelloSvc",
+        "start": "auto",
+        "display-name": "Hello!",
+        "description": "The hello service"
+      }
+    }
+  ],
   "directories": [
     "some/assets"
   ],
@@ -53,16 +58,17 @@
       }
     ]
   },
-  "hooks": [
-    {"when": "install", "command": "sc.exe create HelloSvc binPath=\"[INSTALLDIR]hello.exe\" type=share start=auto DisplayName=\"Hello!\""},
-    {"when": "install", "command": "sc.exe start HelloSvc"},
-    {"when": "install", "command": "this will fail and be ignored", "return": "ignore"},
-    {"when": "uninstall", "command": "sc.exe delete HelloSvc"}
-  ],
   "choco": {
     "description": "hello program",
     "project-url": "https://github.com/mh-cbon/go-msi/tree/master/testing",
     "tags": "hello",
     "license-url": "https://github.com/mh-cbon/go-msi/blob/master/LICENSE"
-  }
+  },
+  "hooks": [
+    {
+      "command": "this will fail and be ignored",
+      "when": "install",
+      "return": "ignore"
+    }
+  ]
 }

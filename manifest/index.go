@@ -22,7 +22,7 @@ type WixManifest struct {
 	VersionOk      string         `json:"-"`
 	License        string         `json:"license,omitempty"`
 	UpgradeCode    string         `json:"upgrade-code"`
-	Files          WixFiles       `json:"files"`
+	Files          []File         `json:"files,omitempty"`
 	Directories    []string       `json:"directories,omitempty"`
 	DirNames       []string       `json:"-"`
 	RelDirs        []string       `json:"-"`
@@ -35,6 +35,22 @@ type WixManifest struct {
 	UninstallHooks []Hook         `json:"-"`
 	Properties     []Property     `json:"properties,omitempty"`
 	Conditions     []Condition    `json:"conditions,omitempty"`
+}
+
+// File is the struct to decode a file.
+type File struct {
+	Path    string   `json:"path"`
+	Service *Service `json:"service,omitempty"`
+}
+
+// Service is the struct to decode a service.
+type Service struct {
+	Name        string `json:"name"`
+	Bin         string `json:"-"`
+	Start       string `json:"start"`
+	DisplayName string `json:"display-name,omitempty"`
+	Description string `json:"description,omitempty"`
+	Arguments   string `json:"arguments,omitempty"`
 }
 
 // ChocoSpec is the struct to decode the choco key of a wix.json file.
@@ -96,12 +112,6 @@ type Value string
 type Condition struct {
 	Condition string `json:"condition"`
 	Message   string `json:"message"`
-}
-
-// WixFiles is the struct to decode files key of the wix.json file.
-type WixFiles struct {
-	GUID  string   `json:"guid"`
-	Items []string `json:"items,omitempty"`
 }
 
 // WixEnvList is the struct to decode env key of the wix.json file.
@@ -194,10 +204,6 @@ func (wixFile *WixManifest) SetGuids(force bool) bool {
 		wixFile.UpgradeCode = makeGUID()
 		updated = true
 	}
-	if wixFile.Files.GUID == "" || force {
-		wixFile.Files.GUID = makeGUID()
-		updated = true
-	}
 	if (wixFile.Env.GUID == "" || force) && len(wixFile.Env.Vars) > 0 {
 		wixFile.Env.GUID = makeGUID()
 		updated = true
@@ -224,9 +230,6 @@ func (wixFile *WixManifest) NeedGUID() bool {
 	if wixFile.UpgradeCode == "" {
 		return true
 	}
-	if wixFile.Files.GUID == "" {
-		return true
-	}
 	if wixFile.Env.GUID == "" && len(wixFile.Env.Vars) > 0 {
 		return true
 	}
@@ -250,41 +253,40 @@ func (wixFile *WixManifest) RewriteFilePaths(out string) error {
 	if err != nil {
 		return err
 	}
-	for i, file := range wixFile.Files.Items {
-		file, err = filepath.Abs(file)
+	for i, file := range wixFile.Files {
+		path, err := rewrite(out, file.Path)
 		if err != nil {
 			return err
 		}
-		wixFile.Files.Items[i], err = filepath.Rel(out, file)
-		if err != nil {
-			return err
-		}
+		wixFile.Files[i].Path = path
 	}
-	for _, d := range wixFile.Directories {
-		wixFile.DirNames = append(wixFile.DirNames, filepath.Base(d))
-		d, err = filepath.Abs(d)
+	for _, dir := range wixFile.Directories {
+		wixFile.DirNames = append(wixFile.DirNames, filepath.Base(dir))
+		path, err := rewrite(out, dir)
 		if err != nil {
 			return err
 		}
-		r, err := filepath.Rel(out, d)
-		if err != nil {
-			return err
-		}
-		wixFile.RelDirs = append(wixFile.RelDirs, r)
+		wixFile.RelDirs = append(wixFile.RelDirs, path)
 	}
 	for i, s := range wixFile.Shortcuts.Items {
 		if s.Icon != "" {
-			file, err := filepath.Abs(s.Icon)
+			path, err := rewrite(out, s.Icon)
 			if err != nil {
 				return err
 			}
-			wixFile.Shortcuts.Items[i].Icon, err = filepath.Rel(out, file)
-			if err != nil {
-				return err
-			}
+			wixFile.Shortcuts.Items[i].Icon = path
 		}
 	}
 	return nil
+}
+
+func rewrite(out, path string) (string, error) {
+	var err error
+	path, err = filepath.Abs(path)
+	if err != nil {
+		return "", err
+	}
+	return filepath.Rel(out, path)
 }
 
 // Normalize appropriately fixes some values within the decoded json.
@@ -364,6 +366,13 @@ func (wixFile *WixManifest) Normalize() error {
 			if v.Type == "" {
 				v.Type = "string"
 			}
+		}
+	}
+
+	// Bind services to their file component
+	for i, file := range wixFile.Files {
+		if file.Service != nil {
+			wixFile.Files[i].Service.Bin = filepath.Base(file.Path)
 		}
 	}
 
