@@ -271,6 +271,13 @@ func (wixFile *WixManifest) RewriteFilePaths(out string) error {
 	if err != nil {
 		return err
 	}
+	if wixFile.License != "" {
+		path, err := rewrite(out, wixFile.License)
+		if err != nil {
+			return nil
+		}
+		wixFile.License = path
+	}
 	for i, file := range wixFile.Files {
 		path, err := rewrite(out, file.Path)
 		if err != nil {
