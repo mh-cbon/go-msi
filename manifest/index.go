@@ -23,6 +23,7 @@ type WixManifest struct {
 	License        string         `json:"license,omitempty"`
 	Banner         string         `json:"banner,omitempty"`
 	Dialog         string         `json:"dialog,omitempty"`
+	Icon           string         `json:"icon,omitempty"`
 	UpgradeCode    string         `json:"upgrade-code"`
 	Files          []File         `json:"files,omitempty"`
 	Directories    []string       `json:"directories,omitempty"`
@@ -320,6 +321,13 @@ func (wixFile *WixManifest) Normalize() error {
 			return err
 		}
 		wixFile.Dialog = path
+	}
+	if wixFile.Icon != "" {
+		path, err := filepath.Abs(wixFile.Icon)
+		if err != nil {
+			return err
+		}
+		wixFile.Icon = path
 	}
 
 	// choco fix

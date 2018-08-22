@@ -29,6 +29,10 @@
 
       {{if gt (.Banner | len) 0 }} <WixVariable Id="WixUIBannerBmp" Value="{{.Banner}}"/> {{end}}
       {{if gt (.Dialog | len) 0 }} <WixVariable Id="WixUIDialogBmp" Value="{{.Dialog}}"/> {{end}}
+      {{if gt (.Icon | len) 0 }}
+      <Icon Id="InstallerIco" SourceFile="{{.Icon}}"/>
+      <Property Id="ARPPRODUCTICON" Value="InstallerIco"/>
+      {{end}}
 
       {{range $i, $p := .Properties}}
       <Property Id="{{$p.ID}}" {{if $p.Value}} Value="{{$p.Value}}" {{end}}>
