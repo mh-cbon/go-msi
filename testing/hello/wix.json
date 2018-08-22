@@ -2,6 +2,7 @@
   "product": "hello",
   "company": "mh-cbon",
   "license": "LICENSE",
+  "icon": "ico.ico",
   "upgrade-code": "",
   "files": [
     {
