@@ -21,6 +21,8 @@ type WixManifest struct {
 	Version        string         `json:"version,omitempty"`
 	VersionOk      string         `json:"-"`
 	License        string         `json:"license,omitempty"`
+	Banner         string         `json:"banner,omitempty"`
+	Dialog         string         `json:"dialog,omitempty"`
 	UpgradeCode    string         `json:"upgrade-code"`
 	Files          []File         `json:"files,omitempty"`
 	Directories    []string       `json:"directories,omitempty"`
@@ -303,6 +305,21 @@ func (wixFile *WixManifest) Normalize() error {
 	v, err := semver.NewVersion(wixFile.Version)
 	if err == nil {
 		wixFile.VersionOk = v.String()
+	}
+
+	if wixFile.Banner != "" {
+		path, err := filepath.Abs(wixFile.Banner)
+		if err != nil {
+			return err
+		}
+		wixFile.Banner = path
+	}
+	if wixFile.Dialog != "" {
+		path, err := filepath.Abs(wixFile.Dialog)
+		if err != nil {
+			return err
+		}
+		wixFile.Dialog = path
 	}
 
 	// choco fix
