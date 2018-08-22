@@ -76,14 +76,14 @@ func WriteAsRtf(src string, dst string, reencode bool) error {
 }
 
 // IsRtf Detects if the given src file is formatted with RTF format.
-func IsRtf(src string) bool {
+func IsRtf(src string) (bool, error) {
 	dat, err := ioutil.ReadFile(src)
 	if err != nil {
-		return false
+		return false, err
 	}
 	sDat := string(dat)
 	if len(sDat) > 4 {
-		return sDat[0:5] == "{\\rtf"
+		return sDat[0:5] == "{\\rtf", nil
 	}
-	return false
+	return false, nil
 }

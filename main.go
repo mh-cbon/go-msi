@@ -752,6 +752,20 @@ func quickMake(c *cli.Context) error {
 	if c.IsSet("license") {
 		wixFile.License = license
 	}
+	if wixFile.License != "" {
+		isRtf, err := rtf.IsRtf(wixFile.License)
+		if err != nil {
+			return cli.NewExitError(err.Error(), 1)
+		}
+		if !isRtf {
+			fmt.Println("Converting license to RTF")
+			target := filepath.Join(out, filepath.Base(wixFile.License)+".rtf")
+			if err := rtf.WriteAsRtf(wixFile.License, target, true); err != nil {
+				return cli.NewExitError(err.Error(), 1)
+			}
+			wixFile.License = target
+		}
+	}
 
 	if err := addProperties(&wixFile, properties); err != nil {
 		return cli.NewExitError(err.Error(), 1)
@@ -763,20 +777,6 @@ func quickMake(c *cli.Context) error {
 
 	if err := wixFile.RewriteFilePaths(out); err != nil {
 		return cli.NewExitError(err.Error(), 1)
-	}
-
-	if wixFile.License != "" {
-		if !rtf.IsRtf(wixFile.License) {
-			target := filepath.Join(out, filepath.Base(wixFile.License)+".rtf")
-			err := rtf.WriteAsRtf(wixFile.License, target, true)
-			if err != nil {
-				return cli.NewExitError(err.Error(), 1)
-			}
-			wixFile.License, err = filepath.Rel(out, target)
-			if err != nil {
-				return cli.NewExitError(err.Error(), 1)
-			}
-		}
 	}
 
 	templates, err := tpls.Find(src, "*.wxs")
