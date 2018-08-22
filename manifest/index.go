@@ -24,6 +24,7 @@ type WixManifest struct {
 	Banner         string         `json:"banner,omitempty"`
 	Dialog         string         `json:"dialog,omitempty"`
 	Icon           string         `json:"icon,omitempty"`
+	Info           *Info          `json:"info,omitempty"`
 	UpgradeCode    string         `json:"upgrade-code"`
 	Files          []File         `json:"files,omitempty"`
 	Directories    []string       `json:"directories,omitempty"`
@@ -38,6 +39,20 @@ type WixManifest struct {
 	UninstallHooks []Hook         `json:"-"`
 	Properties     []Property     `json:"properties,omitempty"`
 	Conditions     []Condition    `json:"conditions,omitempty"`
+}
+
+// Info lists the control panel program information.
+// Each member data is named after the matching column name in the uninstall
+// program list.
+type Info struct {
+	Comments         string `json:"comments,omitempty"`
+	Contact          string `json:"contact,omitempty"`
+	HelpLink         string `json:"help-link,omitempty"`
+	SupportTelephone string `json:"support-telephone,omitempty"`
+	SupportLink      string `json:"support-link,omitempty"`
+	UpdateInfoLink   string `json:"update-info-link,omitempty"`
+	Readme           string `json:"readme,omitempty"`
+	Size             uint64 `json:"size,omitempty"` // in kilobytes
 }
 
 // File is the struct to decode a file.

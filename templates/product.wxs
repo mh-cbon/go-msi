@@ -33,6 +33,15 @@
       <Icon Id="InstallerIco" SourceFile="{{.Icon}}"/>
       <Property Id="ARPPRODUCTICON" Value="InstallerIco"/>
       {{end}}
+      {{if .Info}}
+      {{if gt (.Info.Comments | len) 0 }} <Property Id='ARPCOMMENTS'>{{.Info.Comments}}</Property> {{end}}
+      {{if gt (.Info.Contact | len) 0 }} <Property Id='ARPCONTACT'>{{.Info.Contact}}</Property> {{end}}
+      {{if gt (.Info.HelpLink | len) 0 }} <Property Id='ARPHELPLINK'>{{.Info.HelpLink}}</Property> {{end}}
+      {{if gt (.Info.SupportLink | len) 0 }} <Property Id='ARPURLINFOABOUT'>{{.Info.SupportLink}}</Property> {{end}}
+      {{if gt (.Info.UpdateInfoLink | len) 0 }} <Property Id='ARPURLUPDATEINFO'>{{.Info.UpdateInfoLink}}</Property> {{end}}
+      {{if gt (.Info.SupportTelephone | len) 0 }} <Property Id='ARPHELPTELEPHONE'>{{.Info.SupportTelephone}}</Property> {{end}}
+      {{if gt .Info.Size 0 }} <Property Id='ARPSIZE'>{{.Info.Size}}</Property> {{end}}
+      {{end}}
 
       {{range $i, $p := .Properties}}
       <Property Id="{{$p.ID}}" {{if $p.Value}} Value="{{$p.Value}}" {{end}}>
@@ -123,6 +132,8 @@
 
       </Directory>
 
+      <CustomAction Id="SetARPINSTALLLOCATION" Property="ARPINSTALLLOCATION" Value="[INSTALLDIR]"/>
+      {{if .Info}}{{if gt (.Info.Readme | len) 0 }}<CustomAction Id="SetARPREADME" Property="ARPREADME" Value="{{.Info.Readme}}"/>{{end}}{{end}}
       {{range $i, $e := .InstallHooks}}
       <SetProperty Id="CustomInstallExec{{$i}}" Value="{{$e.CookedCommand}}" Before="CustomInstallExec{{$i}}" Sequence="execute"/>
       <CustomAction Id="CustomInstallExec{{$i}}" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="deferred" {{if gt ($e.Return | len) 0}} Return="{{$e.Return}}" {{end}} Impersonate="no"/>
@@ -133,6 +144,8 @@
       {{end}}
       <InstallExecuteSequence>
          <RemoveExistingProducts After="InstallValidate"/>
+         <Custom Action="SetARPINSTALLLOCATION" After="InstallValidate"/>
+         {{if .Info}}{{if gt (.Info.Readme | len) 0 }}<Custom Action="SetARPREADME" After="InstallValidate"/>{{end}}{{end}}
          {{range $i, $e := .InstallHooks}}
          <Custom Action="CustomInstallExec{{$i}}" After="{{if eq $i 0}}InstallFiles{{else}}CustomInstallExec{{dec $i}}{{end}}">NOT Installed AND NOT REMOVE</Custom>
          {{end}}
