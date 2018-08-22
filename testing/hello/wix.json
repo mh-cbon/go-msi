@@ -3,6 +3,16 @@
   "company": "mh-cbon",
   "license": "LICENSE",
   "icon": "ico.ico",
+  "info": {
+    "comments": "some comments",
+    "contact": "some contact",
+    "help-link": "http://example.com/help",
+    "support-telephone": "555-123456789",
+    "support-link": "http://example.com/support",
+    "update-info-link": "http://example.com/update",
+    "readme": "[INSTALLDIR]readme.txt",
+    "size": 123456
+  },
   "upgrade-code": "",
   "files": [
     {
@@ -53,7 +63,7 @@
       {
         "name": "hello",
         "description": "hello web server",
-        "target": "[INSTALLDIR]\\hello.exe",
+        "target": "[INSTALLDIR]hello.exe",
         "wdir": "INSTALLDIR",
         "icon":"ico.ico"
       }
