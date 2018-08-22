@@ -16,7 +16,8 @@
             Manufacturer="{{.Company}}"
             Language="1033">
 
-      <Package InstallerVersion="200" Compressed="yes" Comments="Windows Installer Package" InstallScope="perMachine"/>
+      <Package InstallerVersion="200" Compressed="yes" Description="{{.Product}} {{.Version}}"
+               Comments="This installs {{.Product}} {{.Version}}" InstallScope="perMachine"/>
 
       <Media Id="1" Cabinet="product.cab" EmbedCab="yes"/>
 
