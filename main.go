@@ -178,6 +178,10 @@ func main() {
 			Action: generateWixCommands,
 			Flags: []cli.Flag{
 				cli.StringFlag{
+					Name:  "bin, b",
+					Usage: "Path to the wix binaries (if not in PATH)",
+				},
+				cli.StringFlag{
 					Name:  "path, p",
 					Value: "wix.json",
 					Usage: "Path to the wix manifest file",
@@ -219,6 +223,10 @@ func main() {
 			Usage:  "All-in-one command to make MSI files",
 			Action: quickMake,
 			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "bin, b",
+					Usage: "Path to the wix binaries (if not in PATH)",
+				},
 				cli.StringFlag{
 					Name:  "path, p",
 					Value: "wix.json",
@@ -635,6 +643,7 @@ func generateWixCommands(c *cli.Context) error {
 	out := c.String("out")
 	msi := c.String("msi")
 	arch := c.String("arch")
+	bin := c.String("bin")
 
 	if msi == "" {
 		return cli.NewExitError("--msi parameter must be set", 1)
@@ -685,7 +694,13 @@ func generateWixCommands(c *cli.Context) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	cmdStr := wix.GenerateCmd(&wixFile, builtTemplates, msi, arch)
+	if bin != "" {
+		if bin, err = filepath.Abs(bin); err != nil {
+			return cli.NewExitError(err.Error(), 1)
+		}
+	}
+
+	cmdStr := wix.GenerateCmd(&wixFile, builtTemplates, msi, arch, bin)
 
 	targetFile := filepath.Join(out, "build.bat")
 	err = ioutil.WriteFile(targetFile, []byte(cmdStr), 0644)
@@ -721,6 +736,7 @@ func quickMake(c *cli.Context) error {
 	msi := c.String("msi")
 	arch := c.String("arch")
 	keep := c.Bool("keep")
+	bin := c.String("bin")
 
 	if msi == "" {
 		return cli.NewExitError("--msi parameter must be set", 1)
@@ -801,7 +817,13 @@ func quickMake(c *cli.Context) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	cmdStr := wix.GenerateCmd(&wixFile, builtTemplates, msi, arch)
+	if bin != "" {
+		if bin, err = filepath.Abs(bin); err != nil {
+			return cli.NewExitError(err.Error(), 1)
+		}
+	}
+
+	cmdStr := wix.GenerateCmd(&wixFile, builtTemplates, msi, arch, bin)
 
 	targetFile := filepath.Join(out, "build.bat")
 	err = ioutil.WriteFile(targetFile, []byte(cmdStr), 0644)
