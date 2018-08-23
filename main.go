@@ -699,16 +699,11 @@ func generateWixCommands(c *cli.Context) error {
 func runWixCommands(c *cli.Context) error {
 	out := c.String("out")
 
-	bin, err := exec.LookPath("cmd.exe")
-	if err != nil {
-		return cli.NewExitError(err.Error(), 1)
-	}
-	args := []string{"/C", "build.bat"}
-	oCmd := exec.Command(bin, args...)
+	oCmd := exec.Command("cmd.exe", "/C", "build.bat")
 	oCmd.Dir = out
 	oCmd.Stdout = os.Stdout
 	oCmd.Stderr = os.Stderr
-	err = oCmd.Run()
+	err := oCmd.Run()
 	if err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
@@ -814,12 +809,7 @@ func quickMake(c *cli.Context) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	bin, err := exec.LookPath("cmd.exe")
-	if err != nil {
-		return cli.NewExitError(err.Error(), 1)
-	}
-	args := []string{"/C", "build.bat"}
-	oCmd := exec.Command(bin, args...)
+	oCmd := exec.Command("cmd.exe", "/C", "build.bat")
 	oCmd.Dir = out
 	oCmd.Stdout = os.Stdout
 	oCmd.Stderr = os.Stderr
