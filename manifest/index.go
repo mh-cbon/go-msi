@@ -431,5 +431,5 @@ func extractRegistry(path string) (string, string, error) {
 	if len(p) < 2 {
 		return "", "", fmt.Errorf("invalid registry path %q", p)
 	}
-	return p[0], strings.Join(p[1:len(p)], `\`), nil
+	return p[0], strings.Join(p[1:], `\`), nil
 }
