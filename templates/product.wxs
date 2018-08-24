@@ -16,7 +16,8 @@
             Manufacturer="{{.Company}}"
             Language="1033">
 
-      <Package InstallerVersion="200" Compressed="yes" Comments="Windows Installer Package" InstallScope="perMachine"/>
+      <Package InstallerVersion="200" Compressed="yes" Description="{{.Product}} {{.Version}}"
+               Comments="This installs {{.Product}} {{.Version}}" InstallScope="perMachine"/>
 
       <Media Id="1" Cabinet="product.cab" EmbedCab="yes"/>
 
@@ -27,21 +28,52 @@
       </Upgrade>
       <Condition Message="A newer version of this software is already installed.">NOT NEWERVERSIONDETECTED</Condition>
 
+      {{if gt (.Banner | len) 0 }} <WixVariable Id="WixUIBannerBmp" Value="{{.Banner}}"/> {{end}}
+      {{if gt (.Dialog | len) 0 }} <WixVariable Id="WixUIDialogBmp" Value="{{.Dialog}}"/> {{end}}
+      {{if gt (.Icon | len) 0 }}
+      <Icon Id="InstallerIco" SourceFile="{{.Icon}}"/>
+      <Property Id="ARPPRODUCTICON" Value="InstallerIco"/>
+      {{end}}
+      {{if .Info}}
+      {{if gt (.Info.Comments | len) 0 }} <Property Id='ARPCOMMENTS'>{{.Info.Comments}}</Property> {{end}}
+      {{if gt (.Info.Contact | len) 0 }} <Property Id='ARPCONTACT'>{{.Info.Contact}}</Property> {{end}}
+      {{if gt (.Info.HelpLink | len) 0 }} <Property Id='ARPHELPLINK'>{{.Info.HelpLink}}</Property> {{end}}
+      {{if gt (.Info.SupportLink | len) 0 }} <Property Id='ARPURLINFOABOUT'>{{.Info.SupportLink}}</Property> {{end}}
+      {{if gt (.Info.UpdateInfoLink | len) 0 }} <Property Id='ARPURLUPDATEINFO'>{{.Info.UpdateInfoLink}}</Property> {{end}}
+      {{if gt (.Info.SupportTelephone | len) 0 }} <Property Id='ARPHELPTELEPHONE'>{{.Info.SupportTelephone}}</Property> {{end}}
+      {{if gt .Info.Size 0 }} <Property Id='ARPSIZE'>{{.Info.Size}}</Property> {{end}}
+      {{end}}
+
+      {{range $i, $p := .Properties}}
+      <Property Id="{{$p.ID}}" {{if $p.Value}} Value="{{$p.Value}}" {{end}}>
+         {{if $p.Registry}}
+         <RegistrySearch Id="{{$p.ID}}Search" Root="{{$p.Registry.Root}}" Key="{{$p.Registry.Key}}"
+            {{if gt ($p.Registry.Name | len) 0}} Name="{{$p.Registry.Name}}" {{end}} Type="raw"/>
+         {{end}}
+      </Property>
+      {{end}}
+      {{range $i, $c := .Conditions}}
+      <Condition Message="{{$c.Message}}"><![CDATA[{{$c.Condition}}]]></Condition>
+      {{end}}
+
       <Directory Id="TARGETDIR" Name="SourceDir">
 
          <Directory Id="$(var.Program_Files)">
             <Directory Id="INSTALLDIR" Name="{{.Product}}">
-               {{if gt (.Files.Items | len) 0}}
-               <Component Id="ApplicationFiles" Guid="{{.Files.GUID}}">
-                  {{range $i, $e := .Files.Items}}
-                    <File Id="ApplicationFile{{$i}}" Source="{{$e}}"/>
-                  {{end}}
-               </Component>
-               {{end}}
-               {{if gt (.Directories | len) 0}}
-               {{range $i, $e := .Directories}}
+                {{range $i, $e := .Files}}
+                <Component Id="ApplicationFiles{{$i}}" Guid="*">
+                    <File Id="ApplicationFile{{$i}}" Source="{{$e.Path}}"/>
+                    {{if ($e.Service)}}
+                    <ServiceInstall Id="ServiceInstall{{$i}}" Type="ownProcess" Name="{{$e.Service.Name}}" Start="{{$e.Service.Start}}" Account="LocalSystem" ErrorControl="normal"
+                     {{if gt ($e.Service.DisplayName | len) 0}} DisplayName="{{$e.Service.DisplayName}}" {{end}}
+                     {{if gt ($e.Service.Description | len) 0}} Description="{{$e.Service.Description}}" {{end}}
+                     {{if gt ($e.Service.Arguments | len) 0}} Arguments="{{$e.Service.Arguments}}" {{end}} />
+                    <ServiceControl Id="ServiceControl{{$i}}" Name="{{$e.Service.Name}}" Start="install" Stop="both" Remove="uninstall"/>
+                    {{end}}
+                 </Component>
+                {{end}}
+               {{range $i, $e := .DirNames}}
                <Directory Id="APPDIR{{$i}}" Name="{{$e}}" />
-               {{end}}
                {{end}}
             </Directory>
          </Directory>
@@ -57,6 +89,16 @@
             Action="{{$e.Action}}"
             System="{{$e.System}}" />
           {{end}}
+        </Component>
+        {{end}}
+
+        {{range $i, $r := .Registries}}
+        <Component Id="RegistryEntries{{$i}}" Guid="{{$r.GUID}}">
+            <RegistryKey Root="{{$r.Root}}" Key="{{$r.Key}}">
+                {{range $j, $v := $r.Values}}
+                <RegistryValue Type="{{$v.Type}}" {{if gt ($v.Name | len) 0}} Name="{{$v.Name}}" {{end}} Value="{{$v.Value}}" {{if eq $i 0}}{{if eq $j 0}} KeyPath="yes" {{end}}{{end}}/>
+                {{end}}
+            </RegistryKey>
         </Component>
         {{end}}
 
@@ -91,16 +133,20 @@
 
       </Directory>
 
+      <CustomAction Id="SetARPINSTALLLOCATION" Property="ARPINSTALLLOCATION" Value="[INSTALLDIR]"/>
+      {{if .Info}}{{if gt (.Info.Readme | len) 0 }}<CustomAction Id="SetARPREADME" Property="ARPREADME" Value="{{.Info.Readme}}"/>{{end}}{{end}}
       {{range $i, $e := .InstallHooks}}
       <SetProperty Id="CustomInstallExec{{$i}}" Value="{{$e.CookedCommand}}" Before="CustomInstallExec{{$i}}" Sequence="execute"/>
-      <CustomAction Id="CustomInstallExec{{$i}}" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="deferred" Return="check" Impersonate="no"/>
+      <CustomAction Id="CustomInstallExec{{$i}}" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="deferred" {{if gt ($e.Return | len) 0}} Return="{{$e.Return}}" {{end}} Impersonate="no"/>
       {{end}}
       {{range $i, $e := .UninstallHooks}}
       <SetProperty Id="CustomUninstallExec{{$i}}" Value="{{$e.CookedCommand}}" Before="CustomUninstallExec{{$i}}" Sequence="execute"/>
-      <CustomAction Id="CustomUninstallExec{{$i}}" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="deferred" Return="check" Impersonate="no"/>
+      <CustomAction Id="CustomUninstallExec{{$i}}" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="deferred" {{if gt ($e.Return | len) 0}} Return="{{$e.Return}}" {{end}} Impersonate="no"/>
       {{end}}
       <InstallExecuteSequence>
          <RemoveExistingProducts After="InstallValidate"/>
+         <Custom Action="SetARPINSTALLLOCATION" After="InstallValidate"/>
+         {{if .Info}}{{if gt (.Info.Readme | len) 0 }}<Custom Action="SetARPREADME" After="InstallValidate"/>{{end}}{{end}}
          {{range $i, $e := .InstallHooks}}
          <Custom Action="CustomInstallExec{{$i}}" After="{{if eq $i 0}}InstallFiles{{else}}CustomInstallExec{{dec $i}}{{end}}">NOT Installed AND NOT REMOVE</Custom>
          {{end}}
@@ -113,8 +159,11 @@
          {{if gt (.Env.Vars | len) 0}}
          <ComponentRef Id="ENVS"/>
          {{end}}
-         {{if gt (.Files.Items | len) 0}}
-         <ComponentRef Id="ApplicationFiles"/>
+         {{range $i, $e := .Files}}
+         <ComponentRef Id="ApplicationFiles{{$i}}"/>
+         {{end}}
+         {{range $i, $r := .Registries}}
+         <ComponentRef Id="RegistryEntries{{$i}}" />
          {{end}}
          {{if gt (.Shortcuts.Items | len) 0}}
          <ComponentRef Id="ApplicationShortcuts"/>

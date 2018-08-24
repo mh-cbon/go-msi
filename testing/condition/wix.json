@@ -1,0 +1,19 @@
+{
+  "product": "condition",
+  "company": "mh-cbon",
+  "properties": [
+    {
+      "id": "CURRENTBUILD",
+      "registry": {
+        "path": "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
+        "name": "CurrentBuild"
+      }
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "Installed OR (CURRENTBUILD < 0)",
+      "message": "some condition message"
+    }
+  ]
+}

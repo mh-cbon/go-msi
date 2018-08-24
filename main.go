@@ -65,6 +65,30 @@ func main() {
 			Action: checkEnv,
 		},
 		{
+			Name:   "set-files",
+			Usage:  "Adds or removes files from your wix manifest",
+			Action: setFiles,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "path, p",
+					Value: "wix.json",
+					Usage: "Path to the wix manifest file",
+				},
+				cli.StringSliceFlag{
+					Name:  "includes, i",
+					Usage: "Files to include, use of * is permitted",
+				},
+				cli.StringSliceFlag{
+					Name:  "excludes, e",
+					Usage: "Files to exclude, use of * is permitted",
+				},
+				cli.BoolFlag{
+					Name:  "test, t",
+					Usage: "Test mode, does not modify the wix manifest file but exits with an error instead",
+				},
+			},
+		},
+		{
 			Name:   "set-guid",
 			Usage:  "Sets appropriate guids in your wix manifest",
 			Action: setGUID,
@@ -102,13 +126,15 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "version",
-					Value: "",
 					Usage: "The version of your program",
 				},
 				cli.StringFlag{
 					Name:  "license, l",
-					Value: "",
 					Usage: "Path to the license file",
+				},
+				cli.StringSliceFlag{
+					Name:  "property, pr",
+					Usage: "A property to set defined as Id=Value",
 				},
 			},
 		},
@@ -119,12 +145,10 @@ func main() {
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "src, s",
-					Value: "",
 					Usage: "Path to an UTF-8 encoded file",
 				},
 				cli.StringFlag{
 					Name:  "out, o",
-					Value: "",
 					Usage: "Path to the ANSI generated file",
 				},
 			},
@@ -136,12 +160,10 @@ func main() {
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "src, s",
-					Value: "",
 					Usage: "Path to a text file",
 				},
 				cli.StringFlag{
 					Name:  "out, o",
-					Value: "",
 					Usage: "Path to the RTF generated file",
 				},
 				cli.BoolFlag{
@@ -155,6 +177,10 @@ func main() {
 			Usage:  "Generate a batch file of Wix commands to run",
 			Action: generateWixCommands,
 			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "bin, b",
+					Usage: "Path to the wix binaries (if not in PATH)",
+				},
 				cli.StringFlag{
 					Name:  "path, p",
 					Value: "wix.json",
@@ -172,12 +198,10 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "arch, a",
-					Value: "",
 					Usage: "A target architecture, amd64 or 386 (ia64 is not handled)",
 				},
 				cli.StringFlag{
 					Name:  "msi, m",
-					Value: "",
 					Usage: "Path to write resulting msi file to",
 				},
 			},
@@ -200,6 +224,10 @@ func main() {
 			Action: quickMake,
 			Flags: []cli.Flag{
 				cli.StringFlag{
+					Name:  "bin, b",
+					Usage: "Path to the wix binaries (if not in PATH)",
+				},
+				cli.StringFlag{
 					Name:  "path, p",
 					Value: "wix.json",
 					Usage: "Path to the wix manifest file",
@@ -216,23 +244,23 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "arch, a",
-					Value: "",
 					Usage: "A target architecture, amd64 or 386 (ia64 is not handled)",
 				},
 				cli.StringFlag{
 					Name:  "msi, m",
-					Value: "",
 					Usage: "Path to write resulting msi file to",
 				},
 				cli.StringFlag{
 					Name:  "version",
-					Value: "",
 					Usage: "The version of your program",
 				},
 				cli.StringFlag{
 					Name:  "license, l",
-					Value: "",
 					Usage: "Path to the license file",
+				},
+				cli.StringSliceFlag{
+					Name:  "property, pr",
+					Usage: "A property to set defined as Id=Value",
 				},
 				cli.BoolFlag{
 					Name:  "keep, k",
@@ -257,7 +285,6 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "version",
-					Value: "",
 					Usage: "The version of your program",
 				},
 				cli.StringFlag{
@@ -267,12 +294,10 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "input, i",
-					Value: "",
 					Usage: "Path to the msi file to package into the chocolatey package",
 				},
 				cli.StringFlag{
 					Name:  "changelog-cmd, c",
-					Value: "",
 					Usage: "A command to generate the content of the changlog in the package",
 				},
 				cli.BoolFlag{
@@ -283,7 +308,13 @@ func main() {
 		},
 	}
 
-	app.Run(os.Args)
+	if err := app.Run(os.Args); err != nil {
+		fmt.Println(err)
+		if e, ok := err.(*cli.ExitError); ok {
+			os.Exit(e.ExitCode())
+		}
+		os.Exit(1)
+	}
 }
 
 var verReg = regexp.MustCompile(`\s[0-9]+[.][0-9]+[.][0-9]+`)
@@ -363,6 +394,104 @@ func checkJSON(c *cli.Context) error {
 	return nil
 }
 
+func setFiles(c *cli.Context) error {
+	path := c.String("path")
+	includes := c.StringSlice("includes")
+	excludes := c.StringSlice("excludes")
+	test := c.Bool("test")
+
+	if len(includes) == 0 {
+		return cli.NewExitError(fmt.Errorf("--includes argument is required"), 1)
+	}
+	wixFile := manifest.WixManifest{}
+	err := wixFile.Load(path)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+
+	failed := false
+	dir := filepath.Dir(path)
+	out := make(map[string]bool)
+	err = glob(dir, excludes, func(match string) {
+		out[match] = true
+	})
+	if err != nil {
+		return cli.NewExitError(err, 1)
+	}
+	in := make(map[string]bool)
+	err = glob(dir, includes, func(match string) {
+		if !out[match] {
+			in[match] = true
+			for _, f := range wixFile.Files {
+				if f.Path == match {
+					return
+				}
+			}
+			fmt.Printf("    adding %q\n", match)
+			failed = true
+			if !test {
+				wixFile.Files = append(wixFile.Files, manifest.File{Path: match})
+			}
+		}
+	})
+	if err != nil {
+		return cli.NewExitError(err, 1)
+	}
+
+	for i := len(wixFile.Files) - 1; i >= 0; i-- {
+		file := wixFile.Files[i].Path
+		if !in[file] {
+			fmt.Printf("    removing %q\n", file)
+			failed = true
+			if !test {
+				wixFile.Files = append(wixFile.Files[:i], wixFile.Files[i+1:]...)
+			}
+		}
+	}
+
+	if !failed {
+		return nil
+	}
+	if test {
+		return fmt.Errorf("file list not up to date")
+	}
+	err = wixFile.Write(path)
+	if err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
+	fmt.Println("The file is saved on disk")
+	return nil
+}
+
+func glob(dir string, files []string, f func(match string)) error {
+	for _, file := range files {
+		matches, err := filepath.Glob(filepath.Join(dir, file))
+		if err != nil {
+			return err
+		}
+		if matches == nil {
+			return fmt.Errorf("file %q does not exist", file)
+		}
+		for _, match := range matches {
+			info, err := os.Stat(match)
+			if err != nil {
+				return err
+			}
+			if info.IsDir() {
+				continue
+			}
+			if dir != "" {
+				match, err = filepath.Rel(dir, match)
+				if err != nil {
+					return err
+				}
+			}
+			f(filepath.ToSlash(match))
+		}
+	}
+	return nil
+}
+
 func setGUID(c *cli.Context) error {
 	path := c.String("path")
 	force := c.Bool("force")
@@ -373,11 +502,7 @@ func setGUID(c *cli.Context) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	updated, err := wixFile.SetGuids(force)
-	if err != nil {
-		return cli.NewExitError(err.Error(), 1)
-	}
-
+	updated := wixFile.SetGuids(force)
 	if updated {
 		fmt.Println("The manifest was updated")
 	} else {
@@ -399,6 +524,7 @@ func generateTemplates(c *cli.Context) error {
 	out := c.String("out")
 	version := c.String("version")
 	license := c.String("license")
+	properties := c.StringSlice("property")
 
 	wixFile := manifest.WixManifest{}
 	err := wixFile.Load(path)
@@ -419,6 +545,10 @@ func generateTemplates(c *cli.Context) error {
 
 	if c.IsSet("license") {
 		wixFile.License = license
+	}
+
+	if err := addProperties(&wixFile, properties); err != nil {
+		return cli.NewExitError(err.Error(), 1)
 	}
 
 	err = wixFile.Normalize()
@@ -513,6 +643,7 @@ func generateWixCommands(c *cli.Context) error {
 	out := c.String("out")
 	msi := c.String("msi")
 	arch := c.String("arch")
+	bin := c.String("bin")
 
 	if msi == "" {
 		return cli.NewExitError("--msi parameter must be set", 1)
@@ -563,7 +694,13 @@ func generateWixCommands(c *cli.Context) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	cmdStr := wix.GenerateCmd(&wixFile, builtTemplates, msi, arch)
+	if bin != "" {
+		if bin, err = filepath.Abs(bin); err != nil {
+			return cli.NewExitError(err.Error(), 1)
+		}
+	}
+
+	cmdStr := wix.GenerateCmd(&wixFile, builtTemplates, msi, arch, bin)
 
 	targetFile := filepath.Join(out, "build.bat")
 	err = ioutil.WriteFile(targetFile, []byte(cmdStr), 0644)
@@ -577,16 +714,11 @@ func generateWixCommands(c *cli.Context) error {
 func runWixCommands(c *cli.Context) error {
 	out := c.String("out")
 
-	bin, err := exec.LookPath("cmd.exe")
-	if err != nil {
-		return cli.NewExitError(err.Error(), 1)
-	}
-	args := []string{"/C", "build.bat"}
-	oCmd := exec.Command(bin, args...)
+	oCmd := exec.Command("cmd.exe", "/C", "build.bat")
 	oCmd.Dir = out
 	oCmd.Stdout = os.Stdout
 	oCmd.Stderr = os.Stderr
-	err = oCmd.Run()
+	err := oCmd.Run()
 	if err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
@@ -600,9 +732,11 @@ func quickMake(c *cli.Context) error {
 	out := c.String("out")
 	version := c.String("version")
 	license := c.String("license")
+	properties := c.StringSlice("property")
 	msi := c.String("msi")
 	arch := c.String("arch")
 	keep := c.Bool("keep")
+	bin := c.String("bin")
 
 	if msi == "" {
 		return cli.NewExitError("--msi parameter must be set", 1)
@@ -613,11 +747,7 @@ func quickMake(c *cli.Context) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	if wixFile.NeedGUID() {
-		if _, err := wixFile.SetGuids(false); err != nil {
-			return cli.NewExitError(err.Error(), 1)
-		}
-	}
+	wixFile.SetGuids(false)
 
 	if err := os.RemoveAll(out); err != nil {
 		return cli.NewExitError(err.Error(), 1)
@@ -633,6 +763,24 @@ func quickMake(c *cli.Context) error {
 	if c.IsSet("license") {
 		wixFile.License = license
 	}
+	if wixFile.License != "" {
+		isRtf, err := rtf.IsRtf(wixFile.License)
+		if err != nil {
+			return cli.NewExitError(err.Error(), 1)
+		}
+		if !isRtf {
+			fmt.Println("Converting license to RTF")
+			target := filepath.Join(out, filepath.Base(wixFile.License)+".rtf")
+			if err := rtf.WriteAsRtf(wixFile.License, target, true); err != nil {
+				return cli.NewExitError(err.Error(), 1)
+			}
+			wixFile.License = target
+		}
+	}
+
+	if err := addProperties(&wixFile, properties); err != nil {
+		return cli.NewExitError(err.Error(), 1)
+	}
 
 	if err := wixFile.Normalize(); err != nil {
 		return cli.NewExitError(err.Error(), 1)
@@ -640,20 +788,6 @@ func quickMake(c *cli.Context) error {
 
 	if err := wixFile.RewriteFilePaths(out); err != nil {
 		return cli.NewExitError(err.Error(), 1)
-	}
-
-	if wixFile.License != "" {
-		if !rtf.IsRtf(wixFile.License) {
-			target := filepath.Join(out, filepath.Base(wixFile.License)+".rtf")
-			err := rtf.WriteAsRtf(wixFile.License, target, true)
-			if err != nil {
-				return cli.NewExitError(err.Error(), 1)
-			}
-			wixFile.License, err = filepath.Rel(out, target)
-			if err != nil {
-				return cli.NewExitError(err.Error(), 1)
-			}
-		}
 	}
 
 	templates, err := tpls.Find(src, "*.wxs")
@@ -683,7 +817,13 @@ func quickMake(c *cli.Context) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	cmdStr := wix.GenerateCmd(&wixFile, builtTemplates, msi, arch)
+	if bin != "" {
+		if bin, err = filepath.Abs(bin); err != nil {
+			return cli.NewExitError(err.Error(), 1)
+		}
+	}
+
+	cmdStr := wix.GenerateCmd(&wixFile, builtTemplates, msi, arch, bin)
 
 	targetFile := filepath.Join(out, "build.bat")
 	err = ioutil.WriteFile(targetFile, []byte(cmdStr), 0644)
@@ -691,12 +831,7 @@ func quickMake(c *cli.Context) error {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
-	bin, err := exec.LookPath("cmd.exe")
-	if err != nil {
-		return cli.NewExitError(err.Error(), 1)
-	}
-	args := []string{"/C", "build.bat"}
-	oCmd := exec.Command(bin, args...)
+	oCmd := exec.Command("cmd.exe", "/C", "build.bat")
 	oCmd.Dir = out
 	oCmd.Stdout = os.Stdout
 	oCmd.Stderr = os.Stderr
@@ -716,6 +851,23 @@ func quickMake(c *cli.Context) error {
 
 	fmt.Println("All Done!!")
 
+	return nil
+}
+
+func addProperties(wixFile *manifest.WixManifest, properties []string) error {
+	for _, prop := range properties {
+		s := strings.SplitN(prop, "=", 2)
+		if len(s) < 2 {
+			return fmt.Errorf("property definition must be of the form Id=Value")
+		}
+		v := manifest.Value(s[1])
+		wixFile.Properties = append(wixFile.Properties,
+			manifest.Property{
+				ID:    s[0],
+				Value: &v,
+			},
+		)
+	}
 	return nil
 }
 
@@ -768,13 +920,13 @@ func chocoMake(c *cli.Context) error {
 	}
 
 	if changelogCmd != "" {
-		windows, err2 := stringexec.Command(changelogCmd)
-		if err2 != nil {
+		windows, err := stringexec.Command(changelogCmd)
+		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
 		windows.Stderr = os.Stderr
-		out, err3 := windows.Output()
-		if err3 != nil {
+		out, err := windows.Output()
+		if err != nil {
 			return cli.NewExitError(fmt.Sprintf("Failed to execute command to generate the changelog:%q\n%v", changelogCmd, err.Error()), 1)
 		}
 		sout := string(out)
@@ -787,13 +939,13 @@ func chocoMake(c *cli.Context) error {
 		wixFile.Choco.ChangeLog = sout
 	}
 
-	if err = util.CopyFile(filepath.Join(wixFile.Choco.BuildDir, wixFile.Choco.MsiFile), input); err != nil {
+	if err := util.CopyFile(filepath.Join(wixFile.Choco.BuildDir, wixFile.Choco.MsiFile), input); err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
 
 	for _, tpl := range templates {
 		dst := filepath.Join(out, filepath.Base(tpl))
-		err = tpls.GenerateTemplate(&wixFile, tpl, dst)
+		err := tpls.GenerateTemplate(&wixFile, tpl, dst)
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
