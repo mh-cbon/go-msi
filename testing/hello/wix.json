@@ -2,18 +2,34 @@
   "product": "hello",
   "company": "mh-cbon",
   "license": "LICENSE",
-  "upgrade-code": "",
-  "files": {
-    "guid": "",
-    "items": [
-      "build/amd64/hello.exe"
-    ]
+  "icon": "ico.ico",
+  "info": {
+    "comments": "some comments",
+    "contact": "some contact",
+    "help-link": "http://example.com/help",
+    "support-telephone": "555-123456789",
+    "support-link": "http://example.com/support",
+    "update-info-link": "http://example.com/update",
+    "readme": "[INSTALLDIR]readme.txt",
+    "size": 123456
   },
+  "upgrade-code": "EA215DEE-E37A-4647-9E42-64D155AA22D1",
+  "files": [
+    {
+      "path": "build/amd64/hello.exe",
+      "service": {
+        "name": "HelloSvc",
+        "start": "auto",
+        "display-name": "Hello!",
+        "description": "The hello service"
+      }
+    }
+  ],
   "directories": [
-    "assets"
+    "some/assets"
   ],
   "env": {
-    "guid": "",
+    "guid": "5C10D8BB-CBC7-4D01-87D8-AAE42B0C39A9",
     "vars": [
       {
         "name": "some",
@@ -25,27 +41,46 @@
       }
     ]
   },
+  "registries": [
+    {
+      "path": "HKCU\\Software\\mh-cbon\\hello",
+      "guid": "C431779A-401B-4F55-AA06-50D31D48C0FC",
+      "values": [
+        {
+          "name": "Version",
+          "value": "[SOME_VERSION]"
+        },
+        {
+          "name": "InstallDir",
+          "value": "[INSTALLDIR]"
+        }
+      ]
+    }
+  ],
   "shortcuts": {
-    "guid": "",
+    "guid": "8534EE81-6D16-491A-BB73-C562DC97BF82",
     "items": [
       {
         "name": "hello",
         "description": "hello web server",
-        "target": "[INSTALLDIR]\\hello.exe",
+        "target": "[INSTALLDIR]hello.exe",
         "wdir": "INSTALLDIR",
-        "icon":"ico.ico"
+        "arguments": "",
+        "icon": "ico.ico"
       }
     ]
   },
-  "hooks": [
-    {"when": "install", "command": "sc.exe create HelloSvc binPath=\"[INSTALLDIR]hello.exe\" type=share start=auto DisplayName=\"Hello!\""},
-    {"when": "install", "command": "sc.exe start HelloSvc"},
-    {"when": "uninstall", "command": "sc.exe delete HelloSvc"}
-  ],
   "choco": {
     "description": "hello program",
     "project-url": "https://github.com/mh-cbon/go-msi/tree/master/testing",
     "tags": "hello",
     "license-url": "https://github.com/mh-cbon/go-msi/blob/master/LICENSE"
-  }
+  },
+  "hooks": [
+    {
+      "command": "this will fail and be ignored",
+      "when": "install",
+      "return": "ignore"
+    }
+  ]
 }

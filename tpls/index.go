@@ -11,8 +11,8 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/mat007/go-msi/manifest"
 	"github.com/mattn/go-zglob"
-	"github.com/mh-cbon/go-msi/manifest"
 )
 
 var funcMap = template.FuncMap{
@@ -41,7 +41,7 @@ var funcMap = template.FuncMap{
 	"upper": strings.ToUpper,
 }
 
-// Find all wxs fies in given directory
+// Find all wxs files in given directory
 func Find(srcDir string, pattern string) ([]string, error) {
 	glob := filepath.Join(srcDir, pattern)
 	return zglob.Glob(glob)
