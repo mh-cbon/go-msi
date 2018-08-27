@@ -13,4 +13,4 @@ RUN iex ((new-object net.webclient).DownloadString('https://chocolatey.org/insta
     choco feature disable --name showDownloadProgress ; \
     choco install -y changelog
 
-WORKDIR C:/gopath/src/github.com/mh-cbon/go-msi
+WORKDIR C:/gopath/src/github.com/mat007/go-msi
