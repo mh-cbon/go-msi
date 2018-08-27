@@ -13,7 +13,7 @@
     "readme": "[INSTALLDIR]readme.txt",
     "size": 123456
   },
-  "upgrade-code": "",
+  "upgrade-code": "EA215DEE-E37A-4647-9E42-64D155AA22D1",
   "files": [
     {
       "path": "build/amd64/hello.exe",
@@ -29,7 +29,7 @@
     "some/assets"
   ],
   "env": {
-    "guid": "",
+    "guid": "5C10D8BB-CBC7-4D01-87D8-AAE42B0C39A9",
     "vars": [
       {
         "name": "some",
@@ -43,8 +43,8 @@
   },
   "registries": [
     {
-      "guid": "",
       "path": "HKCU\\Software\\mh-cbon\\hello",
+      "guid": "C431779A-401B-4F55-AA06-50D31D48C0FC",
       "values": [
         {
           "name": "Version",
@@ -58,14 +58,15 @@
     }
   ],
   "shortcuts": {
-    "guid": "",
+    "guid": "8534EE81-6D16-491A-BB73-C562DC97BF82",
     "items": [
       {
         "name": "hello",
         "description": "hello web server",
         "target": "[INSTALLDIR]hello.exe",
         "wdir": "INSTALLDIR",
-        "icon":"ico.ico"
+        "arguments": "",
+        "icon": "ico.ico"
       }
     ]
   },

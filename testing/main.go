@@ -31,7 +31,7 @@ func testCondition() {
 	confirm(rmFile("log-uninstall.txt"), "uninstall log removal")
 
 	gopath := os.Getenv("GOPATH")
-	wd := makeDir(filepath.Join(gopath, "src/github.com/mh-cbon/go-msi/testing/condition"))
+	wd := makeDir(filepath.Join(gopath, "src/github.com/mh-cbon/mat007/testing/condition"))
 	mustChdir(wd)
 
 	setup := makeCmd("C:/go-msi/go-msi.exe", "set-guid")
@@ -69,7 +69,7 @@ func testHello() {
 	confirm(rmFile("log-uninstall.txt"), "uninstall log removal")
 
 	gopath := os.Getenv("GOPATH")
-	wd := makeDir(filepath.Join(gopath, "src/github.com/mh-cbon/go-msi/testing/hello"))
+	wd := makeDir(filepath.Join(gopath, "src/github.com/mat007/go-msi/testing/hello"))
 	mustContains(wd, "hello.go")
 	mustChdir(wd)
 
