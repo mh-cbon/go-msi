@@ -152,7 +152,7 @@ func (wixFile *WixManifest) SetGuids(force bool) (bool, error) {
 
 		newUUID, err := uuid.NewV4()
 		if err != nil {
-			return false, nil
+			return false, err
 		}
 
 		wixFile.UpgradeCode = newUUID.String()
@@ -162,7 +162,7 @@ func (wixFile *WixManifest) SetGuids(force bool) (bool, error) {
 
 		newUUID, err := uuid.NewV4()
 		if err != nil {
-			return false, nil
+			return false, err
 		}
 
 		wixFile.Files.GUID = newUUID.String()
@@ -172,7 +172,7 @@ func (wixFile *WixManifest) SetGuids(force bool) (bool, error) {
 
 		newUUID, err := uuid.NewV4()
 		if err != nil {
-			return false, nil
+			return false, err
 		}
 
 		wixFile.Env.GUID = newUUID.String()
@@ -182,7 +182,7 @@ func (wixFile *WixManifest) SetGuids(force bool) (bool, error) {
 
 		newUUID, err := uuid.NewV4()
 		if err != nil {
-			return false, nil
+			return false, err
 		}
 
 		wixFile.Shortcuts.GUID = newUUID.String()
