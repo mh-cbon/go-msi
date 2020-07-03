@@ -111,7 +111,7 @@ Take care to the license file, it must be an `rtf` file, it must be encoded with
 
 I have provided some tools to help with that matter.
 
-# Personnalization
+# Personalization
 
 ### wix templates
 
