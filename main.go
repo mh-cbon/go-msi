@@ -619,9 +619,9 @@ func quickMake(c *cli.Context) error {
 		}
 	}
 
-	if err := os.RemoveAll(out); err != nil {
-		return cli.NewExitError(err.Error(), 1)
-	}
+	// if err := os.RemoveAll(out); err != nil {
+	// 	return cli.NewExitError(err.Error(), 1)
+	// }
 	if err := os.MkdirAll(out, 0744); err != nil {
 		return cli.NewExitError(err.Error(), 1)
 	}
@@ -706,10 +706,10 @@ func quickMake(c *cli.Context) error {
 	}
 
 	if keep == false {
-		err = os.RemoveAll(out)
-		if err != nil {
-			return cli.NewExitError(err.Error(), 1)
-		}
+		// err = os.RemoveAll(out)
+		// if err != nil {
+			// return cli.NewExitError(err.Error(), 1)
+		// }
 	} else {
 		fmt.Printf("Build files are available in %s\n", out)
 	}
