@@ -39,7 +39,7 @@ Check the [release page](https://github.com/mh-cbon/go-msi/releases)!
 
 #### Go
 ```sh
-go get github.com/mh-cbon/go-msi
+go install github.com/mh-cbon/go-msi@latest
 ```
 
 #### Bintray
